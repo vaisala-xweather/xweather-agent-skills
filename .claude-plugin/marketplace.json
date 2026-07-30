@@ -1,0 +1,14 @@
+{
+  "name": "xweather",
+  "description": "Claude Code plugins for the Xweather developer platform — Weather API, Raster Maps, and MapsGL",
+  "owner": {
+    "name": "Xweather DevX"
+  },
+  "plugins": [
+    {
+      "name": "xweather",
+      "source": "./plugins/xweather",
+      "description": "Weather API URL builder with access-cost reporting, Raster Maps static image and tile URLs, and MapsGL SDK guidance"
+    }
+  ]
+}

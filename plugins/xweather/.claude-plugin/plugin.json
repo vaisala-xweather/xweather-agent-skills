@@ -1,0 +1,10 @@
+{
+  "name": "xweather",
+  "description": "Xweather Weather API, Raster Maps, and MapsGL — build and run Weather API request URLs, generate static map images and tile URLs, and work with the MapsGL WebGL SDK",
+  "version": "0.1.0",
+  "author": {
+    "name": "Xweather DevX"
+  },
+  "homepage": "https://www.xweather.com/docs",
+  "license": "MIT"
+}

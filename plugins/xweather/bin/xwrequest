@@ -1,0 +1,5 @@
+#!/bin/sh
+# Xweather Weather API request helper. See skills/weather-api/scripts/xwrequest.py for usage.
+# Credentials come from XWEATHER_CLIENT_ID / XWEATHER_CLIENT_SECRET in the environment.
+here=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+exec python3 "$here/../skills/weather-api/scripts/xwrequest.py" "$@"
