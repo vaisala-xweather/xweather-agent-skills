@@ -10,6 +10,30 @@ MapsGL (`@xweather/mapsgl`) renders weather and custom map data client-side in W
 top of Mapbox GL, MapLibre GL, Google Maps, or Leaflet. It requires an active Xweather account
 with Weather API + Maps access (client id + secret).
 
+## How to write MapsGL code examples
+
+**Default to a single self-contained HTML file using vanilla JavaScript and the CDN build.** One
+file the user can save and open in a browser — CDN `<script>`/`<link>` tags, a `<div>` for the map,
+and a plain `<script>` block. No build step, no bundler, no package installs, no framework.
+
+In that form, MapsGL lives on the global `aerisweather.mapsgl` namespace:
+
+```javascript
+const account = new aerisweather.mapsgl.Account('CLIENT_ID', 'CLIENT_SECRET');
+const controller = new aerisweather.mapsgl.MapboxMapController(map, { account });
+```
+
+Only produce **npm / ES-module / bundler** code when the user explicitly asks for it, or when they're
+plainly already working in such a project — an existing `package.json`, a `src/` tree with imports, or
+they name a bundler. Same for **React or any other framework**: only on explicit request. Don't offer
+a framework version alongside the vanilla one "in case", and don't reach for a framework because the
+task looks app-shaped.
+
+When the user is in an npm project, the translation is mechanical: swap the CDN tags for
+`import * as mapsgl from '@xweather/mapsgl'` plus the map library's own import, and replace
+`aerisweather.mapsgl.` with `mapsgl.`. Everything else — the controller API, layer codes, paint
+objects, expressions — is identical, so the rest of this skill applies unchanged.
+
 ## Core concepts
 
 | Concept | What it is |
@@ -84,7 +108,7 @@ without either one:
 
 1. **Xweather account keys** (`CLIENT_ID` / `CLIENT_SECRET`) — generated from the account portal at
    **https://data.portal.xweather.com/account/keys**. These authenticate MapsGL's own data
-   requests and are what get passed to `new mapsgl.Account(id, secret)`.
+   requests and are what get passed to `new aerisweather.mapsgl.Account(id, secret)`.
 2. **The underlying map provider's own key/token** — independent of Xweather:
    - Mapbox GL → `mapboxgl.accessToken` (Mapbox account access token)
    - MapLibre GL → no key needed, but the `style` URL usually comes from a tile provider (e.g.
@@ -126,7 +150,8 @@ Per-provider CDN includes:
 Pin an explicit version for every `<script>`/`<link>` tag (MapsGL's and the map library's) rather
 than `latest`, for anything beyond a quick prototype.
 
-**npm** — install `@xweather/mapsgl` plus whichever provider package applies:
+**npm** — *only when the user is already in a bundled project or asks for it.* Install
+`@xweather/mapsgl` plus whichever provider package applies:
 ```bash
 npm install --save @xweather/mapsgl mapbox-gl        # Mapbox GL
 npm install --save @xweather/mapsgl maplibre-gl       # MapLibre GL
@@ -156,11 +181,6 @@ Every provider follows the same pattern: create the native map, wrap it in the m
 `*MapController`, wait for `load`, then add layers. Only the map-creation step differs.
 
 ```javascript
-import mapboxgl from 'mapbox-gl';
-import * as mapsgl from '@xweather/mapsgl';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import '@xweather/mapsgl/dist/mapsgl.css';
-
 mapboxgl.accessToken = 'MAPBOX_TOKEN';
 const map = new mapboxgl.Map({
   container: document.getElementById('map'),
@@ -169,8 +189,8 @@ const map = new mapboxgl.Map({
   zoom: 3
 });
 
-const account = new mapsgl.Account('CLIENT_ID', 'CLIENT_SECRET');
-const controller = new mapsgl.MapboxMapController(map, { account });
+const account = new aerisweather.mapsgl.Account('CLIENT_ID', 'CLIENT_SECRET');
+const controller = new aerisweather.mapsgl.MapboxMapController(map, { account });
 
 controller.on('load', () => {
   controller.addWeatherLayer('temperatures');
@@ -188,12 +208,14 @@ All four take `(map, { account, units?, animation? })`. Google's variant also ac
 `interleaved?: boolean`. **Always gate MapsGL calls behind `controller.on('load', ...)`** —
 calling layer/source methods before load throws.
 
-Full per-provider snippets and the complete controller API (properties, events, all methods) are
-in `references/api-reference.md`.
+The four controller constructors and the complete controller API (properties, events, all methods)
+are in `references/api-reference.md`.
 
 ## Complete example
 
-### CDN (plain HTML)
+**This is the shape to produce by default** — one file, saveable and openable in a browser. Adapt it
+rather than starting from scratch: swap the map provider's CDN tags and constructor, change the
+`addWeatherLayer` codes, and adjust `center`/`zoom`.
 
 ```html
 <!DOCTYPE html>
@@ -249,62 +271,39 @@ in `references/api-reference.md`.
 
 Source: https://www.xweather.com/docs/mapsgl/examples/mapbox
 
-### npm (ES modules)
+Two details that matter in the single-file form specifically:
 
-Same structure — swap the CDN `<script>` tags for package imports, and `aerisweather.mapsgl` for
-the imported `mapsgl` namespace. No `window.addEventListener('load', ...)` wrapper is needed since
-bundlers execute the module after the DOM is parsed (keep a `defer`/module script tag, or bundle
-into the page's entry point).
+- The CDN tags use `defer`, so wrap the setup in `window.addEventListener('load', ...)`. Without it,
+  `mapboxgl` and `aerisweather` aren't defined yet and the script throws.
+- `#map` needs an explicit height. A silently blank map is nearly always this, not a JS error.
 
-```bash
-npm install --save @xweather/mapsgl mapbox-gl
-```
+### npm / ES modules — only when asked
 
-```html
-<!-- index.html -->
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MapsGL + Mapbox GL</title>
-  <style>
-    body, html { margin: 0; padding: 0; }
-    #map { height: 100vh; width: 100%; }
-  </style>
-</head>
-<body>
-  <div id="map"></div>
-  <script type="module" src="./main.js"></script>
-</body>
-</html>
-```
+Same structure: swap the CDN `<script>` tags for package imports, and `aerisweather.mapsgl.` for the
+imported `mapsgl.` namespace. The `window.addEventListener('load', ...)` wrapper is unnecessary since
+bundlers execute the module after the DOM is parsed (keep a `defer`/module script tag, or bundle into
+the page's entry point). Nothing else changes.
 
 ```javascript
-// main.js
+// main.js — loaded via <script type="module" src="./main.js"></script>
 import mapboxgl from 'mapbox-gl';
 import * as mapsgl from '@xweather/mapsgl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '@xweather/mapsgl/dist/mapsgl.css';
 
 mapboxgl.accessToken = 'MAPBOX_TOKEN';
-const map = new mapboxgl.Map({
-  container: 'map',
-  style: 'mapbox://styles/mapbox/light-v11',
-  center: [-85.5, 40],
-  zoom: 3
-});
+const map = new mapboxgl.Map({ container: 'map', style: 'mapbox://styles/mapbox/light-v11', center: [-85.5, 40], zoom: 3 });
 
 const account = new mapsgl.Account('CLIENT_ID', 'CLIENT_SECRET');
 const controller = new mapsgl.MapboxMapController(map, { account });
 
 controller.on('load', () => {
   controller.addWeatherLayer('radar');
-  controller.addWeatherLayer('alerts-outline', {
-    paint: { opacity: 0.5 }
-  });
 });
 ```
+
+The host page is then just the container plus `<script type="module" src="./main.js"></script>` — the
+`#map` height rule still applies.
 
 ## Adding, removing, and listing weather layers
 
@@ -314,7 +313,7 @@ controller.addWeatherLayer('wind-particles');
 
 // with overrides (data quality, time clamping, paint, legend, mask, filter, ...)
 controller.addWeatherLayer('temperatures', {
-  data: { quality: mapsgl.DataQuality.low },
+  data: { quality: aerisweather.mapsgl.DataQuality.low },
 });
 
 controller.hasWeatherLayer('radar');            // boolean
@@ -526,6 +525,9 @@ const results = await controller.queryPromise({ lat: 40, lon: -74.5 });
 
 ## Checklist for common tasks
 
+- **"Build me a map / show me an example"** → one self-contained HTML file, vanilla JS, CDN tags,
+  `aerisweather.mapsgl.*`. No bundler or framework unless explicitly requested. See
+  "How to write MapsGL code examples" above.
 - **"Add a weather layer"** → `controller.addWeatherLayer(code)` inside `on('load', ...)`; look the
   code up in `references/layers.md`, or fetch
   `https://www.xweather.com/docs/api/mapsgl/layers` if it isn't listed there.

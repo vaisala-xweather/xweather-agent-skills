@@ -2,6 +2,12 @@
 
 Verified against `@xweather/mapsgl` SDK source (`packages/webgl-maps/src`).
 
+Signatures below write the namespace as `mapsgl.` for brevity. In the **CDN build — the default this
+skill writes examples in** — that namespace is the global `aerisweather.mapsgl`, so
+`mapsgl.Account(...)` is `new aerisweather.mapsgl.Account(...)` in real single-file code. It is bare
+`mapsgl.` only in an npm/ES-module project that did `import * as mapsgl from '@xweather/mapsgl'`.
+Method names, arguments, and behaviour are identical either way.
+
 ## Account
 
 ```javascript
