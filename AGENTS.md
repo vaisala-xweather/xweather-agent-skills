@@ -38,6 +38,17 @@ python3 scripts/regenerate_references.py --check   # exit 1 on drift, writes not
 
 CI runs `--check` on any pull request touching a generated file, so a hand-edit fails the build.
 
+The script also pins the **MapsGL CDN version** in `skills/mapsgl/SKILL.md` to whatever
+`docs/api/releases/versions` reports for the `mapsgl` product key, rewriting every
+`cdn.aerisapi.com/sdk/js/mapsgl/<version>/` URL and the sentence naming the fallback. That in-file
+version is only a fallback — the skill instructs agents to fetch the current release at generation
+time. Don't hand-edit it.
+
+**The releases endpoint outranks npm.** `@xweather/mapsgl` on npm has carried a higher version than
+the releases endpoint reports, and `cdn.aerisapi.com` serves those newer paths too, so a URL
+resolving proves nothing about what's released. Never bump a version from npm or from a successful
+`curl`.
+
 Three further files embed generated content inside hand-written prose —
 `skills/weather-api/references/access-cost.md`, `skills/raster-maps/references/map-units.md`, and
 `skills/mapsgl/references/weather-layers.md`. The script reports drift in those but won't rewrite

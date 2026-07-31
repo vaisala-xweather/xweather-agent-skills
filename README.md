@@ -183,6 +183,7 @@ stale as the products change:
 | `weather-api/references/filters.md` | each endpoint doc page's filter and query tables |
 | `raster-maps/references/layers.md` | `docs/api/maps/layers` |
 | `mapsgl/references/layers.md` | `docs/api/mapsgl/layers` |
+| the MapsGL CDN version pinned in `mapsgl/SKILL.md` | `docs/api/releases/versions`, `mapsgl` key |
 
 ```bash
 python3 scripts/regenerate_references.py           # rewrite in place

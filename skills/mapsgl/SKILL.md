@@ -4,7 +4,7 @@ description: This skill should be used when working with the Xweather MapsGL JS 
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.9.1"
+  version: "0.9.2"
 ---
 
 # MapsGL
@@ -26,15 +26,37 @@ const account = new aerisweather.mapsgl.Account('CLIENT_ID', 'CLIENT_SECRET');
 const controller = new aerisweather.mapsgl.MapboxMapController(map, { account });
 ```
 
-**MapsGL's own script and stylesheet always come from `cdn.aerisapi.com`:**
+**Look up the current released version before writing any example.** Don't reuse a version from
+memory or from an earlier turn — MapsGL ships often, and a stale pin is the most common thing to go
+wrong in otherwise-correct example code:
 
-```html
-<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.css" rel="stylesheet" />
-<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.js"></script>
+```bash
+curl -s https://www.xweather.com/docs/api/releases/versions \
+  | python3 -c 'import json,sys; print(json.load(sys.stdin)["products"]["mapsgl"]["version"])'
 ```
 
-Never substitute `unpkg.com`, `cdn.jsdelivr.net`, or another npm mirror for those two — the npm build
-exposes a different global and the page breaks at runtime even though the files load. See
+That endpoint is the release source of truth for every Xweather product, keyed by product id —
+`mapsgl` here, alongside `weather-api`, `maps`, `maps-ui-sdk`, `mapsgl-apple-sdk`,
+`mapsgl-android-sdk`, `mcp-server`, `phrases-api`. It's a small public JSON document, no auth needed.
+
+**MapsGL's own script and stylesheet always come from `cdn.aerisapi.com`**, with that version
+substituted:
+
+```html
+<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.2/aerisweather.mapsgl.css" rel="stylesheet" />
+<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.2/aerisweather.mapsgl.js"></script>
+```
+
+`1.9.2` above is the version at the time this file was last regenerated — use it only as a fallback
+if the endpoint can't be reached, and say so when you do.
+
+Note that **npm may be ahead of the released version.** `@xweather/mapsgl` on npm has carried a
+higher version than the releases endpoint reports, and `cdn.aerisapi.com` serves those newer paths
+too — so a version that resolves is not evidence it's the current release. Trust the releases
+endpoint, not npm and not a 200 from the CDN.
+
+Never substitute `unpkg.com`, `cdn.jsdelivr.net`, or another npm mirror for those two tags — the npm
+build exposes a different global and the page breaks at runtime even though the files load. See
 "MapsGL's own assets come from `cdn.aerisapi.com`" under Setup for why.
 
 Only produce **npm / ES-module / bundler** code when the user explicitly asks for it, or when they're
@@ -147,8 +169,8 @@ instead of them. MapsGL's CDN build exposes everything under `window.aerisweathe
 Copy these two lines verbatim, changing only the version number:
 
 ```html
-<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.css" rel="stylesheet" />
-<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.js"></script>
+<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.2/aerisweather.mapsgl.css" rel="stylesheet" />
+<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.2/aerisweather.mapsgl.js"></script>
 ```
 
 ```
@@ -194,14 +216,21 @@ A complete pair of includes, MapsGL plus its map library:
 <script defer src="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js"></script>
 
 <!-- 2. MapsGL itself — always cdn.aerisapi.com -->
-<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.css" rel="stylesheet" />
-<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.js"></script>
+<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.2/aerisweather.mapsgl.css" rel="stylesheet" />
+<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.2/aerisweather.mapsgl.js"></script>
 ```
 
 Pin an explicit version for every `<script>`/`<link>` tag (MapsGL's and the map library's) rather
 than `latest`, for anything beyond a quick prototype. `cdn.aerisapi.com/sdk/js/mapsgl/latest/…` does
-resolve if you need it. To check the newest published version:
-`curl -s https://registry.npmjs.org/@xweather/mapsgl/latest | grep -o '"version":"[^"]*"'`.
+resolve if you need it.
+
+For MapsGL's version, use the releases endpoint — **not** npm, which can be ahead of the current
+release:
+
+```bash
+curl -s https://www.xweather.com/docs/api/releases/versions \
+  | python3 -c 'import json,sys; print(json.load(sys.stdin)["products"]["mapsgl"]["version"])'
+```
 
 **npm** — *only when the user is already in a bundled project or asks for it.* Install
 `@xweather/mapsgl` plus whichever provider package applies:
@@ -281,8 +310,8 @@ rather than starting from scratch: swap the map provider's CDN tags and construc
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.css" rel="stylesheet" />
     <script defer src="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js"></script>
 
-    <link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.css" rel="stylesheet" />
-    <script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.js"></script>
+    <link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.2/aerisweather.mapsgl.css" rel="stylesheet" />
+    <script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.2/aerisweather.mapsgl.js"></script>
 
     <style>
     body, html { margin: 0; padding: 0; }

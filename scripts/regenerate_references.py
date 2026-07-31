@@ -42,6 +42,7 @@ DOCS = "https://www.xweather.com/docs"
 WX_CATALOG = f"{DOCS}/api/weather-api/endpoints"
 MAPS_CATALOG = f"{DOCS}/api/maps/layers"
 MGL_CATALOG = f"{DOCS}/api/mapsgl/layers"
+RELEASES = f"{DOCS}/api/releases/versions"
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 WX_REF = ROOT / "skills/weather-api/references"
@@ -528,6 +529,57 @@ def render_mapsgl_layers(layers):
     return "\n".join(out)
 
 
+# ---------------------------------------------------------------- released versions
+
+
+def fetch_released_version(product):
+    """Current released version for a product id from the releases endpoint.
+
+    This is the release source of truth. It can lag npm: `@xweather/mapsgl` has published a higher
+    version than this endpoint reports, and cdn.aerisapi.com serves those newer paths too, so a URL
+    resolving is not evidence it's the current release. Always prefer this value.
+    """
+    products = _json(RELEASES).get("products") or {}
+    if product not in products:
+        raise SystemExit(
+            "error: no %r product in %s — available: %s"
+            % (product, RELEASES, ", ".join(sorted(products)) or "none")
+        )
+    version = (products[product].get("version") or "").strip()
+    if not re.fullmatch(r"\d+(\.\d+)*", version):
+        raise SystemExit(f"error: unexpected version {version!r} for {product} at {RELEASES}")
+    return version
+
+
+def apply_mapsgl_version(version):
+    """Point every MapsGL CDN URL in the skill at the released version.
+
+    Only the version segment of cdn.aerisapi.com/sdk/js/mapsgl/<version>/ URLs is touched, plus the
+    one sentence that names the pinned fallback. Returns (path, old, new) if anything changed.
+    """
+    path = MGL_REF.parent / "SKILL.md"
+    text = path.read_text()
+
+    found = set(re.findall(r"sdk/js/mapsgl/(\d+(?:\.\d+)*)/", text))
+    if not found:
+        raise SystemExit(
+            "error: no cdn.aerisapi.com/sdk/js/mapsgl/<version>/ URLs found in %s — the skill's CDN "
+            "guidance may have been restructured; update apply_mapsgl_version()." % path.name
+        )
+    if found == {version}:
+        return None
+
+    updated = re.sub(r"(sdk/js/mapsgl/)\d+(?:\.\d+)*(/)", r"\g<1>%s\g<2>" % version, text)
+    # The prose names the pinned version as the offline fallback; keep it in step.
+    updated = re.sub(
+        r"^`\d+(?:\.\d+)*` above is the version",
+        "`%s` above is the version" % version,
+        updated,
+        flags=re.M,
+    )
+    return (path, sorted(found), version, updated)
+
+
 # ---------------------------------------------------------------- drift checks
 
 
@@ -623,6 +675,11 @@ def main():
     mgl_layers = fetch_mapsgl_layers()
     print("  %d layers" % len(mgl_layers), file=sys.stderr)
 
+    print("Fetching released product versions…", file=sys.stderr)
+    mgl_version = fetch_released_version("mapsgl")
+    print("  mapsgl %s" % mgl_version, file=sys.stderr)
+    version_change = apply_mapsgl_version(mgl_version)
+
     print("Fetching Weather API endpoint catalog and doc pages…", file=sys.stderr)
     endpoints = fetch_weather_api()
     print("  %d endpoints" % len(endpoints), file=sys.stderr)
@@ -645,6 +702,16 @@ def main():
             changed.append(path)
             if not args.check:
                 path.write_text(text)
+
+    if version_change:
+        vpath, old, new, updated = version_change
+        changed.append(vpath)
+        print(
+            "  mapsgl CDN version pin: %s -> %s" % ("/".join(old), new),
+            file=sys.stderr,
+        )
+        if not args.check:
+            vpath.write_text(updated)
 
     problems = check_multiplier_prose(endpoints, layers) + check_mapsgl_prose(mgl_layers)
 
