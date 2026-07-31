@@ -8,10 +8,10 @@ also ships as a Claude Code plugin.
 
 | Skill | Use it for |
 |---|---|
-| `skills/weather-api/` | Building `data.api.xweather.com` request URLs — 59 endpoints, 8 actions, filters, query syntax, and access-cost reporting |
-| `skills/raster-maps/` | Building `maps.api.xweather.com` URLs — static map images and XYZ tile templates across 159 layers, with map-unit cost reporting |
-| `skills/mapsgl/` | The `@xweather/mapsgl` WebGL SDK — controllers, weather layers, styling, expressions, legends, timeline animation, session cost |
-| `skills/webhooks/` | Pushed data delivery — receiver design, securing the endpoint, retry and idempotency behaviour, registration |
+| `plugins/xweather/skills/weather-api/` | Building `data.api.xweather.com` request URLs — 59 endpoints, 8 actions, filters, query syntax, and access-cost reporting |
+| `plugins/xweather/skills/raster-maps/` | Building `maps.api.xweather.com` URLs — static map images and XYZ tile templates across 159 layers, with map-unit cost reporting |
+| `plugins/xweather/skills/mapsgl/` | The `@xweather/mapsgl` WebGL SDK — controllers, weather layers, styling, expressions, legends, timeline animation, session cost |
+| `plugins/xweather/skills/webhooks/` | Pushed data delivery — receiver design, securing the endpoint, retry and idempotency behaviour, registration |
 
 Each skill is a directory with a `SKILL.md`, plus `references/` for detail loaded on demand and
 `scripts/` for the two helper programs. Read a skill's `SKILL.md` when a task matches its
@@ -22,11 +22,11 @@ Each skill is a directory with a `SKILL.md`, plus `references/` for detail loade
 **Never hand-edit the generated reference files.** Five are derived from live Xweather catalogs:
 
 ```
-skills/weather-api/references/endpoints.md
-skills/weather-api/references/examples.md
-skills/weather-api/references/filters.md
-skills/raster-maps/references/layers.md
-skills/mapsgl/references/layers.md
+plugins/xweather/skills/weather-api/references/endpoints.md
+plugins/xweather/skills/weather-api/references/examples.md
+plugins/xweather/skills/weather-api/references/filters.md
+plugins/xweather/skills/raster-maps/references/layers.md
+plugins/xweather/skills/mapsgl/references/layers.md
 ```
 
 Regenerate them instead:
@@ -38,7 +38,7 @@ python3 scripts/regenerate_references.py --check   # exit 1 on drift, writes not
 
 CI runs `--check` on any pull request touching a generated file, so a hand-edit fails the build.
 
-The script also pins the **MapsGL CDN version** in `skills/mapsgl/SKILL.md` to whatever
+The script also pins the **MapsGL CDN version** in `plugins/xweather/skills/mapsgl/SKILL.md` to whatever
 `docs/api/releases/versions` reports for the `mapsgl` product key, rewriting every
 `cdn.aerisapi.com/sdk/js/mapsgl/<version>/` URL and the sentence naming the fallback. That in-file
 version is only a fallback — the skill instructs agents to fetch the current release at generation
@@ -50,15 +50,15 @@ resolving proves nothing about what's released. Never bump a version from npm or
 `curl`.
 
 Three further files embed generated content inside hand-written prose —
-`skills/weather-api/references/access-cost.md`, `skills/raster-maps/references/map-units.md`, and
-`skills/mapsgl/references/weather-layers.md`. The script reports drift in those but won't rewrite
+`plugins/xweather/skills/weather-api/references/access-cost.md`, `plugins/xweather/skills/raster-maps/references/map-units.md`, and
+`plugins/xweather/skills/mapsgl/references/weather-layers.md`. The script reports drift in those but won't rewrite
 them; fix them by hand when it flags one.
 
 ## Conventions
 
 - **Skill frontmatter follows the Agent Skills spec**: `name` and `description` required, `name`
   matching the directory name, `version` under `metadata` rather than at the top level. Validate with
-  `skills-ref validate ./skills/<name>` if you have it.
+  `skills-ref validate ./plugins/xweather/skills/<name>` if you have it.
 - **Keep skill content provider-neutral.** Don't name a specific agent's tools (`WebFetch`,
   `AskUserQuestion`, `Grep`) or client-specific variables in `SKILL.md` or `references/`. Say what to
   do ("fetch the catalog", "ask the user"), not which tool to do it with.
@@ -74,6 +74,6 @@ them; fix them by hand when it flags one.
 
 ## Bumping the version
 
-`.claude-plugin/plugin.json` sets an explicit `version`; Claude Code users only receive updates when
+`plugins/xweather/.claude-plugin/plugin.json` sets an explicit `version`; Claude Code users only receive updates when
 it changes, so bump it on every release. Keep `metadata.version` in each `SKILL.md` in step. Never
 change the plugin's `name` (`xweather`) — it keys installs and namespaces the skills.

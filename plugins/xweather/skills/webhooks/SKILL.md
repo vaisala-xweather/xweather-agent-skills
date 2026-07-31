@@ -4,7 +4,7 @@ description: This skill should be used to design, build, secure, or debug an Xwe
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.9.0"
+  version: "0.10.0"
 ---
 
 # Xweather Webhooks

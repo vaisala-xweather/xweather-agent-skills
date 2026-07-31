@@ -9,9 +9,9 @@ on:
   pull_request:
     # On PRs, only verify — never rewrite. Catches a hand-edit to a generated file.
     paths:
-      - "skills/weather-api/references/**"
-      - "skills/raster-maps/references/**"
-      - "skills/mapsgl/references/**"
+      - "plugins/xweather/skills/weather-api/references/**"
+      - "plugins/xweather/skills/raster-maps/references/**"
+      - "plugins/xweather/skills/mapsgl/references/**"
       - "scripts/regenerate_references.py"
 
 permissions:

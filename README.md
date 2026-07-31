@@ -23,17 +23,15 @@ Code plugin for one-command install there.
 ### Claude Code
 
 ```
-/plugin marketplace add vaisala-xweather/xweather-claude-plugins
+/plugin marketplace add vaisala-xweather/xweather-agent-skills
 /plugin install xweather@vaisala-xweather
 /reload-plugins
 ```
 
-In the **Claude app**: Settings → Plugins → Add → `vaisala-xweather/xweather-claude-plugins`.
+In the **Claude app**: Settings → Plugins → Add → `vaisala-xweather/xweather-agent-skills`.
 
-The catalog lives in a separate repo,
-[xweather-claude-plugins](https://github.com/vaisala-xweather/xweather-claude-plugins) — this repo is
-the plugin itself, not a marketplace. Installing prompts for nothing and configures nothing. A local
-path works when developing: `claude --plugin-dir .`.
+Installing prompts for nothing and configures nothing. When developing, load the plugin directly:
+`claude --plugin-dir ./plugins/xweather`.
 
 ### OpenAI Codex
 
@@ -48,7 +46,7 @@ Codex discovers skills in `.agents/skills` directories — note the plural `.age
 ```bash
 git clone https://github.com/vaisala-xweather/xweather-agent-skills.git
 mkdir -p ~/.agents/skills
-ln -s "$PWD"/xweather-agent-skills/skills/* ~/.agents/skills/
+ln -s "$PWD"/xweather-agent-skills/plugins/xweather/skills/* ~/.agents/skills/
 ```
 
 Symlinking rather than copying means `git pull` updates the skills in place. Restart Codex if a skill
@@ -64,7 +62,7 @@ enabled = false
 
 Cursor, GitHub Copilot, VS Code, Gemini CLI, Goose, OpenHands, JetBrains Junie and others all read
 the same `SKILL.md` files but look in different directories. Clone the repo and symlink
-`skills/*` into whichever location your client documents — <https://agentskills.io/clients> links the
+`plugins/xweather/skills/*` into whichever location your client documents — <https://agentskills.io/clients> links the
 per-tool instructions.
 
 ### ChatGPT (the app, not Codex)
@@ -79,8 +77,8 @@ Two standard-library Python 3 programs, bundled with the skills that use them:
 
 | Script | Purpose |
 |---|---|
-| `skills/weather-api/scripts/xwrequest.py` | Issue a Weather API request. Prints the credential-redacted URL, HTTP status, accesses charged with the multiplier breakdown, remaining allowance, and the response. |
-| `skills/raster-maps/scripts/xwmap.py` | Issue a Raster Maps request. Prints the redacted URL and map-unit estimate, saves the image. `--estimate-only` computes cost without sending anything. |
+| `plugins/xweather/skills/weather-api/scripts/xwrequest.py` | Issue a Weather API request. Prints the credential-redacted URL, HTTP status, accesses charged with the multiplier breakdown, remaining allowance, and the response. |
+| `plugins/xweather/skills/raster-maps/scripts/xwmap.py` | Issue a Raster Maps request. Prints the redacted URL and map-unit estimate, saves the image. `--estimate-only` computes cost without sending anything. |
 
 Both read credentials from the environment, so secrets stay out of shell history and out of the
 printed output:
@@ -88,9 +86,9 @@ printed output:
 ```bash
 export XWEATHER_CLIENT_ID='…' XWEATHER_CLIENT_SECRET='…'
 
-python3 skills/weather-api/scripts/xwrequest.py '/observations/seattle,wa?filter=allstations&limit=3'
-python3 skills/raster-maps/scripts/xwmap.py 'flat,radar,admin/800x600/minneapolis,mn,7/current.png' -o radar.png
-python3 skills/raster-maps/scripts/xwmap.py 'flat,lightning-strikes/800x600/dallas,tx,7/current.png' --estimate-only
+python3 plugins/xweather/skills/weather-api/scripts/xwrequest.py '/observations/seattle,wa?filter=allstations&limit=3'
+python3 plugins/xweather/skills/raster-maps/scripts/xwmap.py 'flat,radar,admin/800x600/minneapolis,mn,7/current.png' -o radar.png
+python3 plugins/xweather/skills/raster-maps/scripts/xwmap.py 'flat,lightning-strikes/800x600/dallas,tx,7/current.png' --estimate-only
 ```
 
 Claude Code additionally exposes them as bare `xwrequest` / `xwmap` commands via `bin/`, but the
@@ -147,31 +145,35 @@ read a failed connection.
 ## Layout
 
 ```
-AGENTS.md                        conventions for agents working in this repo
-skills/                          the four skills — the portable payload
-├── weather-api/
-├── raster-maps/
-├── mapsgl/
-└── webhooks/
-scripts/regenerate_references.py regenerates the catalog-derived references
-bin/                             xwrequest, xwmap — Claude Code puts these on PATH
-.claude-plugin/plugin.json      Claude Code plugin manifest (repo root is the plugin)
-.github/workflows/               weekly reference refresh
+AGENTS.md                             conventions for agents working in this repo
+.claude-plugin/marketplace.json       the Claude marketplace catalog
+scripts/regenerate_references.py      regenerates the catalog-derived references
+.github/workflows/                    weekly reference refresh
+plugins/xweather/                     the plugin
+├── .claude-plugin/plugin.json        plugin manifest
+├── bin/                              xwrequest, xwmap — Claude Code puts these on PATH
+└── skills/                           the four skills — the portable payload
+    ├── weather-api/
+    ├── raster-maps/
+    ├── mapsgl/
+    └── webhooks/
 ```
 
-The repository root *is* the Claude Code plugin, so `skills/` has exactly one canonical copy — no
-duplication and no symlinks. Other agents read `skills/` directly. The Claude marketplace catalog that
-lists this plugin lives in
-[xweather-claude-plugins](https://github.com/vaisala-xweather/xweather-claude-plugins); keeping it
-separate is deliberate, since a repo that declares itself both plugin and marketplace failed the
-Claude app's server-side sync.
+The marketplace catalog sits at the repository root and the plugin lives in `plugins/xweather/`, the
+layout `anthropics/claude-code` uses. That nesting is required: the Claude app's marketplace sync only
+resolves **relative** plugin sources, so the plugin has to live inside the marketplace repo. Cross-repo
+`github`, `url`, and `url`+`sha` sources all fail there with `failed_content`, even though the Claude
+Code CLI accepts them.
+
+There is still exactly one copy of the skills — non-Claude agents read
+`plugins/xweather/skills/` instead of a root-level `skills/`.
 
 ## Development
 
 ```bash
-claude --plugin-dir .            # load in Claude Code without installing
-claude plugin validate .         # validate the manifests
-skills-ref validate ./skills/weather-api   # validate against the Agent Skills spec
+claude --plugin-dir ./plugins/xweather   # load in Claude Code without installing
+claude plugin validate .                 # validate the manifests
+skills-ref validate ./plugins/xweather/skills/weather-api   # validate against the Agent Skills spec
 ```
 
 `skills-ref` comes from <https://github.com/agentskills/agentskills>. `/reload-plugins` picks up edits
@@ -184,12 +186,12 @@ stale as the products change:
 
 | File | Source |
 |---|---|
-| `weather-api/references/endpoints.md` | `docs/api/weather-api/endpoints` + each endpoint's doc page |
-| `weather-api/references/examples.md` | each endpoint doc page's `exampleRequests` |
-| `weather-api/references/filters.md` | each endpoint doc page's filter and query tables |
-| `raster-maps/references/layers.md` | `docs/api/maps/layers` |
-| `mapsgl/references/layers.md` | `docs/api/mapsgl/layers` |
-| the MapsGL CDN version pinned in `mapsgl/SKILL.md` | `docs/api/releases/versions`, `mapsgl` key |
+| `plugins/xweather/skills/weather-api/references/endpoints.md` | `docs/api/weather-api/endpoints` + each endpoint's doc page |
+| `plugins/xweather/skills/weather-api/references/examples.md` | each endpoint doc page's `exampleRequests` |
+| `plugins/xweather/skills/weather-api/references/filters.md` | each endpoint doc page's filter and query tables |
+| `plugins/xweather/skills/raster-maps/references/layers.md` | `docs/api/maps/layers` |
+| `plugins/xweather/skills/mapsgl/references/layers.md` | `docs/api/mapsgl/layers` |
+| the MapsGL CDN version pinned in `plugins/xweather/skills/mapsgl/SKILL.md` | `docs/api/releases/versions`, `mapsgl` key |
 
 ```bash
 python3 scripts/regenerate_references.py           # rewrite in place
@@ -200,8 +202,7 @@ python3 scripts/regenerate_references.py --check   # exit 1 on drift, writes not
 drifts, and runs `--check` on any PR touching a generated file so a hand-edit fails loudly.
 
 Three further files embed generated content inside hand-written prose:
-`weather-api/references/access-cost.md` and `raster-maps/references/map-units.md` carry multiplier
-tables, and `mapsgl/references/weather-layers.md` documents the catalog's render types, categories,
+`access-cost.md` and `map-units.md` carry multiplier tables, and `mapsgl/references/weather-layers.md` documents the catalog's render types, categories,
 and which codes are composite. The script **reports** drift in those but won't rewrite them, since
 regenerating would destroy the surrounding explanation.
 
@@ -212,13 +213,14 @@ quietly emptying a reference. The two layer catalogs are plain JSON endpoints an
 
 ## Releasing
 
-`.claude-plugin/plugin.json` sets an explicit `version`, so **Claude Code users only receive updates
+`plugins/xweather/.claude-plugin/plugin.json` sets an explicit `version`, so **Claude Code users only receive updates
 when that field is bumped**. Bump it on every release, and keep `metadata.version` in each `SKILL.md`
 in step.
 
 **Never change the plugin's `name`** (`xweather`). It keys `enabledPlugins`, `pluginConfigs`, and
 every `/plugin install`, and it namespaces the skills, so renaming breaks existing installs. To change
-the label users see, edit `displayName` here and in the catalog repo's `marketplace.json` entry.
+the label users see, edit `displayName` in both `plugins/xweather/.claude-plugin/plugin.json` and the
+root `marketplace.json` entry.
 
 ## Requirements
 

@@ -1,0 +1,20 @@
+{
+  "name": "vaisala-xweather",
+  "description": "Xweather plugins for Claude — Weather API, Raster Maps, MapsGL, and Webhooks",
+  "owner": {
+    "name": "Vaisala Xweather",
+    "url": "https://www.xweather.com"
+  },
+  "plugins": [
+    {
+      "name": "xweather",
+      "displayName": "Xweather API & Maps",
+      "description": "Weather API URL builder with access-cost reporting, Raster Maps static image and tile URLs, MapsGL SDK guidance, and Webhooks receiver setup",
+      "author": {
+        "name": "Vaisala Xweather",
+        "url": "https://www.xweather.com"
+      },
+      "source": "./plugins/xweather"
+    }
+  ]
+}

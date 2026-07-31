@@ -4,18 +4,18 @@
 Five reference files are generated rather than hand-written, and drift out of date as Xweather
 ships changes:
 
-    skills/weather-api/references/endpoints.md   from docs/api/weather-api/endpoints + doc pages
-    skills/weather-api/references/examples.md    from each endpoint doc page's exampleRequests
-    skills/weather-api/references/filters.md     from each endpoint doc page's filter/query tables
-    skills/raster-maps/references/layers.md      from docs/api/maps/layers
-    skills/mapsgl/references/layers.md           from docs/api/mapsgl/layers
+    plugins/xweather/skills/weather-api/references/endpoints.md   from docs/api/weather-api/endpoints + doc pages
+    plugins/xweather/skills/weather-api/references/examples.md    from each endpoint doc page's exampleRequests
+    plugins/xweather/skills/weather-api/references/filters.md     from each endpoint doc page's filter/query tables
+    plugins/xweather/skills/raster-maps/references/layers.md      from docs/api/maps/layers
+    plugins/xweather/skills/mapsgl/references/layers.md           from docs/api/mapsgl/layers
 
 Three more files embed generated content inside hand-written prose, so they are checked rather than
 rewritten; the script reports when their groupings no longer match the live catalogs:
 
-    skills/weather-api/references/access-cost.md
-    skills/raster-maps/references/map-units.md
-    skills/mapsgl/references/weather-layers.md
+    plugins/xweather/skills/weather-api/references/access-cost.md
+    plugins/xweather/skills/raster-maps/references/map-units.md
+    plugins/xweather/skills/mapsgl/references/weather-layers.md
 
 Usage:
     python3 scripts/regenerate_references.py            # rewrite in place
@@ -45,9 +45,9 @@ MGL_CATALOG = f"{DOCS}/api/mapsgl/layers"
 RELEASES = f"{DOCS}/api/releases/versions"
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-WX_REF = ROOT / "skills/weather-api/references"
-RM_REF = ROOT / "skills/raster-maps/references"
-MGL_REF = ROOT / "skills/mapsgl/references"
+WX_REF = ROOT / "plugins/xweather/skills/weather-api/references"
+RM_REF = ROOT / "plugins/xweather/skills/raster-maps/references"
+MGL_REF = ROOT / "plugins/xweather/skills/mapsgl/references"
 
 UA = {"User-Agent": "Mozilla/5.0 (xweather-agent-skills reference regeneration)"}
 PUSH = re.compile(r'self\.__next_f\.push\(\[1,("(?:[^"\\]|\\.)*")\]\)', re.S)
