@@ -4,7 +4,7 @@ description: This skill should be used when working with the Xweather MapsGL JS 
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.9.0"
+  version: "0.9.1"
 ---
 
 # MapsGL
@@ -25,6 +25,17 @@ In that form, MapsGL lives on the global `aerisweather.mapsgl` namespace:
 const account = new aerisweather.mapsgl.Account('CLIENT_ID', 'CLIENT_SECRET');
 const controller = new aerisweather.mapsgl.MapboxMapController(map, { account });
 ```
+
+**MapsGL's own script and stylesheet always come from `cdn.aerisapi.com`:**
+
+```html
+<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.css" rel="stylesheet" />
+<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.js"></script>
+```
+
+Never substitute `unpkg.com`, `cdn.jsdelivr.net`, or another npm mirror for those two — the npm build
+exposes a different global and the page breaks at runtime even though the files load. See
+"MapsGL's own assets come from `cdn.aerisapi.com`" under Setup for why.
 
 Only produce **npm / ES-module / bundler** code when the user explicitly asks for it, or when they're
 plainly already working in such a project — an existing `package.json`, a `src/` tree with imports, or
@@ -129,29 +140,68 @@ Every install needs `@xweather/mapsgl` **plus** the map library being wrapped �
 bundle it, whether installing via CDN or npm.
 
 **CDN** — include the map provider's own `<link>`/`<script>` tags *in addition to* MapsGL's, not
-instead of them. MapsGL's CDN build exposes everything under `window.aerisweather.mapsgl`:
+instead of them. MapsGL's CDN build exposes everything under `window.aerisweather.mapsgl`.
+
+### MapsGL's own assets come from `cdn.aerisapi.com` — nowhere else
+
+Copy these two lines verbatim, changing only the version number:
 
 ```html
-<!-- 1. The underlying map library — example shown for Mapbox GL, swap for MapLibre/Leaflet's own CDN tags -->
-<link href="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.css" rel="stylesheet" />
-<script defer src="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js"></script>
-
-<!-- 2. MapsGL itself -->
-<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.2/aerisweather.mapsgl.css" rel="stylesheet" />
-<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.2/aerisweather.mapsgl.js"></script>
+<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.css" rel="stylesheet" />
+<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.js"></script>
 ```
 
-Per-provider CDN includes:
+```
+https://cdn.aerisapi.com/sdk/js/mapsgl/{version}/aerisweather.mapsgl.js
+https://cdn.aerisapi.com/sdk/js/mapsgl/{version}/aerisweather.mapsgl.css
+```
 
-| Provider | CDN tags |
+**Never serve MapsGL from `unpkg.com`, `cdn.jsdelivr.net`, `esm.sh`, or any other npm mirror**, and
+never invent a filename like `mapsgl.js` or `@xweather/mapsgl/dist/...` for a `<script>` tag. This is
+worth stating flatly because the wrong URL *appears to work*:
+
+- `https://unpkg.com/@xweather/mapsgl/dist/mapsgl.js` returns **HTTP 200**. So does the `.css` beside
+  it. There is no network error to notice.
+- But that is the **npm** build, whose UMD wrapper assigns `globalThis.mapsgl` — **not**
+  `aerisweather.mapsgl`. The page then dies at runtime with
+  `ReferenceError: aerisweather is not defined`, which looks like a MapsGL bug rather than a bad URL.
+
+If a user reports `aerisweather is not defined`, check the `<script src>` host first — it is almost
+always this.
+
+The unpkg/jsdelivr paths are only meaningful in a bundled project that imports `@xweather/mapsgl` as a
+module, and even there the import comes from npm, not a CDN URL.
+
+### The map library's own CDN tags
+
+These are separate from MapsGL and *do* legitimately come from unpkg for some providers:
+
+| Provider | CDN tags for the **map library only** |
 |---|---|
 | Mapbox GL | `https://api.mapbox.com/mapbox-gl-js/<version>/mapbox-gl.{css,js}` |
 | MapLibre GL | e.g. `https://unpkg.com/maplibre-gl@<version>/dist/maplibre-gl.{css,js}` |
 | Leaflet | e.g. `https://unpkg.com/leaflet@<version>/dist/leaflet.{css,js}` |
 | Google Maps | `<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>` (no separate CSS) |
 
+Don't let the unpkg entries in this table bleed into MapsGL's URLs — the rows above cover Mapbox,
+MapLibre, Leaflet and Google *only*. MapsGL always comes from `cdn.aerisapi.com`.
+
+A complete pair of includes, MapsGL plus its map library:
+
+```html
+<!-- 1. The map library — Mapbox GL shown; swap for MapLibre/Leaflet/Google per the table above -->
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.css" rel="stylesheet" />
+<script defer src="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js"></script>
+
+<!-- 2. MapsGL itself — always cdn.aerisapi.com -->
+<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.css" rel="stylesheet" />
+<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.js"></script>
+```
+
 Pin an explicit version for every `<script>`/`<link>` tag (MapsGL's and the map library's) rather
-than `latest`, for anything beyond a quick prototype.
+than `latest`, for anything beyond a quick prototype. `cdn.aerisapi.com/sdk/js/mapsgl/latest/…` does
+resolve if you need it. To check the newest published version:
+`curl -s https://registry.npmjs.org/@xweather/mapsgl/latest | grep -o '"version":"[^"]*"'`.
 
 **npm** — *only when the user is already in a bundled project or asks for it.* Install
 `@xweather/mapsgl` plus whichever provider package applies:
@@ -231,8 +281,8 @@ rather than starting from scratch: swap the map provider's CDN tags and construc
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.css" rel="stylesheet" />
     <script defer src="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js"></script>
 
-    <link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.2/aerisweather.mapsgl.css" rel="stylesheet" />
-    <script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.2/aerisweather.mapsgl.js"></script>
+    <link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.css" rel="stylesheet" />
+    <script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.js"></script>
 
     <style>
     body, html { margin: 0; padding: 0; }
@@ -514,6 +564,11 @@ const results = await controller.queryPromise({ lat: 40, lon: -74.5 });
 - **"How many accesses / how much does this cost?"** → sessions, not tiles or layers: count the
   5-minute clock buckets the viewing touches, × 150 accesses. Show the arithmetic and mention that
   layers and interaction are free inside a session. See `references/sessions.md`.
+- **`aerisweather is not defined` / `Cannot read properties of undefined`** → the `<script src>` is
+  pointing at an npm mirror (`unpkg.com`, `cdn.jsdelivr.net`) instead of
+  `https://cdn.aerisapi.com/sdk/js/mapsgl/<version>/aerisweather.mapsgl.js`. The mirror returns 200 and
+  loads a build that defines `globalThis.mapsgl` rather than `aerisweather.mapsgl`, so there's no
+  network error to spot — only the runtime failure. Fix the host, don't rename the global.
 - **"Handle load errors / show an error state"** → there is no `controller.on('error', ...)` —
   that event doesn't exist on `MapController` and will never fire. See the events note in
   `references/api-reference.md`.
