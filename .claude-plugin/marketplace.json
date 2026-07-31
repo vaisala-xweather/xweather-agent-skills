@@ -1,5 +1,5 @@
 {
-  "name": "xweather",
+  "name": "vaisala-xweather",
   "description": "Claude Code plugins for the Xweather developer platform — Weather API, Raster Maps, MapsGL, and Webhooks",
   "owner": {
     "name": "Vaisala Xweather",

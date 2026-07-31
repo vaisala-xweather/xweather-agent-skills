@@ -24,7 +24,7 @@ Code plugin for one-command install there.
 
 ```
 /plugin marketplace add vaisala-xweather/xweather-agent-skills
-/plugin install xweather@xweather
+/plugin install xweather@vaisala-xweather
 /reload-plugins
 ```
 
@@ -110,10 +110,10 @@ skills, including the ChatGPT app.
 
 **It is deliberately not bundled here.** A bundled MCP server can't be conditionally disabled, so
 anyone without an MCP-enabled subscription would get a permanent connection error for a feature they
-never asked for. Add it yourself in one command:
+never asked for. Connect it yourself instead.
 
-The token is your client id and secret joined by a **single underscore** — `abc123_def456`, not two
-separate values.
+In every form below, the token is your client id and secret joined by a **single underscore** —
+`abc123_def456`, not two separate values.
 
 **Claude Code:**
 
