@@ -20,42 +20,54 @@ Code plugin for one-command install there.
 
 ## Install
 
-### Any skills-compatible agent
-
-Clone the repository and point your agent at `skills/`. Each client has its own discovery
-location — check its Agent Skills docs — but the usual pattern is to copy or symlink the skill
-directories in:
-
-```bash
-git clone <this-repo> xweather-skills
-
-# OpenAI Codex
-mkdir -p ~/.codex/skills && ln -s "$PWD"/xweather-skills/skills/* ~/.codex/skills/
-
-# project-scoped, for agents that read a repo-local directory
-mkdir -p .agent/skills && ln -s "$PWD"/xweather-skills/skills/* .agent/skills/
-```
-
-Skills are plain directories with a `SKILL.md`, so copying them works anywhere a client looks. The
-client showcase at <https://agentskills.io/clients> lists the per-tool install path.
-
 ### Claude Code
 
 ```
-/plugin marketplace add <owner>/<repo>
+/plugin marketplace add vaisala-xweather/xweather-agent-skills
 /plugin install xweather@xweather
 /reload-plugins
 ```
 
-A local path works for testing before publishing:
+Installing prompts for nothing and configures nothing. A local path works when developing:
+`/plugin marketplace add ./xweather-agent-skills`.
 
-```
-/plugin marketplace add ./xweather-skills
-/plugin install xweather@xweather
+### OpenAI Codex
+
+Codex discovers skills in `.agents/skills` directories — note the plural `.agents`:
+
+| Scope | Path |
+|---|---|
+| Repository | `$REPO_ROOT/.agents/skills` (also `$CWD/.agents/skills` and parent dirs) |
+| Personal | `$HOME/.agents/skills` |
+| Machine-wide | `/etc/codex/skills` |
+
+```bash
+git clone https://github.com/vaisala-xweather/xweather-agent-skills.git
+mkdir -p ~/.agents/skills
+ln -s "$PWD"/xweather-agent-skills/skills/* ~/.agents/skills/
 ```
 
-Keeping the repository private restricts the marketplace to people who can read it. Installing
-prompts for nothing and configures nothing.
+Symlinking rather than copying means `git pull` updates the skills in place. Restart Codex if a skill
+doesn't appear. Individual skills can be disabled in `~/.codex/config.toml`:
+
+```toml
+[[skills.config]]
+path = "/Users/you/.agents/skills/mapsgl/SKILL.md"
+enabled = false
+```
+
+### Other skills-compatible agents
+
+Cursor, GitHub Copilot, VS Code, Gemini CLI, Goose, OpenHands, JetBrains Junie and others all read
+the same `SKILL.md` files but look in different directories. Clone the repo and symlink
+`skills/*` into whichever location your client documents — <https://agentskills.io/clients> links the
+per-tool instructions.
+
+### ChatGPT (the app, not Codex)
+
+The consumer ChatGPT app reads **neither** Agent Skills nor `AGENTS.md` — only MCP connectors. These
+skills won't load there. For live weather data in ChatGPT, connect Xweather's hosted MCP server
+instead; see [The Xweather MCP server](#the-xweather-mcp-server) below.
 
 ## Helper scripts
 
@@ -100,14 +112,33 @@ skills, including the ChatGPT app.
 anyone without an MCP-enabled subscription would get a permanent connection error for a feature they
 never asked for. Add it yourself in one command:
 
+The token is your client id and secret joined by a **single underscore** — `abc123_def456`, not two
+separate values.
+
+**Claude Code:**
+
 ```bash
 claude mcp add --transport http xweather https://mcp.api.xweather.com/mcp \
   --header "Authorization: Bearer CLIENT_ID_CLIENT_SECRET"
 ```
 
-Note the token format: client id and secret joined by a **single underscore**. The `weather-api` skill
-documents the server in full — the three auth methods, the six tool tag groups, filter precedence, and
-how to read a failed connection.
+Add `--scope user` for all projects, or `--scope project` to share it with a repo via `.mcp.json`.
+
+**ChatGPT** (Plus, Pro, Business, Enterprise or Edu — custom connectors need a paid plan): Settings →
+Connectors → advanced settings → enable **Developer mode**, then add a connector with this URL.
+ChatGPT can't send custom headers, so the token goes in the query string instead:
+
+```
+https://mcp.api.xweather.com/mcp?api_key=CLIENT_ID_CLIENT_SECRET
+```
+
+**Claude.ai** (Pro or Max): Settings → Connectors → Add custom connector, same URL form as ChatGPT —
+the desktop app also can't set headers.
+
+Narrow the loaded tools with `&include_tags=general,forecast,summary` if people have other MCP servers
+connected; all six groups at once crowds the model's tool choices. The `weather-api` skill documents
+the server in full — all three auth methods, the six tool tag groups, filter precedence, and how to
+read a failed connection.
 
 ## Layout
 
