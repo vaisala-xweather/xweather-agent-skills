@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
 """Regenerate the skill reference files that are derived from live Xweather catalogs.
 
-Four reference files are generated rather than hand-written, and drift out of date as Xweather
+Five reference files are generated rather than hand-written, and drift out of date as Xweather
 ships changes:
 
     skills/weather-api/references/endpoints.md   from docs/api/weather-api/endpoints + doc pages
     skills/weather-api/references/examples.md    from each endpoint doc page's exampleRequests
     skills/weather-api/references/filters.md     from each endpoint doc page's filter/query tables
     skills/raster-maps/references/layers.md      from docs/api/maps/layers
+    skills/mapsgl/references/layers.md           from docs/api/mapsgl/layers
 
-Two more files embed generated content inside hand-written prose, so they are checked rather than
-rewritten; the script reports when their multiplier groupings no longer match the live catalogs:
+Three more files embed generated content inside hand-written prose, so they are checked rather than
+rewritten; the script reports when their groupings no longer match the live catalogs:
 
     skills/weather-api/references/access-cost.md
     skills/raster-maps/references/map-units.md
+    skills/mapsgl/references/weather-layers.md
 
 Usage:
     python3 scripts/regenerate_references.py            # rewrite in place
@@ -39,10 +41,12 @@ import urllib.request
 DOCS = "https://www.xweather.com/docs"
 WX_CATALOG = f"{DOCS}/api/weather-api/endpoints"
 MAPS_CATALOG = f"{DOCS}/api/maps/layers"
+MGL_CATALOG = f"{DOCS}/api/mapsgl/layers"
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 WX_REF = ROOT / "plugins/xweather/skills/weather-api/references"
 RM_REF = ROOT / "plugins/xweather/skills/raster-maps/references"
+MGL_REF = ROOT / "plugins/xweather/skills/mapsgl/references"
 
 UA = {"User-Agent": "Mozilla/5.0 (xweather-claude-plugin reference regeneration)"}
 PUSH = re.compile(r'self\.__next_f\.push\(\[1,("(?:[^"\\]|\\.)*")\]\)', re.S)
@@ -398,7 +402,169 @@ def render_layers(layers):
     return "\n".join(out)
 
 
+# ---------------------------------------------------------------- mapsgl
+
+MGL_CATEGORY_ORDER = [
+    "Radar + Satellite", "Conditions", "Forecasts", "Severe", "Lightning", "Tropical",
+    "Maritime", "Air Quality", "Climate", "Roads", "Admin", "Other", "Uncategorized",
+]
+
+
+def fetch_mapsgl_layers():
+    layers = _json(MGL_CATALOG).get("layers") or []
+    if not layers:
+        raise SystemExit(f"error: no layers in {MGL_CATALOG} — catalog shape may have changed")
+    return layers
+
+
+def render_mapsgl_layers(layers):
+    composite = sorted(l["id"] for l in layers if l.get("type") == "none")
+    by_cost = {}
+    for layer in layers:
+        by_cost.setdefault(layer.get("multiplier", 1), []).append(layer["id"])
+
+    grouped = {}
+    for layer in layers:
+        cats = [c for c in (layer.get("categories") or []) if c != "Popular"] or ["Uncategorized"]
+        grouped.setdefault(cats[0], []).append(layer)
+
+    out = [
+        "# MapsGL weather layer catalog",
+        "",
+        "%d built-in weather layers. The **code** is the string passed to"
+        % len(layers),
+        "`controller.addWeatherLayer(code)` — and to `getWeatherLayer`, `hasWeatherLayer`,",
+        "`removeWeatherLayer`, and `setWeatherLayerVisibility`. It is **not** the resulting"
+        " `WebGLLayer`'s",
+        "`id`; see `weather-layers.md` for that distinction, which is the most common source of",
+        "silently-failing style updates.",
+        "",
+        "This is a snapshot, regenerated from the live catalog by `scripts/regenerate_references.py`",
+        "and refreshed weekly in CI. For **account-specific availability** — what a given",
+        "subscription can actually render — call `controller.weatherProvider.getLayerMetadata()` at",
+        "runtime instead; this file reflects the public catalog, not entitlements. If a code here is",
+        "rejected at runtime, that's a plan question, not a typo.",
+        "",
+        "Each entry reads: *render type · animatable · cost multiplier · coverage · data range ·"
+        " update interval*.",
+        "",
+        "The **render type** determines which `paint` namespace styles the layer — a `sample` layer",
+        "is styled through `paint.sample`, a `line` layer through `paint.stroke`, and so on. See",
+        "`styles.md` for the property tables per type.",
+        "",
+        "---",
+        "",
+        "## Composite layers",
+        "",
+        "These %d codes have render type `none`, meaning they expand into **several** sub-layers."
+        % len(composite),
+        "`addWeatherLayer` and `getWeatherLayer` return an **array** of `WebGLLayer` for them, so",
+        "iterate before setting paint properties:",
+        "",
+        " · ".join("`%s`" % c for c in composite),
+        "",
+        "## Cost multipliers",
+        "",
+        "A layer's multiplier weights its contribution to session/access billing. It has no effect on",
+        "rendering.",
+        "",
+    ]
+    # List non-x1 codes exhaustively. Summarising them by name pattern reads well but is wrong:
+    # plenty of `air-quality-*` and `*road-weather-*` layers (the `-text` label variants and the
+    # `*-summary-*` road layers) are x1, so a pattern would overstate their cost.
+    for mult in sorted(by_cost, reverse=True):
+        ids = sorted(by_cost[mult])
+        if mult == 1:
+            out.append(
+                "- **x1** — the remaining %d layers, i.e. anything not listed above." % len(ids)
+            )
+        else:
+            out.append("- **x%s** (%d):" % (mult, len(ids)))
+            out.append("  %s" % " · ".join("`%s`" % i for i in ids))
+    out += [
+        "",
+        "Cost does not follow the layer name. `air-quality-o3` is x5 while `air-quality-o3-text` —",
+        "its label variant — is x1, and the per-region `road-weather-risk-*` layers are x5 while",
+        "`road-weather-summary-*` are x1. Check the entry rather than inferring from the prefix.",
+        "",
+        "---",
+        "",
+    ]
+
+    ordered = MGL_CATEGORY_ORDER + sorted(set(grouped) - set(MGL_CATEGORY_ORDER))
+    emitted = set()
+    for category in ordered:
+        items = grouped.get(category)
+        if not items:
+            continue
+        out.append("## %s" % category)
+        out.append("")
+        for layer in sorted(items, key=lambda l: l["id"]):
+            if layer["id"] in emitted:
+                continue
+            emitted.add(layer["id"])
+            out.append("### `%s` — %s" % (layer["id"], layer["title"]))
+            out.append("")
+            if layer.get("description"):
+                out.append(layer["description"])
+                out.append("")
+            meta = [layer.get("type") or "?"]
+            meta.append("animatable" if layer.get("animatable") else "static")
+            meta.append("x%s" % layer.get("multiplier"))
+            coverage = ", ".join(layer.get("dataCoverage") or [])
+            if coverage:
+                meta.append("Coverage: %s" % coverage)
+            data_range = (layer.get("dataRange") or "").strip()
+            if data_range and data_range != "-":
+                meta.append("Range: %s" % data_range)
+            interval = (layer.get("updateInterval") or "").strip()
+            if interval and interval != "-":
+                meta.append("Updates: %s" % interval)
+            extra = [c for c in (layer.get("categories") or []) if c != category]
+            if extra:
+                meta.append("Also: %s" % ", ".join(extra))
+            out.append("*%s*" % " · ".join(meta))
+            out.append("")
+    return "\n".join(out)
+
+
 # ---------------------------------------------------------------- drift checks
+
+
+def check_mapsgl_prose(mgl_layers):
+    """`weather-layers.md` and the MapsGL SKILL.md name specific layers as composite examples, and
+    list the render types and categories in prose. Verify those claims still hold."""
+    problems = []
+    by_id = {l["id"]: l for l in mgl_layers}
+    composite = {l["id"] for l in mgl_layers if l.get("type") == "none"}
+    types = {l.get("type") for l in mgl_layers}
+    categories = {c for l in mgl_layers for c in (l.get("categories") or [])}
+
+    for name in ("weather-layers.md", "../SKILL.md"):
+        path = MGL_REF / name
+        if not path.exists():
+            continue
+        text = path.read_text()
+        # Layers named near the word "composite" must still be composite. The window is a flat
+        # character count, deliberately: sentence-boundary matching doesn't work here because these
+        # files are full of "e.g." and `.show()`, and stopping at the first period truncates the
+        # window before it ever reaches the list of example codes.
+        flat = text.replace("\n", " ")
+        for match in re.finditer(r"composite.{0,300}", flat, re.I | re.S):
+            for code in re.findall(r"`([a-z0-9][a-z0-9-]{2,})`", match.group(0)):
+                if code in by_id and code not in composite:
+                    problems.append(
+                        "%s names `%s` near a claim about composite layers, but its render type is"
+                        " now `%s` — check whether the prose is still accurate"
+                        % (path.name, code, by_id[code].get("type"))
+                    )
+        for kind in sorted(types):
+            if kind and kind != "none" and "`%s`" % kind not in text and name == "weather-layers.md":
+                problems.append("weather-layers.md does not mention render type `%s`" % kind)
+        for cat in sorted(categories):
+            if name == "weather-layers.md" and "`%s`" % cat not in text:
+                problems.append("weather-layers.md does not mention category `%s`" % cat)
+    return sorted(set(problems))
 
 
 def check_multiplier_prose(endpoints, layers):
@@ -453,6 +619,10 @@ def main():
     layers = fetch_maps_layers()
     print("  %d layers" % len(layers), file=sys.stderr)
 
+    print("Fetching MapsGL layer catalog…", file=sys.stderr)
+    mgl_layers = fetch_mapsgl_layers()
+    print("  %d layers" % len(mgl_layers), file=sys.stderr)
+
     print("Fetching Weather API endpoint catalog and doc pages…", file=sys.stderr)
     endpoints = fetch_weather_api()
     print("  %d endpoints" % len(endpoints), file=sys.stderr)
@@ -462,6 +632,7 @@ def main():
         WX_REF / "examples.md": render_examples(endpoints),
         WX_REF / "filters.md": render_filters(endpoints),
         RM_REF / "layers.md": render_layers(layers),
+        MGL_REF / "layers.md": render_mapsgl_layers(mgl_layers),
     }
 
     for path, text in generated.items():
@@ -475,7 +646,7 @@ def main():
             if not args.check:
                 path.write_text(text)
 
-    problems = check_multiplier_prose(endpoints, layers)
+    problems = check_multiplier_prose(endpoints, layers) + check_mapsgl_prose(mgl_layers)
 
     rel = lambda p: p.relative_to(ROOT)
     if args.check:

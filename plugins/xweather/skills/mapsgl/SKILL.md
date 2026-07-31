@@ -292,17 +292,20 @@ capture what `addWeatherLayer` returns (or call `getWeatherLayer(code)` later) a
 they don't recognize. Composite codes return an **array** of layers to iterate over. Full
 explanation and verified example in `references/weather-layers.md`.
 
-**Never hardcode or guess a layer code.** Look it up live from the public layer catalog endpoint:
+**Never guess a layer code — look it up.** `references/layers.md` lists all 283 layers by category
+with their render type, animatability, cost multiplier, coverage, data range, and update interval. It
+is generated from the public catalog and refreshed weekly, so grep it first; no network call needed.
+
+If a code isn't there, or the snapshot looks stale, fetch the live catalog:
 
 ```
 https://www.xweather.com/docs/api/mapsgl/layers
 ```
 
-Fetch this JSON endpoint (no auth needed) whenever a task needs to find, browse, or verify a layer
-code — it returns `{ layers: [{ id, title, description, type, categories, animatable,
-dataRange, dataCoverage, updateInterval, multiplier }, ...] }` for all ~280+ built-in layers.
-See `references/weather-layers.md` for the full schema and category list. For account/plan-specific
-availability at runtime, also consider:
+A plain public JSON endpoint (no auth) returning `{ layers: [{ id, title, description, type,
+categories, animatable, dataRange, dataCoverage, updateInterval, multiplier }, ...] }`. It overrides
+the snapshot. For what the **authenticated account** can actually render — neither file knows about
+entitlements — ask at runtime:
 
 ```javascript
 controller.weatherProvider.getLayerMetadata().then((data) => console.log(data));
@@ -310,7 +313,12 @@ controller.weatherProvider.getLayerMetadata().then((data) => console.log(data));
 
 Some codes are **composite** (expand to multiple sub-layers, e.g. `boundaries`, `roads`,
 `stormcells`) — `addWeatherLayer` returns an array for these, and `overrides.childLayers` can
-target one sub-layer by id.
+target one sub-layer by id. All 14 composite codes are listed together at the top of
+`references/layers.md`; they're the ones with render type `none`.
+
+A layer's **render type also tells you how to style it** — a `sample` layer takes
+`paint.sample.colorscale`, a `line` layer takes `paint.stroke`. Reading the type out of
+`layers.md` before writing a `paint` override saves a round of guessing.
 
 ## Styling layers
 
@@ -477,9 +485,9 @@ const results = await controller.queryPromise({ lat: 40, lon: -74.5 });
 
 ## Checklist for common tasks
 
-- **"Add a weather layer"** → `controller.addWeatherLayer(code)` inside `on('load', ...)`; look up
-  the code by fetching `https://www.xweather.com/docs/api/mapsgl/layers` (see
-  `references/weather-layers.md`) if unsure.
+- **"Add a weather layer"** → `controller.addWeatherLayer(code)` inside `on('load', ...)`; look the
+  code up in `references/layers.md`, or fetch
+  `https://www.xweather.com/docs/api/mapsgl/layers` if it isn't listed there.
 - **"Remove/hide a layer"** → `removeWeatherLayer` (frees resources) vs
   `setWeatherLayerVisibility(code, false)` (cheap toggle, keeps resources loaded).
 - **"Change the colors/thresholds of a layer"** → override `paint.sample.colorscale` (see
@@ -500,9 +508,10 @@ const results = await controller.queryPromise({ lat: 40, lon: -74.5 });
   (gradient) if paint was customized — see `references/legends.md`.
 - **"Add my own data (not a built-in weather layer)"** → `addSource` + `addLayer` with an explicit
   `type`/`paint`; see `references/api-reference.md`.
-- **"What layers/options are available?"** → fetch `https://www.xweather.com/docs/api/mapsgl/layers`
-  for the full catalog, or `controller.weatherProvider.getLayerMetadata()` at runtime for
-  account-specific availability. Never trust a static/hardcoded list.
+- **"What layers/options are available?"** → `references/layers.md` for the full listing by category;
+  `https://www.xweather.com/docs/api/mapsgl/layers` if that snapshot might be stale; or
+  `controller.weatherProvider.getLayerMetadata()` at runtime for account-specific availability. Never
+  invent a code from memory — one of these three always has the answer.
 - **"Handle load errors / show an error state"** → there is no `controller.on('error', ...)` —
   that event doesn't exist on `MapController` and will never fire. See the events note in
   `references/api-reference.md`.
@@ -510,7 +519,8 @@ const results = await controller.queryPromise({ lat: 40, lon: -74.5 });
 ## Reference files
 
 - `references/api-reference.md` — full `Account`, `MapController`, and `DataSource` API (all methods, properties, events, per-provider setup)
-- `references/weather-layers.md` — how to fetch and use the live weather-layer catalog endpoint
+- `references/layers.md` — all 283 weather layers by category: code, description, render type, animatability, cost multiplier, coverage, data range, update interval; composite codes and cost multipliers grouped up front
+- `references/weather-layers.md` — how to discover layer codes, the catalog schema, and the code-vs-layer-id gotcha that silently breaks style updates
 - `references/styles.md` — paint property spec for every render type, plus filters and masks
 - `references/color-scales.md` — color scale config format and built-in named palettes
 - `references/expressions.md` — style/filter expression operator reference

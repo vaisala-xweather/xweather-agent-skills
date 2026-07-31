@@ -1,16 +1,22 @@
 # Discovering Built-in Weather Layer Codes
 
-Do not rely on a hardcoded layer list — the catalog changes as Xweather adds/retires layers.
-Instead, fetch it live from the public docs endpoint:
+**Start with `layers.md`** — a full listing of all 283 layers with code, description, render type,
+animatability, cost multiplier, coverage, data range, and update interval, grouped by category. It's
+generated from the catalog below and refreshed weekly in CI, so it's current without a network call.
+
+Fetch the live catalog when `layers.md` doesn't settle the question — a code it doesn't contain, or
+any doubt about whether the snapshot has gone stale:
 
 ```
 https://www.xweather.com/docs/api/mapsgl/layers
 ```
 
-This is a plain public JSON endpoint (no auth required). Fetch it with `WebFetch`/`curl` whenever
-a task needs to look up a layer code, browse what's available in a category, verify a code exists,
-or check whether a layer animates. Treat it as the source of truth over anything cached in this
-skill or in prior conversation turns.
+This is a plain public JSON endpoint (no auth required). Fetch it with `WebFetch`/`curl` and treat it
+as authoritative over both `layers.md` and anything cached in prior conversation turns.
+
+Neither source reflects **entitlements**. The catalog is the public layer list; what a given
+subscription can actually render comes from `controller.weatherProvider.getLayerMetadata()` at
+runtime. A code that exists in `layers.md` but fails at runtime is a plan question, not a typo.
 
 ## Response shape
 
@@ -52,16 +58,15 @@ rather than trusting that count.
 
 ## Recommended workflow
 
-1. Fetch `https://www.xweather.com/docs/api/mapsgl/layers` once per task that needs layer discovery.
-2. Filter the `layers` array client-side (e.g. by `categories` containing `"Roads"`, or `id`
-   matching a search term) rather than re-fetching per query.
+1. Grep `layers.md` for the intent or category — it lists every code with its render type,
+   animatability, and cost.
+2. If the answer isn't there, fetch `https://www.xweather.com/docs/api/mapsgl/layers` once per task
+   and filter the `layers` array client-side rather than re-fetching per query.
 3. Use the matched `id` directly with `controller.addWeatherLayer(id)`.
-4. If unsure whether a layer is composite, check `type === "none"` before assuming a single
-   `WebGLLayer` is returned.
-
-For account/plan-specific availability and any options metadata beyond what this endpoint exposes,
-also consider `controller.weatherProvider.getLayerMetadata()` at runtime once the map is loaded —
-it reflects exactly what the authenticated account can access.
+4. Check whether the layer is composite (`type: "none"`, listed together at the top of `layers.md`)
+   before assuming a single `WebGLLayer` comes back.
+5. For account-specific availability, call `controller.weatherProvider.getLayerMetadata()` at runtime
+   once the map has loaded — it reflects exactly what the authenticated account can access.
 
 ## Critical: a weather layer's *code* is not its *layer id*
 

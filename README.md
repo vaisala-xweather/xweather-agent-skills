@@ -86,7 +86,7 @@ single source of truth.
 
 ## Regenerating the references
 
-Four reference files are generated from live Xweather catalogs rather than hand-written, so they go
+Five reference files are generated from live Xweather catalogs rather than hand-written, so they go
 stale as the products change:
 
 | File | Source |
@@ -95,6 +95,7 @@ stale as the products change:
 | `weather-api/references/examples.md` | each endpoint doc page's `exampleRequests` |
 | `weather-api/references/filters.md` | each endpoint doc page's filter and query tables |
 | `raster-maps/references/layers.md` | `docs/api/maps/layers` |
+| `mapsgl/references/layers.md` | `docs/api/mapsgl/layers` |
 
 ```bash
 python3 scripts/regenerate_references.py           # rewrite in place
@@ -104,17 +105,17 @@ python3 scripts/regenerate_references.py --check   # exit 1 on drift, writes not
 `.github/workflows/refresh-references.yml` runs the regeneration weekly and opens a PR when anything
 drifts, and runs `--check` on any PR touching a generated file so a hand-edit fails loudly.
 
-Two further files — `weather-api/references/access-cost.md` and `raster-maps/references/map-units.md`
-— embed multiplier tables inside hand-written prose. The script **reports** drift in those but won't
-rewrite them, since regenerating would destroy the surrounding explanation. Fix them by hand when the
-script flags one.
+Three further files embed generated content inside hand-written prose:
+`weather-api/references/access-cost.md` and `raster-maps/references/map-units.md` carry multiplier
+tables, and `mapsgl/references/weather-layers.md` documents the catalog's render types, categories,
+and which codes are composite. The script **reports** drift in those but won't rewrite them, since
+regenerating would destroy the surrounding explanation. Fix them by hand when the script flags one.
 
 Endpoint doc pages render their parameter tables client-side, so the script reads the Next.js RSC
 payload out of the HTML rather than the rendered DOM. That's inherently coupled to Xweather's docs
 stack; if it changes, the script refuses to write near-empty files and fails loudly instead of
-quietly emptying a reference. The MapsGL layer catalog
-(`curl -s https://www.xweather.com/docs/api/mapsgl/layers`) is fetched live by the `mapsgl` skill at
-use time, so there's nothing to regenerate for it.
+quietly emptying a reference. The two layer catalogs are plain JSON endpoints and need no such
+scraping.
 
 Each skill's `SKILL.md` tells Claude to refetch the relevant catalog when a request fails or when the
 bundled reference doesn't cover something, so the skills degrade gracefully as the products evolve.
