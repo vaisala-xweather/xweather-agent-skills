@@ -9,7 +9,10 @@
     {
       "name": "xweather",
       "displayName": "Xweather API & Maps",
-      "source": ".",
+      "source": {
+        "source": "github",
+        "repo": "vaisala-xweather/xweather-agent-skills"
+      },
       "description": "Weather API URL builder with access-cost reporting, Raster Maps static image and tile URLs, MapsGL SDK guidance, and Webhooks receiver setup",
       "author": {
         "name": "Vaisala Xweather",
