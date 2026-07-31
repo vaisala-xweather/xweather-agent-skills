@@ -1,10 +1,24 @@
 {
   "name": "xweather",
-  "description": "Xweather Weather API, Raster Maps, and MapsGL — build and run Weather API request URLs, generate static map images and tile URLs, and work with the MapsGL WebGL SDK",
-  "version": "0.1.0",
+  "description": "Xweather Weather API, Raster Maps, MapsGL, and Webhooks — build and run Weather API request URLs, generate static map images and tile URLs, work with the MapsGL WebGL SDK, and set up push data delivery. Optionally connects the hosted Xweather MCP server for live data.",
+  "version": "0.2.0",
   "author": {
     "name": "Xweather DevX"
   },
   "homepage": "https://www.xweather.com/docs",
-  "license": "MIT"
+  "license": "MIT",
+  "userConfig": {
+    "xweather_api_key": {
+      "type": "string",
+      "title": "Xweather API key (for the MCP server)",
+      "description": "Your client id and client secret joined by an underscore: client_id_client_secret. Only needed to enable the bundled Xweather MCP server for live weather data. Leave blank to use the skills for URL building only. Requires a subscription that includes MCP access.",
+      "sensitive": true
+    },
+    "mcp_tool_tags": {
+      "type": "string",
+      "title": "MCP tool groups to load",
+      "description": "Comma-separated tags limiting which MCP tools load: general, forecast, summary, tropical, lightning, roadweather. Fewer tools means better model performance when other MCP servers are also connected.",
+      "default": "general,forecast,summary"
+    }
+  }
 }
