@@ -76,6 +76,29 @@ curl -s https://www.xweather.com/docs/api/maps/layers \
   | python3 -c 'import json,sys; [print(l["multiplier"], l["id"]) for l in sorted(json.load(sys.stdin)["layers"], key=lambda x:-x["multiplier"])]'
 ```
 
+## Raster Maps vs. MapsGL billing
+
+MapsGL — the client-side WebGL SDK — measures usage in **sessions** rather than map units, and the
+two models reward opposite patterns:
+
+| | Raster Maps | MapsGL |
+|---|---|---|
+| Unit | Map unit (one 256×256 tile × one ×1 layer) | Session (5-minute wall-clock bucket) |
+| More layers | **Multiplies** cost | **Free** |
+| Pan / zoom | Each new tile costs again | **Free** within the session |
+| Animation | Each frame is a fresh set of tiles | **Free** within the session |
+| Floor | 1 map unit | 1 session = 150 accesses |
+
+So:
+
+- **A static image, or a brief non-interactive view** — Raster Maps. An 800×600 one-layer image is 12
+  map units against MapsGL's 150-access floor.
+- **An animated, multi-layer, heavily-panned map** — MapsGL is likely cheaper, since its cost stops
+  growing once the session starts while Raster Maps keeps charging per tile.
+
+Raise this whenever someone is costing out an interactive tile map with several layers; the crossover
+comes quickly. Details in the `/xweather:mapsgl` skill's `references/sessions.md`.
+
 ## Caching
 
 Images are cached in the browser for a period tied to the layer's update interval — radar refreshes

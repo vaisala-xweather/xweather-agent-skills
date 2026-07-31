@@ -1,6 +1,6 @@
 ---
 name: mapsgl
-description: This skill should be used when working with the Xweather MapsGL JS SDK (@xweather/mapsgl) — setting up a MapsGL map controller for Mapbox GL, MapLibre GL, Google Maps, or Leaflet, and adding, removing, styling, filtering, masking, or animating MapsGL weather layers and custom data layers. Use it whenever a task mentions MapsGL, aerisweather.mapsgl, addWeatherLayer, weather map layers, or client-side WebGL weather rendering.
+description: This skill should be used when working with the Xweather MapsGL JS SDK (@xweather/mapsgl) — setting up a MapsGL map controller for Mapbox GL, MapLibre GL, Google Maps, or Leaflet, and adding, removing, styling, filtering, masking, or animating MapsGL weather layers and custom data layers. Use it whenever a task mentions MapsGL, aerisweather.mapsgl, addWeatherLayer, weather map layers, or client-side WebGL weather rendering. Also use it for questions about how MapsGL usage or cost is measured — sessions, the 5-minute clock intervals, the 150x access multiplier, or how many accesses a MapsGL map consumes.
 version: 0.1.0
 ---
 
@@ -29,10 +29,51 @@ Built-in **weather layers** are pre-wired combinations of an encoded source + on
 layers, addressed by a single string code (e.g. `'temperatures'`, `'radar'`, `'alerts'`). Prefer
 these over hand-building sources/layers unless visualizing custom or non-weather data.
 
-Session billing note: a MapsGL "session" is up to 5 minutes of continuous interaction with any
-active weather layer, billed in fixed 5-minute clock intervals; with a Weather API + Maps
-subscription, 1 session = 150 accesses. This doesn't affect API usage, just worth knowing when a
-user asks about cost/usage.
+## Usage is measured in sessions
+
+MapsGL bills in **sessions**, not tiles, layers, or requests. A session is a continuous interaction
+with a MapsGL map for **up to 5 minutes**, starting when any weather layer is added. On a Weather API
+and Maps subscription, **1 session = 150 accesses** (a 150× multiplier).
+
+Three rules produce every answer:
+
+1. **Sessions align to the wall clock** — boundaries at `:00`, `:05`, `:10`, `:15`. Not a rolling
+   window from first interaction. What matters is how many 5-minute buckets the viewing touches, not
+   how long it lasted.
+2. **At least one session per data request.** No proration — 150 accesses is the floor.
+3. **Inside a session, everything is free**: panning, zooming, animating, refreshing, and toggling
+   layers. **Layer count does not affect cost.**
+
+**When asked how usage is measured, show the arithmetic** — buckets → sessions → accesses — rather
+than just a number. The documented example:
+
+> A user views a radar layer from **8:03 to 8:07** — 4 minutes, but it straddles the `:05` boundary,
+> so it touches two buckets (8:00–8:05 and 8:05–8:10) = **2 sessions = 300 accesses**.
+>
+> The same 4 minutes from **8:05 to 8:09** touches one bucket = **1 session = 150 accesses**. Same
+> duration, half the cost, purely from clock alignment.
+
+Two consequences worth volunteering unprompted, because they invert the intuition people bring from
+tile-based pricing:
+
+> **Adding layers is free.** Five layers viewed for four minutes costs 1 session — the same as one
+> layer. There is no cost reason to limit how many layers a user enables. (On Raster Maps the same
+> five layers would cost 5×.)
+>
+> **Short visits get almost no discount.** A 30-second view averages ~1.1 sessions and a 5-minute
+> view ~2.0, so a visit ten times shorter costs 55% as much, not 10%. Drive-by page loads are the
+> expensive traffic shape.
+
+For capacity planning, a view of `d` minutes starting at a random time averages
+`floor(d/5) + 1 + (d mod 5)/5` sessions — **not** `d/5`. Assuming one session per short view
+underestimates by 10–20%. Table of common durations in `references/sessions.md`.
+
+The only real lever is **when layers are on the map**: don't call `addWeatherLayer` until the user
+asks for weather, and `removeWeatherLayer` when the map goes out of view or idle. Optimising layer
+count, animation, or interaction is pointless — those are free.
+
+Full model, more worked examples (long-running displays, high-traffic short visits), the MapsGL vs.
+Raster Maps billing comparison, and reduction tactics: `references/sessions.md`.
 
 ## Setup
 
@@ -512,6 +553,9 @@ const results = await controller.queryPromise({ lat: 40, lon: -74.5 });
   `https://www.xweather.com/docs/api/mapsgl/layers` if that snapshot might be stale; or
   `controller.weatherProvider.getLayerMetadata()` at runtime for account-specific availability. Never
   invent a code from memory — one of these three always has the answer.
+- **"How many accesses / how much does this cost?"** → sessions, not tiles or layers: count the
+  5-minute clock buckets the viewing touches, × 150 accesses. Show the arithmetic and mention that
+  layers and interaction are free inside a session. See `references/sessions.md`.
 - **"Handle load errors / show an error state"** → there is no `controller.on('error', ...)` —
   that event doesn't exist on `MapController` and will never fire. See the events note in
   `references/api-reference.md`.
@@ -526,3 +570,4 @@ const results = await controller.queryPromise({ lat: 40, lon: -74.5 });
 - `references/expressions.md` — style/filter expression operator reference
 - `references/legends.md` — `points` (categorical) and `bar` (gradient) legend config reference
 - `references/timeline.md` — animation/timeline API
+- `references/sessions.md` — how MapsGL usage is measured: the session model, clock-aligned billing, worked examples, the MapsGL vs. Raster Maps comparison, and how to reduce consumption

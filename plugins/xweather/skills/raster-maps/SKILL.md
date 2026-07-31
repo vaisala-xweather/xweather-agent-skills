@@ -1,6 +1,6 @@
 ---
 name: raster-maps
-description: This skill should be used to build Xweather Raster Maps image URLs (maps.api.xweather.com) — either static map images or XYZ map tile URLs for Leaflet, Mapbox, Google Maps, OpenLayers and similar libraries — from a description of the weather imagery wanted. Use it whenever a task mentions Raster Maps, maps.api.xweather.com, maps.aerisapi.com, an Xweather weather map layer or overlay (radar, satellite, alerts, temperatures, lightning, tropical cyclones, air quality, base maps, admin overlays), a weather map image or tile layer, layer opacity/blur/blend/scale-hsla modifiers, or asks how many map units a weather map will consume.
+description: This skill should be used to build Xweather Raster Maps image URLs (maps.api.xweather.com) — either static map images or XYZ map tile URLs for Leaflet, Mapbox, Google Maps, OpenLayers and similar libraries — from a description of the weather imagery wanted. Use it whenever a task mentions Raster Maps, maps.api.xweather.com, maps.aerisapi.com, an Xweather weather map layer or overlay (radar, satellite, alerts, temperatures, lightning, tropical cyclones, air quality, base maps, admin overlays), a weather map image or tile layer, layer opacity/blur/blend/scale-hsla modifiers, or asks how Raster Maps usage is measured — map units, tile counts, the daily allowance, or how many accesses a static map or tile layer will consume.
 version: 0.1.0
 ---
 
@@ -138,7 +138,8 @@ Size limits: 5000×5000 on paid plans, 2000×2000 on the free developer trial.
 
 ## Map units — report the cost with the URL
 
-Raster Maps bills in map units, not requests:
+Raster Maps measures usage in **map units**, against a **daily** allowance set by the subscription.
+One map unit = **one 256×256 tile carrying one ×1 layer**.
 
 ```
 tiles     = ceil(width / 256) × ceil(height / 256)
@@ -149,19 +150,53 @@ Most layers are ×1, but `lightning-strikes` and the `lightning-all` family are 
 individual air-quality pollutant and national-index layers are **×5**. A layer listed twice counts
 twice.
 
-Include the figure whenever you hand over a URL:
+**Show the arithmetic, not just the total** — the division is where people get surprised:
 
-> `flat,alerts,radar` at 800×600 → 12 tiles × 3 layers = **36 map units** per image.
+> `flat,alerts,radar` at 800×600:
+> ```
+> 800 / 256 = 3.125 → 4 columns
+> 600 / 256 = 2.34  → 3 rows
+> 4 × 3 = 12 tiles × 3 layers = 36 map units
+> ```
 
-> `flat,lightning-strikes` at 800×600 → 12 tiles × (1 + 10) = **132 map units** — `lightning-strikes`
-> is a ×10 layer. `lightning-flash` or `lightning-strike-density` are ×1 if either answers the
-> question.
+> `flat,lightning-strikes` at 800×600 → 12 tiles × (1 + 10) = **132 map units**, because
+> `lightning-strikes` is a ×10 layer. `lightning-flash` or `lightning-strike-density` are ×1 if
+> either answers the question.
 
-For **tile** output, say the number is a per-viewport estimate and that panning and zooming render
-more tiles, each costing again. An ~800×600 viewport is roughly 12 tiles; libraries often pull an
-extra row and column for smooth panning.
+Two facts worth volunteering, because both surprise people:
 
-`xwmap … --estimate-only` computes this from a path, pulling live multipliers from the
+> **Combining layers into one request doesn't reduce map units.** `flat,radar,admin` as a single
+> comma-joined request costs the same 3× as three separate layers — the docs are explicit that two
+> layers cost 2× "either as separate layers or combined". Combining saves round trips and latency,
+> not units.
+>
+> **Cost is quantised in 256-pixel steps.** 512×512 and 500×500 are both 4 tiles; 520×520 jumps to 9.
+> Sizing just under a tile boundary is free savings.
+
+### Static vs. interactive
+
+For a **static image** the number is exact — you control the dimensions, so the calculation above is
+the answer.
+
+For **tiles**, it's an estimate and you should say so. A ~800×600 viewport is roughly 12 tiles, but
+the container's real size and the map's centre shift it, and libraries commonly pull an extra row and
+column to make panning smooth. More importantly: **every pan and zoom renders new tiles, each costing
+again**, so an interactive map's lifetime cost is driven by user interaction rather than by initial
+load. Give a per-viewport figure and name that caveat rather than implying a total.
+
+**Caching is the biggest real-world lever.** Tiles and static images are cached in browser memory for
+a period tied to the layer's update interval — radar refreshes every ~6 minutes, temperatures roughly
+hourly — so re-requests inside that window don't generate new units. Native apps should implement
+equivalent memory or file caching.
+
+If the user is building something animated, multi-layer, and heavily interactive, mention that
+**MapsGL bills completely differently** — in 5-minute sessions where layer count and interaction are
+free — and may be far cheaper for that pattern. See `/xweather:mapsgl`.
+
+Usage is visible in the account dashboard, with a Usage tab for history and per-application
+breakdown; stats lag slightly behind real time.
+
+`xwmap … --estimate-only` computes all of this from a path, pulling live multipliers from the
 catalog. Full model, the multiplier tables, and reduction tactics: `references/map-units.md`.
 
 ## Credentials and returning the image
