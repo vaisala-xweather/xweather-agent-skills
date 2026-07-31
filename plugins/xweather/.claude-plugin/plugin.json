@@ -1,10 +1,21 @@
 {
   "name": "xweather",
+  "displayName": "Xweather API & Maps",
   "description": "Xweather Weather API, Raster Maps, MapsGL, and Webhooks — build and run Weather API request URLs, generate static map images and tile URLs, work with the MapsGL WebGL SDK, and set up push data delivery.",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "author": {
     "name": "Xweather DevX"
   },
   "homepage": "https://www.xweather.com/docs",
-  "license": "MIT"
+  "license": "MIT",
+  "keywords": [
+    "xweather",
+    "weather",
+    "weather-api",
+    "raster-maps",
+    "mapsgl",
+    "webhooks",
+    "radar",
+    "geospatial"
+  ]
 }

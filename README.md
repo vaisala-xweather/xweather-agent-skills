@@ -1,7 +1,11 @@
 # Xweather plugin marketplace for Claude Code
 
-A Claude Code marketplace distributing the **`xweather`** plugin — four skills covering the
-Xweather Weather API, Raster Maps, the MapsGL JS SDK, and Webhooks.
+A Claude Code marketplace distributing **Xweather API & Maps** — four skills covering the Xweather
+Weather API, Raster Maps, the MapsGL JS SDK, and Webhooks.
+
+The plugin's identifier is `xweather`; "Xweather API & Maps" is its `displayName`, shown in the
+`/plugin` picker. The identifier is what namespaces skills and keys installs, so it stays stable even
+if the display name changes.
 
 ## Install
 
@@ -83,6 +87,11 @@ claude plugin validate ./plugins/xweather  # validate before publishing
 updates when that field is bumped**. Bump it on every release. Keep the `version` in
 `marketplace.json` (if you add one) in step, or omit it there and let the plugin manifest be the
 single source of truth.
+
+**Never change the plugin's `name`.** It keys `enabledPlugins`, `pluginConfigs`, and every
+`/plugin install`, so renaming it breaks existing installs. To change the label users see, edit
+`displayName` in both `plugin.json` and the `marketplace.json` entry. `displayName` requires Claude
+Code v2.1.143 or later and falls back to `name` on older versions.
 
 ## Regenerating the references
 

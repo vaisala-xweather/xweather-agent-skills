@@ -1,7 +1,11 @@
-# xweather
+# Xweather API & Maps
 
 Claude Code plugin for the Xweather developer platform: build Weather API request URLs, generate
 Raster Maps imagery and tile URLs, work with the MapsGL WebGL SDK, and set up pushed data delivery.
+
+Installs and is referenced as **`xweather`** — that identifier is the skill namespace
+(`/xweather:weather-api`) and the install target (`/plugin install xweather@xweather`). "Xweather API
+& Maps" is the display name shown in the `/plugin` picker.
 
 ## Skills
 
