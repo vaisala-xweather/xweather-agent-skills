@@ -23,13 +23,17 @@ Code plugin for one-command install there.
 ### Claude Code
 
 ```
-/plugin marketplace add vaisala-xweather/xweather-agent-skills
+/plugin marketplace add vaisala-xweather/xweather-claude-plugins
 /plugin install xweather@vaisala-xweather
 /reload-plugins
 ```
 
-Installing prompts for nothing and configures nothing. A local path works when developing:
-`/plugin marketplace add ./xweather-agent-skills`.
+In the **Claude app**: Settings → Plugins → Add → `vaisala-xweather/xweather-claude-plugins`.
+
+The catalog lives in a separate repo,
+[xweather-claude-plugins](https://github.com/vaisala-xweather/xweather-claude-plugins) — this repo is
+the plugin itself, not a marketplace. Installing prompts for nothing and configures nothing. A local
+path works when developing: `claude --plugin-dir .`.
 
 ### OpenAI Codex
 
@@ -151,14 +155,16 @@ skills/                          the four skills — the portable payload
 └── webhooks/
 scripts/regenerate_references.py regenerates the catalog-derived references
 bin/                             xwrequest, xwmap — Claude Code puts these on PATH
-.claude-plugin/
-├── plugin.json                  Claude Code plugin manifest (repo root is the plugin)
-└── marketplace.json             Claude Code marketplace catalog
+.claude-plugin/plugin.json      Claude Code plugin manifest (repo root is the plugin)
 .github/workflows/               weekly reference refresh
 ```
 
 The repository root *is* the Claude Code plugin, so `skills/` has exactly one canonical copy — no
-duplication and no symlinks. Other agents read `skills/` directly.
+duplication and no symlinks. Other agents read `skills/` directly. The Claude marketplace catalog that
+lists this plugin lives in
+[xweather-claude-plugins](https://github.com/vaisala-xweather/xweather-claude-plugins); keeping it
+separate is deliberate, since a repo that declares itself both plugin and marketplace failed the
+Claude app's server-side sync.
 
 ## Development
 
@@ -212,7 +218,7 @@ in step.
 
 **Never change the plugin's `name`** (`xweather`). It keys `enabledPlugins`, `pluginConfigs`, and
 every `/plugin install`, and it namespaces the skills, so renaming breaks existing installs. To change
-the label users see, edit `displayName` in both `plugin.json` and the `marketplace.json` entry.
+the label users see, edit `displayName` here and in the catalog repo's `marketplace.json` entry.
 
 ## Requirements
 
