@@ -11,7 +11,8 @@ any doubt about whether the snapshot has gone stale:
 https://www.xweather.com/docs/api/mapsgl/layers
 ```
 
-This is a plain public JSON endpoint (no auth required). Fetch it with `WebFetch`/`curl` and treat it
+This is a plain public JSON endpoint (no auth required). Fetch it however this agent fetches URLs — a
+built-in fetch tool, or `curl` via the shell — and treat it
 as authoritative over both `layers.md` and anything cached in prior conversation turns.
 
 Neither source reflects **entitlements**. The catalog is the public layer list; what a given

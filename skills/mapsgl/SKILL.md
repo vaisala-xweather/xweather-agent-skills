@@ -1,7 +1,10 @@
 ---
 name: mapsgl
 description: This skill should be used when working with the Xweather MapsGL JS SDK (@xweather/mapsgl) — setting up a MapsGL map controller for Mapbox GL, MapLibre GL, Google Maps, or Leaflet, and adding, removing, styling, filtering, masking, or animating MapsGL weather layers and custom data layers. Use it whenever a task mentions MapsGL, aerisweather.mapsgl, addWeatherLayer, weather map layers, or client-side WebGL weather rendering. Also use it for questions about how MapsGL usage or cost is measured — sessions, the 5-minute clock intervals, the 150x access multiplier, or how many accesses a MapsGL map consumes.
-version: 0.1.0
+license: MIT
+metadata:
+  author: Vaisala Xweather
+  version: "0.9.0"
 ---
 
 # MapsGL
@@ -453,67 +456,20 @@ controller.addDataInspectorControl({ event: 'click' });  // click/hover to inspe
 controller.removeDataInspectorControl();
 ```
 
-If a weather layer's `paint` is overridden with custom colors, also override its `legend` so the
-legend reflects the real styling (auto-detection only works for unmodified color scales). Use
-`legend: { points: {...} }` for categorical data and `legend: { bar: {...} }` for a continuous
-gradient (e.g. a custom temperature colorscale) — full field reference in `references/legends.md`.
+**If you override a layer's `paint` colors, override its `legend` too.** Auto-detection only works for
+unmodified color scales, so a custom paint with a default legend produces a legend that lies about the
+map. Use `legend: { points: {...} }` for categorical data and `legend: { bar: {...} }` for a
+continuous gradient — and for a gradient, pass the **same `colorscale` stops** to both so they can't
+drift apart:
 
 ```javascript
-const riskColors = {
-  general: '#ffea16', marginal: '#ffc41d', slight: '#ff891d',
-  enhanced: '#fa2311', moderate: '#fa23ec', high: '#fac9eb'
-};
-
-controller.addWeatherLayer('convective', {
-  paint: {
-    fill: {
-      color: [
-        'match', ['downcase', ['get', 'details.risk.type']],
-        'general', riskColors.general,
-        'marginal', riskColors.marginal,
-        'slight', riskColors.slight,
-        'enhanced', riskColors.enhanced,
-        'moderate', riskColors.moderate,
-        'high', riskColors.high,
-        '#000000'
-      ],
-      opacity: 0.7
-    }
-  },
-  legend: {
-    points: {
-      values: [
-        { color: riskColors.general, label: 'General' },
-        { color: riskColors.marginal, label: 'Marginal' },
-        { color: riskColors.slight, label: 'Slight' },
-        { color: riskColors.enhanced, label: 'Enhanced' },
-        { color: riskColors.moderate, label: 'Moderate' },
-        { color: riskColors.high, label: 'High' }
-      ]
-    }
-  }
-});
-```
-
-For a continuous scale (e.g. a custom temperature colorscale), override `legend.bar` instead, using
-the **same `colorscale` stops** as the paint override so the legend and the map stay in sync:
-```javascript
-const customTemperatureColorscale = {
-  stops: [-40, '#1b1b3a', -20, '#2f4b7c', 0, '#00b4d8', 10, '#90e0ef', 20, '#ffd166', 30, '#f77f00', 40, '#d62828'],
-  interval: 2
-};
-
 controller.addWeatherLayer('temperatures', {
-  paint: { sample: { colorscale: customTemperatureColorscale } },
-  legend: {
-    bar: {
-      colorscale: customTemperatureColorscale,
-      measurement: { type: 'temperature', units: 'C' },
-      labels: { every: 10 }
-    }
-  }
+  paint:  { sample: { colorscale: myColorscale } },
+  legend: { bar: { colorscale: myColorscale, measurement: { type: 'temperature', units: 'C' } } }
 });
 ```
+
+Full field reference plus complete categorical and gradient examples: `references/legends.md`.
 
 ## Querying data at a point
 

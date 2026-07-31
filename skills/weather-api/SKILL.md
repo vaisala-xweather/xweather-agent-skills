@@ -1,7 +1,11 @@
 ---
 name: weather-api
 description: This skill should be used to turn a plain-language description of wanted weather data into a working Xweather Weather API request URL (data.api.xweather.com), and to run that request when the user supplies their client id and secret. Use it whenever a task mentions the Xweather API, Aeris API / api.aerisapi.com, an Xweather endpoint or action (observations, conditions, forecasts, alerts, lightning, stormcells, airquality, tropicalcyclones, tides, sunmoon, roadweather, …), or asks "what's the API URL for …", "build me a query for …", "how do I get some kind of weather data for a place", or asks to debug an Xweather request that returns no data or an error. Also use it for questions about what an Xweather request costs — accesses, hits, tokens, endpoint multipliers, rate limits, or allowance usage — and for questions about the hosted Xweather MCP server at mcp.api.xweather.com — whether it exists, whether it is available to them, how to connect it, or how to authenticate and scope its tools.
-version: 0.1.0
+compatibility: Skill instructions are provider-neutral. The bundled scripts/xwrequest.py needs Python 3 (standard library only) and network access to data.api.xweather.com.
+license: MIT
+metadata:
+  author: Vaisala Xweather
+  version: "0.9.0"
 ---
 
 # Xweather Weather API URL builder
@@ -211,11 +215,12 @@ out of the command line and out of its own output.
 
 ```bash
 export XWEATHER_CLIENT_ID='…' XWEATHER_CLIENT_SECRET='…'
-xwrequest '/observations/seattle,wa?filter=allstations&limit=3'
+python3 scripts/xwrequest.py '/observations/seattle,wa?filter=allstations&limit=3'
 ```
 
-`xwrequest` is on PATH while this plugin is enabled. Outside the plugin, call it directly:
-`python3 "${CLAUDE_PLUGIN_ROOT}/skills/weather-api/scripts/xwrequest.py"`.
+Invoke it as `python3 scripts/xwrequest.py`, resolved relative to this skill's directory. Some
+clients also expose it as a bare `xwrequest` command on PATH — use that if available, but don't
+assume it.
 
 It prints the URL with credential placeholders, the HTTP status, the accesses charged with the
 `endpoint`/`spatial`/`temporal` breakdown, the remaining minutely and period allowance, and the
@@ -346,6 +351,6 @@ MCP access may need a specific subscription tier, so "is it available to me?" is
   descriptions. The best model for correct URL shape.
 - `references/recipes.md` — 34 real-world queries by industry/use case, plus the patterns behind
   them.
-- `xwrequest` (`scripts/xwrequest.py`) — runs a request using `XWEATHER_CLIENT_ID` / `XWEATHER_CLIENT_SECRET` from
+- `scripts/xwrequest.py` — runs a request using `XWEATHER_CLIENT_ID` / `XWEATHER_CLIENT_SECRET` from
   the environment; prints the placeholder URL, status, accesses charged with the multiplier
   breakdown, remaining allowance, and the body.

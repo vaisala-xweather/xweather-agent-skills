@@ -97,7 +97,7 @@ So:
   growing once the session starts while Raster Maps keeps charging per tile.
 
 Raise this whenever someone is costing out an interactive tile map with several layers; the crossover
-comes quickly. Details in the `/xweather:mapsgl` skill's `references/sessions.md`.
+comes quickly. Details in the `mapsgl` skill's `references/sessions.md`.
 
 ## Caching
 

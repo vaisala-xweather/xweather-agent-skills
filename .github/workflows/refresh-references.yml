@@ -9,9 +9,9 @@ on:
   pull_request:
     # On PRs, only verify — never rewrite. Catches a hand-edit to a generated file.
     paths:
-      - "plugins/xweather/skills/weather-api/references/**"
-      - "plugins/xweather/skills/raster-maps/references/**"
-      - "plugins/xweather/skills/mapsgl/references/**"
+      - "skills/weather-api/references/**"
+      - "skills/raster-maps/references/**"
+      - "skills/mapsgl/references/**"
       - "scripts/regenerate_references.py"
 
 permissions:
@@ -43,7 +43,7 @@ jobs:
       - name: Validate the plugin manifest
         run: |
           # Cheap guard: a malformed manifest should fail here, not after a PR is opened.
-          python3 -c "import json; json.load(open('plugins/xweather/.claude-plugin/plugin.json'))"
+          python3 -c "import json; json.load(open('.claude-plugin/plugin.json'))"
           python3 -c "import json; json.load(open('.claude-plugin/marketplace.json'))"
 
       - name: Regenerate references
@@ -108,7 +108,7 @@ jobs:
               groupings inside hand-written prose, so the script only *reports* drift there. If the
               run log mentions any of them, edit it by hand in this PR.
 
-            Consider bumping `version` in `plugins/xweather/.claude-plugin/plugin.json` before
+            Consider bumping `version` in `.claude-plugin/plugin.json` before
             merging — installed plugins only update when that field changes.
           labels: |
             dependencies

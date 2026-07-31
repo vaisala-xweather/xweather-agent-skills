@@ -1,7 +1,10 @@
 ---
 name: webhooks
 description: This skill should be used to design, build, secure, or debug an Xweather Webhooks receiver — the push alternative to polling the Weather API. Use it whenever a task mentions Xweather webhooks, pushed weather data, a weather webhook receiver or endpoint, subscribing to pushed hail/lightning/alerts/storm-cell data, or asks how to stop polling the Xweather API and receive data in real time instead. Also use it when writing the endpoint handler, choosing a data set to subscribe to, or preparing the registration details Xweather needs.
-version: 0.1.0
+license: MIT
+metadata:
+  author: Vaisala Xweather
+  version: "0.9.0"
 ---
 
 # Xweather Webhooks
@@ -21,7 +24,7 @@ Reach for them when the user is polling frequently for data that changes unpredi
 strikes, hail threats, new alerts, storm cell updates. Polling that on a short interval burns
 accesses continuously and still adds latency; push removes both problems.
 
-Polling via the `/xweather:weather-api` skill stays the better fit when the data is requested on
+Polling via the `weather-api` skill stays the better fit when the data is requested on
 demand (a user opens a page), when the update cadence is slow and predictable (daily normals, hourly
 temperatures), or when the user can't host a public HTTPS endpoint.
 
@@ -76,7 +79,7 @@ Also available, less commonly used: Air Quality · Earthquakes · Observations �
 Reports · Storm Cells.
 
 Anything outside both lists needs a support conversation. Each data set corresponds to a Weather API
-endpoint, so `references/../` — the `/xweather:weather-api` skill's `endpoints.md` — is the reference
+endpoint, so the `weather-api` skill's `references/endpoints.md` is the reference
 for what fields the payload will contain.
 
 ## Building the receiver
@@ -189,7 +192,7 @@ after registration is that single delivery landing and being acknowledged.
 | Works locally, not in production | Endpoint not publicly reachable over HTTPS, or a proxy/load balancer stripping the `x-api-key` header. |
 
 Because the payload matches the API response, a fast way to know what to expect is to query the
-equivalent Weather API endpoint once via `/xweather:weather-api` and inspect the response shape.
+equivalent Weather API endpoint once via the `weather-api` skill and inspect the response shape.
 
 ## Common patterns
 
@@ -209,6 +212,6 @@ equivalent Weather API endpoint once via `/xweather:weather-api` and inspect the
 
 ## Related
 
-`/xweather:weather-api` covers the pull equivalent and is the reference for payload field names —
+The `weather-api` skill covers the pull equivalent and is the reference for payload field names —
 every webhook data set mirrors an endpoint documented there. Its `access-cost.md` explains the
 polling cost that webhooks are often adopted to eliminate.

@@ -44,11 +44,11 @@ MAPS_CATALOG = f"{DOCS}/api/maps/layers"
 MGL_CATALOG = f"{DOCS}/api/mapsgl/layers"
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-WX_REF = ROOT / "plugins/xweather/skills/weather-api/references"
-RM_REF = ROOT / "plugins/xweather/skills/raster-maps/references"
-MGL_REF = ROOT / "plugins/xweather/skills/mapsgl/references"
+WX_REF = ROOT / "skills/weather-api/references"
+RM_REF = ROOT / "skills/raster-maps/references"
+MGL_REF = ROOT / "skills/mapsgl/references"
 
-UA = {"User-Agent": "Mozilla/5.0 (xweather-claude-plugin reference regeneration)"}
+UA = {"User-Agent": "Mozilla/5.0 (xweather-agent-skills reference regeneration)"}
 PUSH = re.compile(r'self\.__next_f\.push\(\[1,("(?:[^"\\]|\\.)*")\]\)', re.S)
 
 

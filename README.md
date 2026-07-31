@@ -1,97 +1,144 @@
-# Xweather plugin marketplace for Claude Code
+# Xweather API & Maps — Agent Skills
 
-A Claude Code marketplace distributing **Xweather API & Maps** — four skills covering the Xweather
-Weather API, Raster Maps, the MapsGL JS SDK, and Webhooks.
+Four [Agent Skills](https://agentskills.io) for the Xweather developer platform: build Weather API
+request URLs, generate Raster Maps imagery and tile URLs, work with the MapsGL WebGL SDK, and set up
+pushed data delivery.
 
-The plugin's identifier is `xweather`; "Xweather API & Maps" is its `displayName`, shown in the
-`/plugin` picker. The identifier is what namespaces skills and keys installs, so it stays stable even
-if the display name changes.
+Agent Skills is an open standard stewarded by the Linux Foundation's Agentic AI Foundation, so these
+work in any skills-compatible agent — **OpenAI Codex, Cursor, GitHub Copilot, VS Code, Gemini CLI,
+Goose, OpenHands, JetBrains Junie, Claude Code**, and others. The repository also ships as a Claude
+Code plugin for one-command install there.
+
+## The skills
+
+| Skill | Covers |
+|---|---|
+| `weather-api` | `data.api.xweather.com` request URLs — 59 endpoints, 8 actions, per-endpoint filter and query semantics, place and date formats, batch requests, and the access-cost model. Every URL comes with its cost. |
+| `raster-maps` | `maps.api.xweather.com` URLs — static map images and XYZ tile templates across 159 layers, dash-joined data modifiers, opacity/blur/blend/scale-hsla, time offsets, and map-unit cost reporting. |
+| `mapsgl` | The `@xweather/mapsgl` WebGL SDK — controllers for Mapbox GL, MapLibre GL, Google Maps and Leaflet, all 283 layers, styling, expressions, legends, timeline animation, and session-based cost. |
+| `webhooks` | Pushed data delivery — receiver design, securing the endpoint, available data sets, retry and idempotency behaviour, and the registration details Xweather needs. |
 
 ## Install
 
+### Any skills-compatible agent
+
+Clone the repository and point your agent at `skills/`. Each client has its own discovery
+location — check its Agent Skills docs — but the usual pattern is to copy or symlink the skill
+directories in:
+
+```bash
+git clone <this-repo> xweather-skills
+
+# OpenAI Codex
+mkdir -p ~/.codex/skills && ln -s "$PWD"/xweather-skills/skills/* ~/.codex/skills/
+
+# project-scoped, for agents that read a repo-local directory
+mkdir -p .agent/skills && ln -s "$PWD"/xweather-skills/skills/* .agent/skills/
 ```
-/plugin marketplace add <owner>/xweather-claude-plugin
+
+Skills are plain directories with a `SKILL.md`, so copying them works anywhere a client looks. The
+client showcase at <https://agentskills.io/clients> lists the per-tool install path.
+
+### Claude Code
+
+```
+/plugin marketplace add <owner>/<repo>
 /plugin install xweather@xweather
 /reload-plugins
 ```
 
-Replace `<owner>/xweather-claude-plugin` with this repository's path once it's hosted. A local path
-works too, for testing before publishing:
+A local path works for testing before publishing:
 
 ```
-/plugin marketplace add ./xweather-claude-plugin
+/plugin marketplace add ./xweather-skills
 /plugin install xweather@xweather
 ```
 
-Keeping the repository private restricts the marketplace to people who can read it — no other
-configuration needed.
+Keeping the repository private restricts the marketplace to people who can read it. Installing
+prompts for nothing and configures nothing.
 
-## What's in it
+## Helper scripts
 
-| Skill | Covers |
+Two standard-library Python 3 programs, bundled with the skills that use them:
+
+| Script | Purpose |
 |---|---|
-| `/xweather:weather-api` | Build and run `data.api.xweather.com` request URLs — 59 endpoints, 8 actions, filters, query syntax, and access-cost reporting |
-| `/xweather:raster-maps` | Build `maps.api.xweather.com` URLs — static map images and XYZ tile templates across 159 layers, with map-unit cost reporting |
-| `/xweather:mapsgl` | The `@xweather/mapsgl` WebGL SDK — controllers, weather layers, styling, expressions, legends, timeline animation |
-| `/xweather:webhooks` | Pushed data delivery — receiver design, securing the endpoint, available data sets, retry and idempotency behaviour, registration details |
+| `skills/weather-api/scripts/xwrequest.py` | Issue a Weather API request. Prints the credential-redacted URL, HTTP status, accesses charged with the multiplier breakdown, remaining allowance, and the response. |
+| `skills/raster-maps/scripts/xwmap.py` | Issue a Raster Maps request. Prints the redacted URL and map-unit estimate, saves the image. `--estimate-only` computes cost without sending anything. |
 
-Installing prompts for nothing and configures nothing — the skills work immediately, and the two
-commands below activate once you export your credentials.
+Both read credentials from the environment, so secrets stay out of shell history and out of the
+printed output:
 
-Xweather also hosts an **MCP server** for answering weather questions directly. It isn't bundled here
-(a bundled MCP server can't be conditionally disabled, so it would show a permanent connection error
-for anyone without MCP access); the `weather-api` skill documents how to connect it in one command.
+```bash
+export XWEATHER_CLIENT_ID='…' XWEATHER_CLIENT_SECRET='…'
 
-Two commands are added to the Bash tool's `PATH` while the plugin is enabled:
+python3 skills/weather-api/scripts/xwrequest.py '/observations/seattle,wa?filter=allstations&limit=3'
+python3 skills/raster-maps/scripts/xwmap.py 'flat,radar,admin/800x600/minneapolis,mn,7/current.png' -o radar.png
+python3 skills/raster-maps/scripts/xwmap.py 'flat,lightning-strikes/800x600/dallas,tx,7/current.png' --estimate-only
+```
 
-- `xwrequest '<path>'` — issue a Weather API request, printing the credential-redacted URL, the
-  accesses charged, remaining allowance, and the response.
-- `xwmap '<path>' [-o file]` — estimate a Raster Maps request's map units and optionally fetch the
-  image.
+Claude Code additionally exposes them as bare `xwrequest` / `xwmap` commands via `bin/`, but the
+skills never assume that.
 
-Both read credentials from `XWEATHER_CLIENT_ID` and `XWEATHER_CLIENT_SECRET` in the environment, so
-secrets stay out of shell history and out of the printed output. Keys come from the Apps section of
-<https://data.portal.xweather.com/account/keys>.
+## Credentials
+
+Keys come from the Apps section of <https://data.portal.xweather.com/account/keys>. Each key pair is
+bound to a **namespace** — a top-level domain for web, or a reverse-DNS bundle id for mobile. A
+request from outside that namespace fails with `unauthorized_namespace` on the Weather API, or a 403
+`authorization_error` on Raster Maps, regardless of whether the URL is otherwise correct.
+
+Raster Maps puts credentials in the URL *path*, so a tile URL used in client-side JavaScript exposes
+the key pair to anyone viewing the page. The namespace binding is what limits the damage.
+
+## The Xweather MCP server
+
+Xweather hosts an MCP server at `https://mcp.api.xweather.com/mcp` that answers weather questions
+directly instead of producing URLs for you to call — useful in agents that consume MCP but not
+skills, including the ChatGPT app.
+
+**It is deliberately not bundled here.** A bundled MCP server can't be conditionally disabled, so
+anyone without an MCP-enabled subscription would get a permanent connection error for a feature they
+never asked for. Add it yourself in one command:
+
+```bash
+claude mcp add --transport http xweather https://mcp.api.xweather.com/mcp \
+  --header "Authorization: Bearer CLIENT_ID_CLIENT_SECRET"
+```
+
+Note the token format: client id and secret joined by a **single underscore**. The `weather-api` skill
+documents the server in full — the three auth methods, the six tool tag groups, filter precedence, and
+how to read a failed connection.
 
 ## Layout
 
 ```
-.claude-plugin/marketplace.json     the catalog
-.github/workflows/                  weekly reference refresh
-scripts/regenerate_references.py    regenerates the generated reference files
-plugins/xweather/                   the plugin
-├── .claude-plugin/plugin.json      manifest
-├── bin/                            xwrequest, xwmap — added to PATH
-└── skills/
-    ├── weather-api/
-    ├── raster-maps/
-    ├── mapsgl/
-    └── webhooks/
+AGENTS.md                        conventions for agents working in this repo
+skills/                          the four skills — the portable payload
+├── weather-api/
+├── raster-maps/
+├── mapsgl/
+└── webhooks/
+scripts/regenerate_references.py regenerates the catalog-derived references
+bin/                             xwrequest, xwmap — Claude Code puts these on PATH
+.claude-plugin/
+├── plugin.json                  Claude Code plugin manifest (repo root is the plugin)
+└── marketplace.json             Claude Code marketplace catalog
+.github/workflows/               weekly reference refresh
 ```
 
-`scripts/` sits at the repo root, not inside the plugin: installing copies only the plugin directory
-to a cache, so maintenance tooling there would ship to every user for no reason.
+The repository root *is* the Claude Code plugin, so `skills/` has exactly one canonical copy — no
+duplication and no symlinks. Other agents read `skills/` directly.
 
 ## Development
 
 ```bash
-claude --plugin-dir ./plugins/xweather     # load without installing
-claude plugin validate ./plugins/xweather  # validate before publishing
+claude --plugin-dir .            # load in Claude Code without installing
+claude plugin validate .         # validate the manifests
+skills-ref validate ./skills/weather-api   # validate against the Agent Skills spec
 ```
 
-`/reload-plugins` picks up edits without restarting the session.
-
-## Releasing
-
-`plugins/xweather/.claude-plugin/plugin.json` sets an explicit `version`, so **users only receive
-updates when that field is bumped**. Bump it on every release. Keep the `version` in
-`marketplace.json` (if you add one) in step, or omit it there and let the plugin manifest be the
-single source of truth.
-
-**Never change the plugin's `name`.** It keys `enabledPlugins`, `pluginConfigs`, and every
-`/plugin install`, so renaming it breaks existing installs. To change the label users see, edit
-`displayName` in both `plugin.json` and the `marketplace.json` entry. `displayName` requires Claude
-Code v2.1.143 or later and falls back to `name` on older versions.
+`skills-ref` comes from <https://github.com/agentskills/agentskills>. `/reload-plugins` picks up edits
+without restarting a Claude Code session.
 
 ## Regenerating the references
 
@@ -118,13 +165,28 @@ Three further files embed generated content inside hand-written prose:
 `weather-api/references/access-cost.md` and `raster-maps/references/map-units.md` carry multiplier
 tables, and `mapsgl/references/weather-layers.md` documents the catalog's render types, categories,
 and which codes are composite. The script **reports** drift in those but won't rewrite them, since
-regenerating would destroy the surrounding explanation. Fix them by hand when the script flags one.
+regenerating would destroy the surrounding explanation.
 
 Endpoint doc pages render their parameter tables client-side, so the script reads the Next.js RSC
 payload out of the HTML rather than the rendered DOM. That's inherently coupled to Xweather's docs
 stack; if it changes, the script refuses to write near-empty files and fails loudly instead of
-quietly emptying a reference. The two layer catalogs are plain JSON endpoints and need no such
-scraping.
+quietly emptying a reference. The two layer catalogs are plain JSON endpoints and need no scraping.
 
-Each skill's `SKILL.md` tells Claude to refetch the relevant catalog when a request fails or when the
-bundled reference doesn't cover something, so the skills degrade gracefully as the products evolve.
+## Releasing
+
+`.claude-plugin/plugin.json` sets an explicit `version`, so **Claude Code users only receive updates
+when that field is bumped**. Bump it on every release, and keep `metadata.version` in each `SKILL.md`
+in step.
+
+**Never change the plugin's `name`** (`xweather`). It keys `enabledPlugins`, `pluginConfigs`, and
+every `/plugin install`, and it namespaces the skills, so renaming breaks existing installs. To change
+the label users see, edit `displayName` in both `plugin.json` and the `marketplace.json` entry.
+
+## Requirements
+
+- An Xweather account with the relevant product access. A free developer account works for
+  evaluation, with a 2000×2000 static-map size cap.
+- `python3` for the two helper scripts (standard library only — nothing to install).
+- Optional: a subscription including MCP access, if you separately connect the Xweather MCP server.
+- Optional: the Webhooks premium add-on, to actually receive pushed data. The `webhooks` skill is
+  useful before that — you can build and test a receiver against the sample payloads first.

@@ -1,7 +1,11 @@
 ---
 name: raster-maps
 description: This skill should be used to build Xweather Raster Maps image URLs (maps.api.xweather.com) — either static map images or XYZ map tile URLs for Leaflet, Mapbox, Google Maps, OpenLayers and similar libraries — from a description of the weather imagery wanted. Use it whenever a task mentions Raster Maps, maps.api.xweather.com, maps.aerisapi.com, an Xweather weather map layer or overlay (radar, satellite, alerts, temperatures, lightning, tropical cyclones, air quality, base maps, admin overlays), a weather map image or tile layer, layer opacity/blur/blend/scale-hsla modifiers, or asks how Raster Maps usage is measured — map units, tile counts, the daily allowance, or how many accesses a static map or tile layer will consume.
-version: 0.1.0
+compatibility: Skill instructions are provider-neutral. The bundled scripts/xwmap.py needs Python 3 (standard library only) and network access to maps.api.xweather.com.
+license: MIT
+metadata:
+  author: Vaisala Xweather
+  version: "0.9.0"
 ---
 
 # Xweather Raster Maps URL builder
@@ -28,7 +32,7 @@ Every Raster Maps request is one of two shapes, and they are not interchangeable
 | Interactive | No — no pan or zoom | Yes |
 
 **If the user hasn't said which one they want, ask before generating anything.** Use
-AskUserQuestion with these two as the options (plus a third if a route through both is plausible).
+Ask a direct either/or question — a structured-choice prompt if the agent has one, plain text otherwise.
 Don't guess from weak signals and don't produce both by default — a tile template pasted into an
 `<img>` tag renders one 256-pixel square, and a static URL handed to Leaflet fails outright.
 
@@ -191,12 +195,12 @@ equivalent memory or file caching.
 
 If the user is building something animated, multi-layer, and heavily interactive, mention that
 **MapsGL bills completely differently** — in 5-minute sessions where layer count and interaction are
-free — and may be far cheaper for that pattern. See `/xweather:mapsgl`.
+free — and may be far cheaper for that pattern. See the `mapsgl` skill.
 
 Usage is visible in the account dashboard, with a Usage tab for history and per-application
 breakdown; stats lag slightly behind real time.
 
-`xwmap … --estimate-only` computes all of this from a path, pulling live multipliers from the
+`scripts/xwmap.py … --estimate-only` computes all of this from a path, pulling live multipliers from the
 catalog. Full model, the multiplier tables, and reduction tactics: `references/map-units.md`.
 
 ## Credentials and returning the image
@@ -206,19 +210,18 @@ say where keys come from (the Apps section of https://data.portal.xweather.com/a
 else to do.
 
 **With credentials — ask before fetching.** If the user has supplied a client id and secret, ask
-whether they want the image requested and shown, or just the URL to copy. Use AskUserQuestion; don't
-assume. Fetching spends real map units against their allowance, and for a tile template there's no
+whether they want the image requested and shown, or just the URL to copy. Ask; don't assume. Fetching spends real map units against their allowance, and for a tile template there's no
 single meaningful image to return anyway.
 
 If they say yes:
 
 ```bash
 export XWEATHER_CLIENT_ID='…' XWEATHER_CLIENT_SECRET='…'
-xwmap 'flat,radar,admin/800x600/minneapolis,mn,7/current.png' -o radar.png
+python3 scripts/xwmap.py 'flat,radar,admin/800x600/minneapolis,mn,7/current.png' -o radar.png
 ```
 
-`xwmap` is on PATH while this plugin is enabled. Outside the plugin, call it directly:
-`python3 "${CLAUDE_PLUGIN_ROOT}/skills/raster-maps/scripts/xwmap.py"`.
+Invoke it as `python3 scripts/xwmap.py`, resolved relative to this skill's directory. Some clients
+also expose it as a bare `xwmap` command on PATH — use that if available, but don't assume it.
 
 The script prints the placeholder URL and the map-unit estimate, saves the image, and detects the
 JSON error body that Raster Maps returns in place of an image on failure. Read the saved file back
@@ -265,10 +268,10 @@ layers) rather than pretending a `{z}/{x}/{y}` template resolves to one image.
   and `scale-hsla` with the documented tint / recolour / heatmap / shadow recipes.
 - `references/map-units.md` — the cost model, layers grouped by multiplier, caching, and how to
   reduce consumption.
-- `xwmap` (`scripts/xwmap.py`) — estimates map units from a path (`--estimate-only`) and fetches
+- `scripts/xwmap.py` — estimates map units from a path (`--estimate-only`) and fetches
   the image using `XWEATHER_CLIENT_ID` / `XWEATHER_CLIENT_SECRET` from the environment.
 
-Related: the `/xweather:weather-api` skill covers the Weather **data** API
-(`data.api.xweather.com`), and `/xweather:mapsgl` covers the client-side WebGL SDK. Raster Maps is
+Related: the `weather-api` skill covers the Weather **data** API
+(`data.api.xweather.com`), and `mapsgl` covers the client-side WebGL SDK. Raster Maps is
 the server-rendered image product — reach for MapsGL instead when the user wants animated,
 styleable, client-side layers.
