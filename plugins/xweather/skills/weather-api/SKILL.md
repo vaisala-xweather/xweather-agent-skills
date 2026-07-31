@@ -1,6 +1,6 @@
 ---
 name: weather-api
-description: This skill should be used to turn a plain-language description of wanted weather data into a working Xweather Weather API request URL (data.api.xweather.com), and to run that request when the user supplies their client id and secret. Use it whenever a task mentions the Xweather API, Aeris API / api.aerisapi.com, an Xweather endpoint or action (observations, conditions, forecasts, alerts, lightning, stormcells, airquality, tropicalcyclones, tides, sunmoon, roadweather, …), or asks "what's the API URL for …", "build me a query for …", "how do I get some kind of weather data for a place", or asks to debug an Xweather request that returns no data or an error. Also use it for questions about what an Xweather request costs — accesses, hits, tokens, endpoint multipliers, rate limits, or allowance usage.
+description: This skill should be used to turn a plain-language description of wanted weather data into a working Xweather Weather API request URL (data.api.xweather.com), and to run that request when the user supplies their client id and secret. Use it whenever a task mentions the Xweather API, Aeris API / api.aerisapi.com, an Xweather endpoint or action (observations, conditions, forecasts, alerts, lightning, stormcells, airquality, tropicalcyclones, tides, sunmoon, roadweather, …), or asks "what's the API URL for …", "build me a query for …", "how do I get some kind of weather data for a place", or asks to debug an Xweather request that returns no data or an error. Also use it for questions about what an Xweather request costs — accesses, hits, tokens, endpoint multipliers, rate limits, or allowance usage — and for questions about the hosted Xweather MCP server at mcp.api.xweather.com — whether it exists, whether it is available to them, how to connect it, or how to authenticate and scope its tools.
 version: 0.1.0
 ---
 
@@ -269,6 +269,66 @@ If the reply contains several URLs, give each its own cost line and a total.
 | `404` | Endpoint path is wrong. |
 | `429` with `maxhits_min` / `maxhits` | Per-minute or subscription-period access limit hit — check the `X-RateLimit-*` headers and see `access-cost.md`. |
 | Nothing wrong, but huge response | Add `fields=`, lower `limit`/`plimit`. |
+
+## The Xweather MCP server — an alternative to building URLs
+
+Xweather runs a hosted MCP server at **`https://mcp.api.xweather.com/mcp`**. Connected to an MCP
+client, it turns a plain-language question into the necessary Xweather calls directly — no endpoint,
+action, filter, or field names to get right.
+
+Raise it when the user is asking questions *of* the weather rather than building an application
+against the API: "what's the lightning risk in Tampa," "compare this week's rainfall for Seattle and
+Portland." Keep using this skill for URLs when they need a request to embed in their own code, want to
+understand the API's structure, or are debugging an existing integration. The two complement each
+other — the MCP server answers questions; this skill produces artifacts.
+
+**It is not bundled with this plugin.** Adding it is one command:
+
+```bash
+claude mcp add --transport http xweather https://mcp.api.xweather.com/mcp \
+  --header "Authorization: Bearer CLIENT_ID_CLIENT_SECRET"
+```
+
+Add `--scope user` to make it available across all projects, or `--scope project` to share it with a
+repo via `.mcp.json`.
+
+### Authentication
+
+The token is the **client id and secret joined by a single underscore** — `abc123_def456` — not two
+separate parameters. Three ways to pass it:
+
+| Method | When |
+|---|---|
+| `Authorization: Bearer <client_id>_<client_secret>` | Preferred. Any client that supports custom headers, including Claude Code. |
+| `?api_key=<client_id>_<client_secret>` | Clients that can't set headers — Claude desktop and ChatGPT connectors. |
+| OAuth 2.0 | Supported, but as of Dec 18 2025 Xweather documents multiple issues with Claude's OAuth flow and recommends against it. |
+
+### Scoping the tools
+
+Six tag groups exist: `general` (current conditions, impacts, air quality), `forecast`, `summary`
+(aggregations), `tropical`, `lightning`, `roadweather`. Filter them with query parameters:
+
+```
+https://mcp.api.xweather.com/mcp?include_tags=forecast,summary
+```
+
+Also `exclude_tags`, `include_tools`, `exclude_tools` (exact tool names like
+`xweather_get_current_weather`). Precedence runs `exclude_tools` → `exclude_tags` → `include_tools` →
+`include_tags`.
+
+Recommend scoping when the user has other MCP servers connected — loading all six groups crowds the
+model's tool choices, which is the reason Xweather documents the filters at all.
+
+### Diagnosing a failed connection
+
+| Response | Meaning |
+|---|---|
+| `401 invalid_token` | Missing or wrong token. The body suggests clearing tokens and re-registering — that's generic MCP OAuth advice and doesn't apply to bearer-key auth; check the token value instead. |
+| `500` | Usually a malformed token: both halves and exactly one underscore are required. |
+| `403` | Valid credentials, but the subscription doesn't include MCP access. |
+
+MCP access may need a specific subscription tier, so "is it available to me?" is an account question
+— point the user at their account executive rather than guessing.
 
 ## Reference files
 

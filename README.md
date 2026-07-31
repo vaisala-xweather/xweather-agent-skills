@@ -1,8 +1,7 @@
 # Xweather plugin marketplace for Claude Code
 
 A Claude Code marketplace distributing the **`xweather`** plugin — four skills covering the
-Xweather Weather API, Raster Maps, the MapsGL JS SDK, and Webhooks, plus the hosted Xweather MCP
-server for live data.
+Xweather Weather API, Raster Maps, the MapsGL JS SDK, and Webhooks.
 
 ## Install
 
@@ -32,12 +31,12 @@ configuration needed.
 | `/xweather:mapsgl` | The `@xweather/mapsgl` WebGL SDK — controllers, weather layers, styling, expressions, legends, timeline animation |
 | `/xweather:webhooks` | Pushed data delivery — receiver design, securing the endpoint, available data sets, retry and idempotency behaviour, registration details |
 
-On enable, Claude Code offers to connect the hosted **Xweather MCP server** so Claude can fetch live
-weather data in conversation. Provide your API key as `client_id_client_secret`, or leave it blank to
-use the skills for URL building only — the skills work either way, though a blank key leaves a
-cosmetic MCP connection error in `/plugin` → Errors. See the
-[plugin README](plugins/xweather/README.md#mcp-server-optional) for tool-group scoping, the failure
-modes, and why the MCP key and the CLI credentials are configured separately.
+Installing prompts for nothing and configures nothing — the skills work immediately, and the two
+commands below activate once you export your credentials.
+
+Xweather also hosts an **MCP server** for answering weather questions directly. It isn't bundled here
+(a bundled MCP server can't be conditionally disabled, so it would show a permanent connection error
+for anyone without MCP access); the `weather-api` skill documents how to connect it in one command.
 
 Two commands are added to the Bash tool's `PATH` while the plugin is enabled:
 
@@ -57,8 +56,7 @@ secrets stay out of shell history and out of the printed output. Keys come from 
 .github/workflows/                  weekly reference refresh
 scripts/regenerate_references.py    regenerates the generated reference files
 plugins/xweather/                   the plugin
-├── .claude-plugin/plugin.json      manifest + userConfig prompts
-├── .mcp.json                       hosted Xweather MCP server
+├── .claude-plugin/plugin.json      manifest
 ├── bin/                            xwrequest, xwmap — added to PATH
 └── skills/
     ├── weather-api/

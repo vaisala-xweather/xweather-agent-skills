@@ -44,7 +44,6 @@ jobs:
           # Cheap guard: a malformed manifest should fail here, not after a PR is opened.
           python3 -c "import json; json.load(open('plugins/xweather/.claude-plugin/plugin.json'))"
           python3 -c "import json; json.load(open('.claude-plugin/marketplace.json'))"
-          python3 -c "import json; json.load(open('plugins/xweather/.mcp.json'))"
 
       - name: Regenerate references
         id: regen

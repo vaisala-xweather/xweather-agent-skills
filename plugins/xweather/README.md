@@ -2,7 +2,6 @@
 
 Claude Code plugin for the Xweather developer platform: build Weather API request URLs, generate
 Raster Maps imagery and tile URLs, work with the MapsGL WebGL SDK, and set up pushed data delivery.
-Optionally connects the hosted Xweather MCP server so Claude can fetch live weather data directly.
 
 ## Skills
 
@@ -42,48 +41,28 @@ the acknowledge-then-process contract, retry and idempotency behaviour, and the 
 Xweather needs. Webhooks are a premium add-on and endpoints are registered by Xweather staff, so the
 skill separates what you can build today from what needs an account conversation.
 
-## MCP server (optional)
+## The Xweather MCP server
 
-The plugin bundles the hosted Xweather MCP server at `https://mcp.api.xweather.com/mcp`. Where the
-skills teach Claude to *build* URLs for your application, the MCP server lets Claude *fetch* live
-weather data during a conversation.
+Xweather hosts an MCP server at `https://mcp.api.xweather.com/mcp` that answers weather questions
+directly instead of producing URLs for you to call.
 
-It activates only if you provide an API key when enabling the plugin. Claude Code prompts for two
-values and stores the key in your system keychain:
+**This plugin deliberately does not bundle it.** A bundled MCP server can't be conditionally disabled,
+so anyone installing the plugin without an MCP-enabled subscription would get a permanent red
+connection error for a feature they never asked for. Adding it yourself is one command:
 
-| Setting | Purpose |
-|---|---|
-| **Xweather API key** | Your `client_id` and `client_secret` joined by an underscore — `abc123_def456`. Leave blank to skip the MCP server and use the skills for URL building only. |
-| **MCP tool groups** | Comma-separated tags limiting which tools load: `general`, `forecast`, `summary`, `tropical`, `lightning`, `roadweather`. Defaults to `general,forecast,summary`. |
+```bash
+claude mcp add --transport http xweather https://mcp.api.xweather.com/mcp \
+  --header "Authorization: Bearer CLIENT_ID_CLIENT_SECRET"
+```
 
-Narrowing the tool groups is worth doing. All six tags' worth of tools crowd the model's choices,
-especially alongside other MCP servers — the Xweather docs recommend scoping for exactly this reason.
+Note the token format: client id and secret joined by a **single underscore**. Add `--scope user` for
+all projects, or `--scope project` to share it with a repo. Narrow the loaded tools with
+`?include_tags=forecast,summary` if you have other MCP servers connected.
 
-MCP access may require a specific subscription tier. To change either value later, run `/plugin` and
-reconfigure.
-
-### If you're not using the MCP server
-
-Leaving the API key blank does **not** silently disable the server — it still tries to connect, gets
-a `401 invalid_token`, and shows up as a connection error under `/plugin` → **Errors**. The four
-skills are entirely unaffected; the error is cosmetic. If a permanently red error bothers you, delete
-`.mcp.json` from the installed plugin, or ask your Xweather account executive about MCP access.
-
-Failure modes worth recognising:
-
-| Response | Meaning |
-|---|---|
-| `401 invalid_token` | No key configured, or the key is wrong. Note the message suggests clearing tokens and re-registering — that's generic MCP OAuth advice and doesn't apply here, since this plugin authenticates with a bearer key, not OAuth. |
-| `500` | Usually a malformed key. The format is `client_id` + `_` + `client_secret` with a single underscore; both halves are required. |
-| `403` | Valid key, but the subscription doesn't include MCP access. |
-
-### Two credential mechanisms, unavoidably
-
-The MCP server reads its key from plugin configuration. The `xwrequest` and `xwmap` commands read
-`XWEATHER_CLIENT_ID` and `XWEATHER_CLIENT_SECRET` from the environment. These are deliberately
-separate: Claude Code refuses to substitute a sensitive config value into anything that runs in a
-shell, because the value would then be interpreted by that shell. So configuring the MCP key does not
-also configure the commands, and vice versa. Set both if you want both.
+The `weather-api` skill documents the server in full — authentication methods, the six tool tag
+groups, filter precedence, and how to read a failed connection — so you can just ask Claude about it.
+Whether MCP access is included in your subscription is an account question for your Xweather account
+executive.
 
 ## Commands added to PATH
 
@@ -120,6 +99,6 @@ the key pair to anyone viewing the page. The namespace binding is what limits th
 - An Xweather account with the relevant product access. A free developer account works for
   evaluation, with a 2000×2000 static-map size cap.
 - `python3` for the two bundled commands (standard library only — no dependencies to install).
-- Optional: a subscription including MCP access, to use the bundled MCP server.
+- Optional: a subscription including MCP access, if you separately connect the Xweather MCP server.
 - Optional: the Webhooks premium add-on, to actually receive pushed data. The `webhooks` skill is
   useful before that — you can build and test a receiver against the sample payloads first.
