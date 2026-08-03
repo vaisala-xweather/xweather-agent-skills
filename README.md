@@ -4,10 +4,10 @@ Four [Agent Skills](https://agentskills.io) for the Xweather developer platform:
 request URLs, generate Raster Maps imagery and tile URLs, work with the MapsGL WebGL SDK, and set up
 pushed data delivery.
 
-Agent Skills is an open standard stewarded by the Linux Foundation's Agentic AI Foundation, so these
-work in any skills-compatible agent — **OpenAI Codex, Cursor, GitHub Copilot, VS Code, Gemini CLI,
-Goose, OpenHands, JetBrains Junie, Claude Code**, and others. The repository also ships as a Claude
-Code plugin for one-command install there.
+Agent Skills is an open standard originally published by Anthropic, so these work in any
+skills-compatible agent — **OpenAI Codex, Cursor, GitHub Copilot, VS Code, Gemini CLI, Goose,
+OpenHands, JetBrains Junie, Claude Code**, and others. The repository also packages the same skills
+as installable plugins for Claude Code and OpenAI's ChatGPT and Codex plugin surfaces.
 
 ## The skills
 
@@ -35,7 +35,20 @@ Installing prompts for nothing and configures nothing. When developing, load the
 
 ### OpenAI Codex
 
-Codex discovers skills in `.agents/skills` directories — note the plural `.agents`:
+Install the plugin from this repository's marketplace:
+
+```bash
+codex plugin marketplace add vaisala-xweather/xweather-agent-skills
+codex plugin add xweather@vaisala-xweather
+```
+
+Start a new Codex thread after installation so the new skills are loaded. The repository retains its
+Claude marketplace as the shared catalog because Codex supports the legacy-compatible
+`.claude-plugin/marketplace.json` location; `plugins/xweather/.codex-plugin/plugin.json` supplies the
+first-class OpenAI plugin metadata.
+
+For a skills-only installation, Codex also discovers skills in `.agents/skills` directories — note
+the plural `.agents`:
 
 | Scope | Path |
 |---|---|
@@ -49,8 +62,8 @@ mkdir -p ~/.agents/skills
 ln -s "$PWD"/xweather-agent-skills/plugins/xweather/skills/* ~/.agents/skills/
 ```
 
-Symlinking rather than copying means `git pull` updates the skills in place. Restart Codex if a skill
-doesn't appear. Individual skills can be disabled in `~/.codex/config.toml`:
+Symlinking rather than copying means `git pull` updates a skills-only installation in place. Restart
+Codex if a skill doesn't appear. Individual skills can be disabled in `~/.codex/config.toml`:
 
 ```toml
 [[skills.config]]
@@ -65,11 +78,12 @@ the same `SKILL.md` files but look in different directories. Clone the repo and 
 `plugins/xweather/skills/*` into whichever location your client documents — <https://agentskills.io/clients> links the
 per-tool instructions.
 
-### ChatGPT (the app, not Codex)
+### ChatGPT
 
-The consumer ChatGPT app reads **neither** Agent Skills nor `AGENTS.md` — only MCP connectors. These
-skills won't load there. For live weather data in ChatGPT, connect Xweather's hosted MCP server
-instead; see [The Xweather MCP server](#the-xweather-mcp-server) below.
+ChatGPT can load Agent Skills packaged in an OpenAI plugin. This repository includes the required
+`.codex-plugin/plugin.json`; public discovery in ChatGPT and Codex requires a separate submission to
+OpenAI's shared plugin directory. The hosted Xweather MCP server remains available when direct
+live-data tools are preferred; see [The Xweather MCP server](#the-xweather-mcp-server) below.
 
 ## Helper scripts
 
@@ -107,8 +121,8 @@ the key pair to anyone viewing the page. The namespace binding is what limits th
 ## The Xweather MCP server
 
 Xweather hosts an MCP server at `https://mcp.api.xweather.com/mcp` that answers weather questions
-directly instead of producing URLs for you to call — useful in agents that consume MCP but not
-skills, including the ChatGPT app.
+directly instead of producing URLs for you to call — useful when direct live-data tools are a better
+fit than URL-building guidance.
 
 **It is deliberately not bundled here.** A bundled MCP server can't be conditionally disabled, so
 anyone without an MCP-enabled subscription would get a permanent connection error for a feature they
@@ -150,7 +164,8 @@ AGENTS.md                             conventions for agents working in this rep
 scripts/regenerate_references.py      regenerates the catalog-derived references
 .github/workflows/                    weekly reference refresh
 plugins/xweather/                     the plugin
-├── .claude-plugin/plugin.json        plugin manifest
+├── .claude-plugin/plugin.json        Claude Code plugin manifest
+├── .codex-plugin/plugin.json         ChatGPT and Codex plugin manifest
 ├── bin/                              xwrequest, xwmap — Claude Code puts these on PATH
 └── skills/                           the four skills — the portable payload
     ├── weather-api/
@@ -160,24 +175,25 @@ plugins/xweather/                     the plugin
 ```
 
 The marketplace catalog sits at the repository root and the plugin lives in `plugins/xweather/`, the
-layout `anthropics/claude-code` uses. That nesting is required: the Claude app's marketplace sync only
-resolves **relative** plugin sources, so the plugin has to live inside the marketplace repo. Cross-repo
-`github`, `url`, and `url`+`sha` sources all fail there with `failed_content`, even though the Claude
-Code CLI accepts them.
+layout `anthropics/claude-code` uses. That nesting is required because the Claude app's marketplace
+sync resolves relative plugin sources. Codex also recognizes this marketplace location for
+compatibility, so a second catalog under `.agents/` would only duplicate release metadata.
 
-There is still exactly one copy of the skills — non-Claude agents read
-`plugins/xweather/skills/` instead of a root-level `skills/`.
+There is still exactly one copy of the skills. Both plugin manifests and skills-compatible agents
+load `plugins/xweather/skills/` instead of maintaining vendor-specific copies.
 
 ## Development
 
 ```bash
 claude --plugin-dir ./plugins/xweather   # load in Claude Code without installing
 claude plugin validate .                 # validate the manifests
+python3 scripts/validate_packaging.py    # compare shared marketplace, manifest, and skill metadata
 skills-ref validate ./plugins/xweather/skills/weather-api   # validate against the Agent Skills spec
 ```
 
-`skills-ref` comes from <https://github.com/agentskills/agentskills>. `/reload-plugins` picks up edits
-without restarting a Claude Code session.
+`.github/workflows/validate-packaging.yml` runs the metadata comparison for relevant pushes and pull
+requests. `skills-ref` comes from <https://github.com/agentskills/agentskills>. `/reload-plugins`
+picks up edits without restarting a Claude Code session.
 
 ## Regenerating the references
 
@@ -213,14 +229,16 @@ quietly emptying a reference. The two layer catalogs are plain JSON endpoints an
 
 ## Releasing
 
-`plugins/xweather/.claude-plugin/plugin.json` sets an explicit `version`, so **Claude Code users only receive updates
-when that field is bumped**. Bump it on every release, and keep `metadata.version` in each `SKILL.md`
-in step.
+Both plugin manifests set an explicit `version`, so installed users only receive a new packaged
+release when it is bumped. Keep `version` in `plugins/xweather/.claude-plugin/plugin.json` and
+`plugins/xweather/.codex-plugin/plugin.json` aligned with `metadata.version` in every `SKILL.md`.
+Run `python3 scripts/validate_packaging.py` before releasing; CI rejects drift in names, versions,
+display metadata, or the shared marketplace source.
 
 **Never change the plugin's `name`** (`xweather`). It keys `enabledPlugins`, `pluginConfigs`, and
-every `/plugin install`, and it namespaces the skills, so renaming breaks existing installs. To change
-the label users see, edit `displayName` in both `plugins/xweather/.claude-plugin/plugin.json` and the
-root `marketplace.json` entry.
+plugin installation state, and it namespaces the skills, so renaming breaks existing installs. To
+change the label users see, update the Claude manifest and marketplace entry plus
+`interface.displayName` in the Codex manifest.
 
 ## Requirements
 

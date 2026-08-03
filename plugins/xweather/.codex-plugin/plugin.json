@@ -1,0 +1,40 @@
+{
+  "name": "xweather",
+  "version": "0.11.0",
+  "description": "Xweather Weather API, Raster Maps, MapsGL, and Webhooks — build and run Weather API request URLs, generate static map images and tile URLs, work with the MapsGL WebGL SDK, and set up push data delivery.",
+  "author": {
+    "name": "Vaisala Xweather",
+    "url": "https://www.xweather.com"
+  },
+  "homepage": "https://www.xweather.com/docs",
+  "repository": "https://github.com/vaisala-xweather/xweather-agent-skills",
+  "license": "MIT",
+  "keywords": [
+    "xweather",
+    "weather",
+    "weather-api",
+    "raster-maps",
+    "mapsgl",
+    "webhooks",
+    "radar",
+    "geospatial"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Xweather API & Maps",
+    "shortDescription": "Build Xweather API, Raster Maps, MapsGL, and webhook integrations",
+    "longDescription": "Reusable Xweather skills for building Weather API requests, Raster Maps imagery and tiles, MapsGL integrations, and webhook receivers.",
+    "developerName": "Vaisala Xweather",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://www.xweather.com/docs",
+    "defaultPrompt": [
+      "Build an Xweather Weather API request and report its access cost.",
+      "Create an Xweather weather map integration for my application.",
+      "Help me design an Xweather webhook receiver."
+    ]
+  }
+}

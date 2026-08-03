@@ -2,7 +2,7 @@
 
 This repository packages four [Agent Skills](https://agentskills.io) for the Xweather developer
 platform. They are provider-neutral: any skills-compatible agent can load them, and the same content
-also ships as a Claude Code plugin.
+also ships as plugins for Claude Code and OpenAI's ChatGPT and Codex plugin surfaces.
 
 ## The skills
 
@@ -64,7 +64,7 @@ them; fix them by hand when it flags one.
   do ("fetch the catalog", "ask the user"), not which tool to do it with.
 - **Reference bundled files by relative path** from the skill root — `references/foo.md`,
   `scripts/bar.py` — and keep them one level deep.
-- **The two scripts are standard-library Python 3** with no dependencies. Keep them that way; a
+- **All Python scripts are standard-library Python 3** with no dependencies. Keep them that way; a
   dependency install would break the zero-setup property that makes them portable.
 - **Credentials come from the environment** (`XWEATHER_CLIENT_ID`, `XWEATHER_CLIENT_SECRET`) and are
   never echoed. Printed URLs always show `{client_id}` / `{client_secret}` placeholders. Preserve
@@ -74,6 +74,8 @@ them; fix them by hand when it flags one.
 
 ## Bumping the version
 
-`plugins/xweather/.claude-plugin/plugin.json` sets an explicit `version`; Claude Code users only receive updates when
-it changes, so bump it on every release. Keep `metadata.version` in each `SKILL.md` in step. Never
-change the plugin's `name` (`xweather`) — it keys installs and namespaces the skills.
+Both `plugins/xweather/.claude-plugin/plugin.json` and
+`plugins/xweather/.codex-plugin/plugin.json` set an explicit `version`; bump both on every release.
+Keep `metadata.version` in each `SKILL.md` in step. Never change the plugin's `name` (`xweather`) —
+it keys installs and namespaces the skills. Run `python3 scripts/validate_packaging.py` after any
+marketplace, manifest, or skill-version change; CI runs the same comparison.

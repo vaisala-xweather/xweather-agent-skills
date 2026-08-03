@@ -4,7 +4,7 @@ description: This skill should be used to design, build, secure, or debug an Xwe
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.10.0"
+  version: "0.11.0"
 ---
 
 # Xweather Webhooks
@@ -79,8 +79,7 @@ Also available, less commonly used: Air Quality · Earthquakes · Observations �
 Reports · Storm Cells.
 
 Anything outside both lists needs a support conversation. Each data set corresponds to a Weather API
-endpoint, so the `weather-api` skill's `references/endpoints.md` is the reference
-for what fields the payload will contain.
+endpoint. Use the `weather-api` skill when you need the endpoint's response-field reference.
 
 ## Building the receiver
 

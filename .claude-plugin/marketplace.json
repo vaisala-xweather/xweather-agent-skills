@@ -1,6 +1,6 @@
 {
   "name": "vaisala-xweather",
-  "description": "Xweather plugins for Claude — Weather API, Raster Maps, MapsGL, and Webhooks",
+  "description": "Xweather plugins for Claude Code, ChatGPT, and Codex — Weather API, Raster Maps, MapsGL, and Webhooks",
   "owner": {
     "name": "Vaisala Xweather",
     "url": "https://www.xweather.com"
