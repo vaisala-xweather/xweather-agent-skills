@@ -59,7 +59,7 @@ rather than trusting that count.
 
 ## Recommended workflow
 
-1. Grep `layers.md` for the intent or category — it lists every code with its render type,
+1. Search `layers.md` for the intent or category — it lists every code with its render type,
    animatability, and cost.
 2. If the answer isn't there, fetch `https://www.xweather.com/docs/api/mapsgl/layers` once per task
    and filter the `layers` array client-side rather than re-fetching per query.

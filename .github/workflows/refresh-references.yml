@@ -41,19 +41,7 @@ jobs:
           python-version: "3.12"
 
       - name: Validate the manifests
-        run: |
-          # Cheap guard: a malformed manifest should fail here, not after a PR is opened.
-          # Globbed rather than hardcoded — hardcoded paths broke this step when the plugin moved
-          # into plugins/xweather/, and the failure looked like a workflow bug rather than a stale path.
-          python3 - <<'EOF'
-          import json, pathlib, sys
-          found = sorted(pathlib.Path('.').glob('**/.claude-plugin/*.json'))
-          if not found:
-              sys.exit('error: no .claude-plugin manifests found — has the layout changed?')
-          for f in found:
-              json.loads(f.read_text())
-              print(f'ok {f}')
-          EOF
+        run: python3 scripts/validate_packaging.py
 
       - name: Regenerate references
         id: regen
@@ -117,8 +105,8 @@ jobs:
               groupings inside hand-written prose, so the script only *reports* drift there. If the
               run log mentions any of them, edit it by hand in this PR.
 
-            Consider bumping `version` in `plugins/xweather/.claude-plugin/plugin.json` before
-            merging — installed plugins only update when that field changes.
+            Consider bumping both plugin manifest versions and every skill's `metadata.version`
+            before merging — `scripts/validate_packaging.py` requires them to remain aligned.
           labels: |
             dependencies
             documentation

@@ -1,11 +1,11 @@
 ---
 name: weather-api
-description: This skill should be used to turn a plain-language description of wanted weather data into a working Xweather Weather API request URL (data.api.xweather.com), and to run that request when the user supplies their client id and secret. Use it whenever a task mentions the Xweather API, Aeris API / api.aerisapi.com, an Xweather endpoint or action (observations, conditions, forecasts, alerts, lightning, stormcells, airquality, tropicalcyclones, tides, sunmoon, roadweather, …), or asks "what's the API URL for …", "build me a query for …", "how do I get some kind of weather data for a place", or asks to debug an Xweather request that returns no data or an error. Also use it for questions about what an Xweather request costs — accesses, hits, tokens, endpoint multipliers, rate limits, or allowance usage — and for questions about the hosted Xweather MCP server at mcp.api.xweather.com — whether it exists, whether it is available to them, how to connect it, or how to authenticate and scope its tools.
+description: Build and run Xweather Weather API request URLs for data.api.xweather.com from plain-language requirements. Use when a task mentions the Xweather or legacy Aeris API, weather endpoints such as observations, conditions, forecasts, alerts, lightning, air quality, tropical cyclones, tides, or road weather; asks for an API URL or query; needs help debugging an empty or failed request; asks about access costs, endpoint multipliers, rate limits, or allowance usage; or needs guidance for the hosted Xweather MCP server at mcp.api.xweather.com, including availability, connection, authentication, and tool scoping.
 compatibility: Skill instructions are provider-neutral. The bundled scripts/xwrequest.py needs Python 3 (standard library only) and network access to data.api.xweather.com.
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.10.0"
+  version: "0.11.0"
 ---
 
 # Xweather Weather API URL builder
@@ -304,9 +304,9 @@ separate parameters. Three ways to pass it:
 
 | Method | When |
 |---|---|
-| `Authorization: Bearer <client_id>_<client_secret>` | Preferred. Any client that supports custom headers, including Claude Code. |
-| `?api_key=<client_id>_<client_secret>` | Clients that can't set headers — Claude desktop and ChatGPT connectors. |
-| OAuth 2.0 | Supported, but as of Dec 18 2025 Xweather documents multiple issues with Claude's OAuth flow and recommends against it. |
+| `Authorization: Bearer <client_id>_<client_secret>` | Preferred for clients that support custom request headers. |
+| `?api_key=<client_id>_<client_secret>` | For clients that cannot set custom request headers. |
+| OAuth 2.0 | Supported, but verify current Xweather OAuth guidance before recommending it because client interoperability varies. |
 
 ### Scoping the tools
 
@@ -346,7 +346,7 @@ MCP access may need a specific subscription tier, so "is it available to me?" is
   and POST forms, place formats, date forms, query operators, sorting, output formats, batch
   requests, response envelope, error/warning codes, cost headers.
 - `references/filters.md` — what each endpoint's `filter` tokens and `query` properties actually
-  mean. Grep for the `## /endpoint` heading you need rather than reading it end to end.
+  mean. Search for the `## /endpoint` heading you need rather than reading it end to end.
 - `references/examples.md` — the API docs' own example requests for every endpoint, with
   descriptions. The best model for correct URL shape.
 - `references/recipes.md` — 34 real-world queries by industry/use case, plus the patterns behind

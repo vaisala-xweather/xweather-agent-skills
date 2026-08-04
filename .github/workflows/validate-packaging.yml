@@ -1,0 +1,36 @@
+name: Validate plugin packaging
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "LICENSE"
+      - ".claude-plugin/marketplace.json"
+      - "plugins/xweather/.claude-plugin/plugin.json"
+      - "plugins/xweather/.codex-plugin/plugin.json"
+      - "plugins/xweather/skills/*/SKILL.md"
+      - "scripts/validate_packaging.py"
+      - ".github/workflows/validate-packaging.yml"
+  push:
+    paths:
+      - "LICENSE"
+      - ".claude-plugin/marketplace.json"
+      - "plugins/xweather/.claude-plugin/plugin.json"
+      - "plugins/xweather/.codex-plugin/plugin.json"
+      - "plugins/xweather/skills/*/SKILL.md"
+      - "scripts/validate_packaging.py"
+      - ".github/workflows/validate-packaging.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compare shared plugin metadata
+        run: python3 scripts/validate_packaging.py
