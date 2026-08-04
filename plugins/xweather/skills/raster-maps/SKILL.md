@@ -1,6 +1,6 @@
 ---
 name: raster-maps
-description: This skill should be used to build Xweather Raster Maps image URLs (maps.api.xweather.com) — either static map images or XYZ map tile URLs for Leaflet, Mapbox, Google Maps, OpenLayers and similar libraries — from a description of the weather imagery wanted. Use it whenever a task mentions Raster Maps, maps.api.xweather.com, maps.aerisapi.com, an Xweather weather map layer or overlay (radar, satellite, alerts, temperatures, lightning, tropical cyclones, air quality, base maps, admin overlays), a weather map image or tile layer, layer opacity/blur/blend/scale-hsla modifiers, or asks how Raster Maps usage is measured — map units, tile counts, the daily allowance, or how many accesses a static map or tile layer will consume.
+description: This skill should be used to build Xweather Raster Maps image URLs (maps.api.xweather.com) — either static map images or XYZ map tile URLs for Leaflet, Mapbox, Google Maps, OpenLayers and similar libraries — from a description of the weather imagery wanted. Use it whenever a task mentions Raster Maps, maps.api.xweather.com, maps.aerisapi.com, an Xweather weather map layer or overlay (radar, satellite, alerts, temperatures, lightning, tropical cyclones, air quality, base maps, admin overlays), a weather map image or tile layer, layer opacity/blur/blend/scale-hsla modifiers, or asks how Raster Maps usage is measured — map units, tile counts, the daily allowance, or how many accesses a static map or tile layer will consume. Also covers Xweather's attribution requirement — the 'Powered by Vaisala Xweather' credit and logo rules that apply wherever Xweather data or imagery is displayed.
 compatibility: Skill instructions are provider-neutral. The bundled scripts/xwmap.py needs Python 3 (standard library only) and network access to maps.api.xweather.com.
 license: MIT
 metadata:
@@ -53,6 +53,8 @@ report", or shows an `<img>` tag (→ static).
 6. **Apply modifiers** if the request implies them — opacity, blur, blend, recolour. See
    `references/modifiers.md`.
 7. **Report the URL with its map-unit cost** (see Map units), then handle credentials (see below).
+8. **Include the attribution.** Any markup you hand over — an `<img>` tag, a tile layer, a template —
+   needs the Xweather credit alongside it. See "Attribution is required" below.
 
 Never invent a layer code. Check `references/layers.md`, or refetch the live catalog:
 
@@ -103,6 +105,18 @@ terrain,temperatures:blend(overlay),admin-cities
 Maximum **10 layers** per request.
 
 ## URL shapes
+
+When the URL goes into a page, the attribution goes with it:
+
+```html
+<img src="https://maps.api.xweather.com/{client_id}_{client_secret}/flat,radar,admin/800x600/minneapolis,mn,7/current.png"
+     width="800" height="600" alt="Radar" />
+<a href="https://www.xweather.com/" target="_blank" title="Powered by Vaisala Xweather">Powered by Vaisala Xweather</a>
+```
+
+For a tile layer, most mapping libraries take it as an attribution option instead — Leaflet and
+Mapbox GL both accept an `attribution` string on the layer or source, which is the idiomatic place to
+put it.
 
 **Static, centre point** — place and zoom share one comma-joined segment:
 
@@ -256,6 +270,33 @@ layers) rather than pretending a `{z}/{x}/{y}` template resolves to one image.
 | Blend has no effect | Two blends on one layer — only one is allowed per layer. |
 | Layer code rejected | A legacy alias (`sat`, `cities`, `frad`) — use the catalog code (`satellite-geocolor`, `admin-cities`, `fradar`). |
 | Higher bill than expected | A ×10 lightning or ×5 air-quality layer, a layer plotted twice, or an interactive map being panned. |
+
+## Attribution is required
+
+Xweather requires attribution wherever its data or imagery is displayed. This applies to **all
+products** — Weather API, Raster Maps, and MapsGL alike. Build it into anything you produce, and say
+so when handing over code or URLs that will end up in front of users.
+
+The minimum is a link to `https://www.xweather.com/` reading "Powered by Vaisala Xweather":
+
+```html
+<a href="https://www.xweather.com/" target="_blank" title="Powered by Vaisala Xweather">Powered by Vaisala Xweather</a>
+```
+
+The logo may be substituted for the "Xweather" text. Light and dark variants exist in SVG and PNG:
+
+```html
+<a href="https://www.xweather.com/" target="_blank" title="Powered by Vaisala Xweather">
+  <img src="https://www.xweather.com/assets/logos/vaisala-xweather-logo-dark.svg" alt="Vaisala Xweather" height="40" />
+</a>
+```
+
+Swap `-dark` for `-light` over a dark background, or `.svg` for `.png`. Using the logo brings rules:
+keep it unmodified, leave at least a **10px buffer** of space around it, and only adjust lightness or
+opacity in greyscale. Don't rotate it, don't recolour it (monotone black or white excepted), and don't
+use the symbol without the Xweather name.
+
+Full guide: https://www.xweather.com/docs/weather-api/resources/attribution
 
 ## Reference files
 

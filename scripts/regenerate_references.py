@@ -551,6 +551,34 @@ def fetch_released_version(product):
     return version
 
 
+def verify_mapsgl_cdn(version):
+    """Confirm the CDN actually serves this version before pinning examples to it.
+
+    The releases endpoint and the CDN are separate systems. If the endpoint ever announces a version
+    before the CDN has it, pinning blindly would commit example code whose <script> and <link> tags
+    404 — and CI would open a PR containing it. Two HEAD requests are cheap insurance.
+    """
+    base = "https://cdn.aerisapi.com/sdk/js/mapsgl/%s/aerisweather.mapsgl" % version
+    for url in ("%s.js" % base, "%s.css" % base):
+        req = urllib.request.Request(url, method="HEAD", headers=UA)
+        try:
+            with urllib.request.urlopen(req, timeout=20) as resp:
+                if resp.status != 200:
+                    raise SystemExit(
+                        "error: %s returned HTTP %s — the releases endpoint reports %s but the CDN "
+                        "does not serve it yet. Refusing to pin examples to a broken URL."
+                        % (url, resp.status, version)
+                    )
+        except urllib.error.HTTPError as exc:
+            raise SystemExit(
+                "error: %s returned HTTP %s — the releases endpoint reports %s but the CDN does not "
+                "serve it yet. Refusing to pin examples to a broken URL."
+                % (url, exc.code, version)
+            )
+        except urllib.error.URLError as exc:
+            raise SystemExit(f"error: could not reach {url}: {exc.reason}")
+
+
 def apply_mapsgl_version(version):
     """Point every MapsGL CDN URL in the skill at the released version.
 
@@ -678,6 +706,7 @@ def main():
     print("Fetching released product versions…", file=sys.stderr)
     mgl_version = fetch_released_version("mapsgl")
     print("  mapsgl %s" % mgl_version, file=sys.stderr)
+    verify_mapsgl_cdn(mgl_version)
     version_change = apply_mapsgl_version(mgl_version)
 
     print("Fetching Weather API endpoint catalog and doc pages…", file=sys.stderr)

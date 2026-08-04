@@ -1,6 +1,6 @@
 ---
 name: mapsgl
-description: This skill should be used when working with the Xweather MapsGL JS SDK (@xweather/mapsgl) — setting up a MapsGL map controller for Mapbox GL, MapLibre GL, Google Maps, or Leaflet, and adding, removing, styling, filtering, masking, or animating MapsGL weather layers and custom data layers. Use it whenever a task mentions MapsGL, aerisweather.mapsgl, addWeatherLayer, weather map layers, or client-side WebGL weather rendering. Also use it for questions about how MapsGL usage or cost is measured — sessions, the 5-minute clock intervals, the 150x access multiplier, or how many accesses a MapsGL map consumes.
+description: This skill should be used when working with the Xweather MapsGL JS SDK (@xweather/mapsgl) — setting up a MapsGL map controller for Mapbox GL, MapLibre GL, Google Maps, or Leaflet, and adding, removing, styling, filtering, masking, or animating MapsGL weather layers and custom data layers. Use it whenever a task mentions MapsGL, aerisweather.mapsgl, addWeatherLayer, weather map layers, or client-side WebGL weather rendering. Also use it for questions about how MapsGL usage or cost is measured — sessions, the 5-minute clock intervals, the 150x access multiplier, or how many accesses a MapsGL map consumes. Also covers Xweather's attribution requirement — the 'Powered by Vaisala Xweather' credit and logo rules that apply wherever Xweather data or imagery is displayed.
 license: MIT
 metadata:
   author: Vaisala Xweather
@@ -43,11 +43,11 @@ That endpoint is the release source of truth for every Xweather product, keyed b
 substituted:
 
 ```html
-<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.css" rel="stylesheet" />
-<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.js"></script>
+<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.4/aerisweather.mapsgl.css" rel="stylesheet" />
+<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.4/aerisweather.mapsgl.js"></script>
 ```
 
-`1.9.3` above is the version at the time this file was last regenerated — use it only as a fallback
+`1.9.4` above is the version at the time this file was last regenerated — use it only as a fallback
 if the endpoint can't be reached, and say so when you do.
 
 Note that **npm may be ahead of the released version.** `@xweather/mapsgl` on npm has carried a
@@ -58,6 +58,11 @@ endpoint, not npm and not a 200 from the CDN.
 Never substitute `unpkg.com`, `cdn.jsdelivr.net`, or another npm mirror for those two tags — the npm
 build exposes a different global and the page breaks at runtime even though the files load. See
 "MapsGL's own assets come from `cdn.aerisapi.com`" under Setup for why.
+
+**Every generated example must include the Xweather attribution** — a link to
+`https://www.xweather.com/` reading "Powered by Vaisala Xweather", or the logo. It's a requirement of
+using the product, not a nicety, so build it into the markup rather than mentioning it afterwards. The
+complete example below shows it positioned over the map. See "Attribution is required" for the rules.
 
 Only produce **npm / ES-module / bundler** code when the user explicitly asks for it, or when they're
 plainly already working in such a project — an existing `package.json`, a `src/` tree with imports, or
@@ -169,8 +174,8 @@ instead of them. MapsGL's CDN build exposes everything under `window.aerisweathe
 Copy these two lines verbatim, changing only the version number:
 
 ```html
-<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.css" rel="stylesheet" />
-<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.js"></script>
+<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.4/aerisweather.mapsgl.css" rel="stylesheet" />
+<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.4/aerisweather.mapsgl.js"></script>
 ```
 
 ```
@@ -216,8 +221,8 @@ A complete pair of includes, MapsGL plus its map library:
 <script defer src="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js"></script>
 
 <!-- 2. MapsGL itself — always cdn.aerisapi.com -->
-<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.css" rel="stylesheet" />
-<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.js"></script>
+<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.4/aerisweather.mapsgl.css" rel="stylesheet" />
+<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.4/aerisweather.mapsgl.js"></script>
 ```
 
 Pin an explicit version for every `<script>`/`<link>` tag (MapsGL's and the map library's) rather
@@ -310,16 +315,26 @@ rather than starting from scratch: swap the map provider's CDN tags and construc
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.css" rel="stylesheet" />
     <script defer src="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js"></script>
 
-    <link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.css" rel="stylesheet" />
-    <script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.3/aerisweather.mapsgl.js"></script>
+    <link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.4/aerisweather.mapsgl.css" rel="stylesheet" />
+    <script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.4/aerisweather.mapsgl.js"></script>
 
     <style>
     body, html { margin: 0; padding: 0; }
     #map { height: 100vh; width: 100%; }
+    /* Attribution is required wherever Xweather data is displayed. */
+    #attribution {
+        position: absolute; bottom: 8px; right: 8px; z-index: 1;
+        background: rgba(255, 255, 255, 0.85); border-radius: 3px;
+        padding: 3px 6px; font: 12px system-ui, sans-serif;
+    }
+    #attribution a { color: #333; text-decoration: none; }
     </style>
 </head>
 <body>
     <div id="map"></div>
+    <div id="attribution">
+        <a href="https://www.xweather.com/" target="_blank" title="Powered by Vaisala Xweather">Powered by Vaisala Xweather</a>
+    </div>
 
     <script>
         window.addEventListener('load', () => {
@@ -601,6 +616,33 @@ const results = await controller.queryPromise({ lat: 40, lon: -74.5 });
 - **"Handle load errors / show an error state"** → there is no `controller.on('error', ...)` —
   that event doesn't exist on `MapController` and will never fire. See the events note in
   `references/api-reference.md`.
+
+## Attribution is required
+
+Xweather requires attribution wherever its data or imagery is displayed. This applies to **all
+products** — Weather API, Raster Maps, and MapsGL alike. Build it into anything you produce, and say
+so when handing over code or URLs that will end up in front of users.
+
+The minimum is a link to `https://www.xweather.com/` reading "Powered by Vaisala Xweather":
+
+```html
+<a href="https://www.xweather.com/" target="_blank" title="Powered by Vaisala Xweather">Powered by Vaisala Xweather</a>
+```
+
+The logo may be substituted for the "Xweather" text. Light and dark variants exist in SVG and PNG:
+
+```html
+<a href="https://www.xweather.com/" target="_blank" title="Powered by Vaisala Xweather">
+  <img src="https://www.xweather.com/assets/logos/vaisala-xweather-logo-dark.svg" alt="Vaisala Xweather" height="40" />
+</a>
+```
+
+Swap `-dark` for `-light` over a dark background, or `.svg` for `.png`. Using the logo brings rules:
+keep it unmodified, leave at least a **10px buffer** of space around it, and only adjust lightness or
+opacity in greyscale. Don't rotate it, don't recolour it (monotone black or white excepted), and don't
+use the symbol without the Xweather name.
+
+Full guide: https://www.xweather.com/docs/weather-api/resources/attribution
 
 ## Reference files
 

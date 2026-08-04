@@ -69,6 +69,10 @@ them; fix them by hand when it flags one.
 - **Credentials come from the environment** (`XWEATHER_CLIENT_ID`, `XWEATHER_CLIENT_SECRET`) and are
   never echoed. Printed URLs always show `{client_id}` / `{client_secret}` placeholders. Preserve
   this in any change to the scripts.
+- **Every skill states the attribution requirement.** Xweather requires a "Powered by Vaisala
+  Xweather" credit wherever its data or imagery is displayed, so each `SKILL.md` carries an
+  "Attribution is required" section, and `mapsgl` and `raster-maps` build it into their generated
+  markup. Keep it in all four — skills install independently, so none can rely on another to carry it.
 - **Descriptions are long prose in a YAML scalar.** A `: ` sequence inside one silently breaks the
   frontmatter and the skill then loads with no metadata. Use an em dash instead of a colon.
 

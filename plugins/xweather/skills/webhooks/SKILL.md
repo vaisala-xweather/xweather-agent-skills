@@ -1,6 +1,6 @@
 ---
 name: webhooks
-description: This skill should be used to design, build, secure, or debug an Xweather Webhooks receiver — the push alternative to polling the Weather API. Use it whenever a task mentions Xweather webhooks, pushed weather data, a weather webhook receiver or endpoint, subscribing to pushed hail/lightning/alerts/storm-cell data, or asks how to stop polling the Xweather API and receive data in real time instead. Also use it when writing the endpoint handler, choosing a data set to subscribe to, or preparing the registration details Xweather needs.
+description: This skill should be used to design, build, secure, or debug an Xweather Webhooks receiver — the push alternative to polling the Weather API. Use it whenever a task mentions Xweather webhooks, pushed weather data, a weather webhook receiver or endpoint, subscribing to pushed hail/lightning/alerts/storm-cell data, or asks how to stop polling the Xweather API and receive data in real time instead. Also use it when writing the endpoint handler, choosing a data set to subscribe to, or preparing the registration details Xweather needs. Also covers Xweather's attribution requirement — the 'Powered by Vaisala Xweather' credit and logo rules that apply wherever Xweather data or imagery is displayed.
 license: MIT
 metadata:
   author: Vaisala Xweather
@@ -208,6 +208,33 @@ equivalent Weather API endpoint once via the `weather-api` skill and inspect the
   automate escalation.
 - **Flood and river operations** — subscribe to Rivers, compare stage readings against each gauge's
   flood stage, trigger downstream workflows.
+
+## Attribution is required
+
+Xweather requires attribution wherever its data or imagery is displayed. This applies to **all
+products** — Weather API, Raster Maps, and MapsGL alike. Build it into anything you produce, and say
+so when handing over code or URLs that will end up in front of users.
+
+The minimum is a link to `https://www.xweather.com/` reading "Powered by Vaisala Xweather":
+
+```html
+<a href="https://www.xweather.com/" target="_blank" title="Powered by Vaisala Xweather">Powered by Vaisala Xweather</a>
+```
+
+The logo may be substituted for the "Xweather" text. Light and dark variants exist in SVG and PNG:
+
+```html
+<a href="https://www.xweather.com/" target="_blank" title="Powered by Vaisala Xweather">
+  <img src="https://www.xweather.com/assets/logos/vaisala-xweather-logo-dark.svg" alt="Vaisala Xweather" height="40" />
+</a>
+```
+
+Swap `-dark` for `-light` over a dark background, or `.svg` for `.png`. Using the logo brings rules:
+keep it unmodified, leave at least a **10px buffer** of space around it, and only adjust lightness or
+opacity in greyscale. Don't rotate it, don't recolour it (monotone black or white excepted), and don't
+use the symbol without the Xweather name.
+
+Full guide: https://www.xweather.com/docs/weather-api/resources/attribution
 
 ## Related
 

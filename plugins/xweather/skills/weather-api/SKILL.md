@@ -1,6 +1,6 @@
 ---
 name: weather-api
-description: Build and run Xweather Weather API request URLs for data.api.xweather.com from plain-language requirements. Use when a task mentions the Xweather or legacy Aeris API, weather endpoints such as observations, conditions, forecasts, alerts, lightning, air quality, tropical cyclones, tides, or road weather; asks for an API URL or query; needs help debugging an empty or failed request; asks about access costs, endpoint multipliers, rate limits, or allowance usage; or needs guidance for the hosted Xweather MCP server at mcp.api.xweather.com, including availability, connection, authentication, and tool scoping.
+description: Build and run Xweather Weather API request URLs for data.api.xweather.com from plain-language requirements. Use when a task mentions the Xweather or legacy Aeris API, weather endpoints such as observations, conditions, forecasts, alerts, lightning, air quality, tropical cyclones, tides, or road weather; asks for an API URL or query; needs help debugging an empty or failed request; asks about access costs, endpoint multipliers, rate limits, or allowance usage; or needs guidance for the hosted Xweather MCP server at mcp.api.xweather.com, including availability, connection, authentication, and tool scoping. Also covers Xweather's attribution requirement — the 'Powered by Vaisala Xweather' credit and logo rules that apply wherever Xweather data or imagery is displayed.
 compatibility: Skill instructions are provider-neutral. The bundled scripts/xwrequest.py needs Python 3 (standard library only) and network access to data.api.xweather.com.
 license: MIT
 metadata:
@@ -334,6 +334,33 @@ model's tool choices, which is the reason Xweather documents the filters at all.
 
 MCP access may need a specific subscription tier, so "is it available to me?" is an account question
 — point the user at their account executive rather than guessing.
+
+## Attribution is required
+
+Xweather requires attribution wherever its data or imagery is displayed. This applies to **all
+products** — Weather API, Raster Maps, and MapsGL alike. Build it into anything you produce, and say
+so when handing over code or URLs that will end up in front of users.
+
+The minimum is a link to `https://www.xweather.com/` reading "Powered by Vaisala Xweather":
+
+```html
+<a href="https://www.xweather.com/" target="_blank" title="Powered by Vaisala Xweather">Powered by Vaisala Xweather</a>
+```
+
+The logo may be substituted for the "Xweather" text. Light and dark variants exist in SVG and PNG:
+
+```html
+<a href="https://www.xweather.com/" target="_blank" title="Powered by Vaisala Xweather">
+  <img src="https://www.xweather.com/assets/logos/vaisala-xweather-logo-dark.svg" alt="Vaisala Xweather" height="40" />
+</a>
+```
+
+Swap `-dark` for `-light` over a dark background, or `.svg` for `.png`. Using the logo brings rules:
+keep it unmodified, leave at least a **10px buffer** of space around it, and only adjust lightness or
+opacity in greyscale. Don't rotate it, don't recolour it (monotone black or white excepted), and don't
+use the symbol without the Xweather name.
+
+Full guide: https://www.xweather.com/docs/weather-api/resources/attribution
 
 ## Reference files
 
