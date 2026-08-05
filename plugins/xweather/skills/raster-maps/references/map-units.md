@@ -78,7 +78,7 @@ curl -s https://www.xweather.com/docs/api/maps/layers \
 
 ## Raster Maps vs. MapsGL billing
 
-MapsGL — the client-side WebGL SDK — measures usage in **sessions** rather than map units, and the
+MapsGL — the client-side JavaScript SDK — measures usage in **sessions** rather than map units, and the
 two models reward opposite patterns:
 
 | | Raster Maps | MapsGL |

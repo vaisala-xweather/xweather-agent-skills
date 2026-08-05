@@ -1,8 +1,8 @@
 # Xweather API & Maps — Agent Skills
 
-Four [Agent Skills](https://agentskills.io) for the Xweather developer platform: build Weather API
-request URLs, generate Raster Maps imagery and tile URLs, work with the MapsGL WebGL SDK, and set up
-pushed data delivery.
+Five [Agent Skills](https://agentskills.io) for the Xweather developer platform: build Weather API
+request URLs, generate Raster Maps imagery and tile URLs, work with the MapsGL SDKs for the web and for
+Apple platforms, and set up pushed data delivery.
 
 Agent Skills is an open standard originally published by Anthropic, so these work in any
 skills-compatible agent — **OpenAI Codex, Cursor, GitHub Copilot, VS Code, Gemini CLI, Goose,
@@ -15,7 +15,8 @@ as installable plugins for Claude Code and OpenAI's ChatGPT and Codex plugin sur
 |---|---|
 | `weather-api` | `data.api.xweather.com` request URLs — 59 endpoints, 8 actions, per-endpoint filter and query semantics, place and date formats, batch requests, and the access-cost model. Every URL comes with its cost. |
 | `raster-maps` | `maps.api.xweather.com` URLs — static map images and XYZ tile templates across 159 layers, dash-joined data modifiers, opacity/blur/blend/scale-hsla, time offsets, and map-unit cost reporting. |
-| `mapsgl` | The `@xweather/mapsgl` WebGL SDK — controllers for Mapbox GL, MapLibre GL, Google Maps and Leaflet, all 283 layers, styling, expressions, legends, timeline animation, and session-based cost. |
+| `mapsgl` | The MapsGL JavaScript SDK (`@xweather/mapsgl`) — controllers for Mapbox GL, MapLibre GL, Google Maps and Leaflet, all 283 layers, styling, expressions, legends, timeline animation, and session-based cost. |
+| `mapsgl-apple` | The MapsGL SDK for Apple platforms — Swift Package/CocoaPods/Carthage install, `MapboxMapController` and `MapLibreMapController`, all 182 `WeatherService.LayerCode` layers, SwiftUI and UIKit setup, paint properties, expressions, legends, timeline, and session-based cost. |
 | `webhooks` | Pushed data delivery — receiver design, securing the endpoint, available data sets, retry and idempotency behaviour, and the registration details Xweather needs. |
 
 ## Install
@@ -167,10 +168,11 @@ plugins/xweather/                     the plugin
 ├── .claude-plugin/plugin.json        Claude Code plugin manifest
 ├── .codex-plugin/plugin.json         ChatGPT and Codex plugin manifest
 ├── bin/                              xwrequest, xwmap — Claude Code puts these on PATH
-└── skills/                           the four skills — the portable payload
+└── skills/                           the five skills — the portable payload
     ├── weather-api/
     ├── raster-maps/
     ├── mapsgl/
+    ├── mapsgl-apple/
     └── webhooks/
 ```
 
@@ -194,6 +196,25 @@ skills-ref validate ./plugins/xweather/skills/weather-api   # validate against t
 `.github/workflows/validate-packaging.yml` runs the metadata comparison for relevant pushes and pull
 requests. `skills-ref` comes from <https://github.com/agentskills/agentskills>. `/reload-plugins`
 picks up edits without restarting a Claude Code session.
+
+## Local checks before pushing
+
+```bash
+git config core.hooksPath .githooks    # once per clone
+```
+
+That enables a pre-push hook running `scripts/validate_packaging.py`, which asserts that the Claude
+and Codex plugin manifests agree on every shared property, plus `claude plugin validate . --strict`
+when the CLI is on PATH. Both are local and instant. `SKIP_PREPUSH=1 git push` bypasses it.
+
+Run the packaging check on its own at any time:
+
+```bash
+python3 scripts/validate_packaging.py
+```
+
+The reference regeneration is deliberately *not* in the hook — it fetches ~60 doc pages, which is too
+slow for a push. CI covers it.
 
 ## Regenerating the references
 

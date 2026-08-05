@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Regenerate the skill reference files that are derived from live Xweather catalogs.
 
-Five reference files are generated rather than hand-written, and drift out of date as Xweather
+Six reference files are generated rather than hand-written, and drift out of date as Xweather
 ships changes:
 
     plugins/xweather/skills/weather-api/references/endpoints.md   from docs/api/weather-api/endpoints + doc pages
@@ -9,6 +9,7 @@ ships changes:
     plugins/xweather/skills/weather-api/references/filters.md     from each endpoint doc page's filter/query tables
     plugins/xweather/skills/raster-maps/references/layers.md      from docs/api/maps/layers
     plugins/xweather/skills/mapsgl/references/layers.md           from docs/api/mapsgl/layers
+    plugins/xweather/skills/mapsgl-apple/references/layers.md     from the Apple SDK's DocC symbol index
 
 Three more files embed generated content inside hand-written prose, so they are checked rather than
 rewritten; the script reports when their groupings no longer match the live catalogs:
@@ -22,6 +23,11 @@ Usage:
     python3 scripts/regenerate_references.py --check    # exit 1 if anything would change
 
 --check is what CI runs. It writes nothing.
+
+The Apple SDK has no public layer catalog endpoint — its supported set is the
+`WeatherService.LayerCode` enum, which is a subset of the MapsGL JavaScript SDK catalog and uses Swift
+case names rather than the JS string codes (`air-quality-pm2p5` is `.particulateMatter2p5Micron`). The two cannot be
+mapped mechanically, so that file is generated from the SDK's published DocC symbol index instead.
 
 The endpoint doc pages render their parameter tables client-side, so the useful data lives in the
 Next.js RSC payload embedded in the HTML rather than in the rendered DOM. That is what `_payload`
@@ -43,11 +49,13 @@ WX_CATALOG = f"{DOCS}/api/weather-api/endpoints"
 MAPS_CATALOG = f"{DOCS}/api/maps/layers"
 MGL_CATALOG = f"{DOCS}/api/mapsgl/layers"
 RELEASES = f"{DOCS}/api/releases/versions"
+APPLE_DOCC = "https://cdn.aerisapi.com/sdk/ios/mapsgl/docs/v%s/index/index.json"
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 WX_REF = ROOT / "plugins/xweather/skills/weather-api/references"
 RM_REF = ROOT / "plugins/xweather/skills/raster-maps/references"
 MGL_REF = ROOT / "plugins/xweather/skills/mapsgl/references"
+APPLE_REF = ROOT / "plugins/xweather/skills/mapsgl-apple/references"
 
 UA = {"User-Agent": "Mozilla/5.0 (xweather-agent-skills reference regeneration)"}
 PUSH = re.compile(r'self\.__next_f\.push\(\[1,("(?:[^"\\]|\\.)*")\]\)', re.S)
@@ -529,6 +537,218 @@ def render_mapsgl_layers(layers):
     return "\n".join(out)
 
 
+# ---------------------------------------------------------------- mapsgl apple sdk
+
+# Which `paint` sub-object each layer descriptor exposes, and therefore what an override has to
+# reach for. Derived from the descriptors' `paint` types in the same DocC index this file is built
+# from; kept here as prose because the paint type names alone don't tell a reader where to write.
+APPLE_PAINT_PATHS = {
+    "SampleLayerDescriptor": ("sample", "`paint.opacity`, `paint.sample`"),
+    "RasterLayerDescriptor": ("raster", "`paint.opacity`, `paint.raster`"),
+    "ParticleLayerDescriptor": ("particles", "`paint.opacity`, `paint.sample`, `paint.particle`"),
+    "GridLayerDescriptor": (
+        "grid",
+        "`paint.opacity`, `paint.sample`, `paint.grid`, `paint.fill`, `paint.stroke`, "
+        "`paint.icon`, `paint.symbol`",
+    ),
+    "ContourLayerDescriptor": ("contour", "`paint.opacity`, `paint.sample`, `paint.contour`"),
+    "FillLayerDescriptor": ("fill", "`paint.opacity`, `paint.fill`, `paint.stroke`"),
+    "LineLayerDescriptor": ("line", "`paint.opacity`, `paint.stroke`"),
+    "CircleLayerDescriptor": (
+        "circle", "`paint.opacity`, `paint.fill`, `paint.stroke`, `paint.circle`"
+    ),
+    "SymbolLayerDescriptor": (
+        "symbol", "`paint.opacity`, `paint.fill`, `paint.stroke`, `paint.icon`, `paint.text`"
+    ),
+    "HeatmapLayerDescriptor": ("heatmap", "`paint.opacity`, `paint.heatmap`"),
+}
+
+APPLE_TYPE_ORDER = [
+    "SampleLayerDescriptor", "RasterLayerDescriptor", "ParticleLayerDescriptor",
+    "GridLayerDescriptor", "ContourLayerDescriptor", "FillLayerDescriptor", "LineLayerDescriptor",
+    "CircleLayerDescriptor", "SymbolLayerDescriptor", "HeatmapLayerDescriptor",
+]
+
+
+def _docc_find(node, title):
+    """Depth-first search of a DocC index tree by node title.
+
+    DocC's index nests children under a symbol but uses flat `groupMarker` entries as section
+    headings rather than real parents, so a symbol's members are its *direct* children.
+    """
+    if node.get("title") == title:
+        return node
+    for child in node.get("children") or []:
+        found = _docc_find(child, title)
+        if found is not None:
+            return found
+    return None
+
+
+def fetch_apple_layers(version):
+    """Weather layer configurations from the Apple SDK's DocC symbol index.
+
+    Returns (codes, configs) where `codes` is the ordered list of `WeatherService.LayerCode` case
+    names and `configs` maps each case name to its layer/source descriptor types. A composite layer
+    has no single `layer`, so its layer descriptor comes back as None.
+    """
+    index = _json(APPLE_DOCC % version)
+    languages = index.get("interfaceLanguages") or {}
+    roots = languages.get("swift") or []
+    if not roots:
+        raise SystemExit(
+            f"error: no swift symbols in {APPLE_DOCC % version} — the DocC index shape may have "
+            "changed, or that version was never published"
+        )
+
+    service = _docc_find(roots[0], "WeatherService")
+    layer_code = _docc_find(roots[0], "WeatherService.LayerCode")
+    if service is None or layer_code is None:
+        raise SystemExit(
+            "error: WeatherService / WeatherService.LayerCode not found in the Apple SDK DocC index "
+            "— the SDK's public API may have been restructured"
+        )
+
+    codes = [
+        child["title"][len("case "):]
+        for child in layer_code.get("children") or []
+        if child.get("type") == "case"
+    ]
+    if not codes:
+        raise SystemExit("error: no WeatherService.LayerCode cases found in the Apple SDK DocC index")
+
+    configs = {}
+    for child in service.get("children") or []:
+        title = child.get("title", "")
+        if child.get("type") != "struct" or not title.startswith("WeatherService."):
+            continue
+        entry = {"struct": title, "layer": None, "source": None, "composite": False}
+        for member in child.get("children") or []:
+            name = member.get("title", "")
+            for prefix in ("var layer:", "let layer:"):
+                if name.startswith(prefix):
+                    entry["layer"] = name.split(":", 1)[1].strip()
+            for prefix in ("var layers:", "let layers:"):
+                if name.startswith(prefix):
+                    entry["composite"] = True
+            for prefix in ("var source:", "let source:"):
+                if name.startswith(prefix):
+                    entry["source"] = name.split(":", 1)[1].strip()
+        # `WeatherService.Temperatures` is the config struct for `.temperatures`; the SDK's naming
+        # is exactly this consistent, and render_apple_layers() fails loudly if it stops being.
+        case = title[len("WeatherService."):]
+        configs[case[0].lower() + case[1:]] = entry
+    return codes, configs
+
+
+def render_apple_layers(version, codes, configs):
+    missing = [c for c in codes if c not in configs]
+    if missing:
+        raise SystemExit(
+            "error: %d WeatherService.LayerCode cases have no matching configuration struct (%s) — "
+            "the SDK no longer names config structs after their layer code, so this generator's "
+            "pairing assumption is broken."
+            % (len(missing), ", ".join(missing[:5]))
+        )
+
+    composite = sorted(c for c in codes if configs[c]["composite"])
+    by_type = {}
+    for case in codes:
+        entry = configs[case]
+        if entry["composite"]:
+            continue
+        by_type.setdefault(entry["layer"] or "unknown", []).append(case)
+
+    unknown = sorted(set(by_type) - set(APPLE_PAINT_PATHS))
+    out = [
+        "# MapsGL Apple SDK — weather layer catalog",
+        "",
+        "%d built-in weather layers, generated from the Apple SDK's published DocC symbol index."
+        % len(codes),
+        "",
+        "**In Swift a layer is a `WeatherService.LayerCode` case, not a string.**"
+        " `.temperatures`, not `\"temperatures\"`.",
+        "The case names are *not* mechanical transforms of the JS/Raster Maps layer codes —"
+        " `air-quality-pm2p5`",
+        "is `.particulateMatter2p5Micron` and `air-quality-no2` is `.nitrogenDioxide` — so never"
+        " convert a code",
+        "from the web docs by hand. Look it up here, or let the compiler complete it.",
+        "",
+        "The Apple SDK also supports **fewer** layers than the MapsGL JavaScript SDK (%d vs. 283)."
+        % len(codes),
+        "If a layer exists in the MapsGL JavaScript catalog and not here, it is not available on Apple"
+        " platforms — that is a real gap, not a naming problem.",
+        "",
+        "Each entry reads: **`.case`** → its configuration struct. The struct is what you instantiate"
+        " to",
+        "override defaults:",
+        "",
+        "```swift",
+        "var config = WeatherService.Temperatures(service: controller.service)",
+        "config.layer.paint.opacity = 0.5   // opacity is on the layer paint, not on `paint.sample`",
+        "try controller.addWeatherLayer(config: config)",
+        "```",
+        "",
+        "Every configuration struct carries the same four members: `code`, `layer` (the descriptor —"
+        " paint and",
+        "quality live here), `legend`, and `presentation` (the data-inspector formatter). Composite"
+        " layers are",
+        "the exception; see below.",
+        "",
+        "For each layer's **description, animatability, coverage, data range, update interval and cost"
+        " multiplier**,",
+        "see the shared MapsGL layer documentation at https://www.xweather.com/docs/mapsgl/weather-layers"
+        " — those",
+        "attributes are properties of the data, not of the SDK, and are identical across SDKs. For what"
+        " the",
+        "authenticated account may actually render, ask at runtime:",
+        "",
+        "```swift",
+        "controller.service.loadLayerMetadata { result in ... }   // -> [WeatherLayerMetadata]",
+        "```",
+        "",
+        "Generated from the DocC index for SDK %s. Regenerate with"
+        " `python3 scripts/regenerate_references.py`;" % version,
+        "the version is resolved from the releases endpoint, so this list tracks the current release.",
+        "",
+        "---",
+        "",
+        "## Composite layers",
+        "",
+        "These %d cases expand into **several** sub-layers. Their configuration struct exposes"
+        % len(composite),
+        "`let layers: [any WeatherLayerConfiguration]` instead of a single `layer` — and it is a `let`,"
+        " so",
+        "**you cannot override paint on a composite through its own config struct**. To restyle one,"
+        " add the",
+        "constituent layers individually instead (e.g. `.stormcellsTracks` and `.stormcellsPositions`"
+        " rather",
+        "than `.stormcells`).",
+        "",
+        " · ".join("`.%s`" % c for c in composite),
+        "",
+        "---",
+        "",
+    ]
+
+    ordered = APPLE_TYPE_ORDER + unknown
+    for descriptor in ordered:
+        cases = by_type.get(descriptor)
+        if not cases:
+            continue
+        kind, paint = APPLE_PAINT_PATHS.get(
+            descriptor, ("?", "_(unrecognized descriptor — check the DocC reference)_")
+        )
+        out.append("## `%s` — render type `%s` (%d)" % (descriptor, kind, len(cases)))
+        out.append("")
+        out.append("Paint namespaces: %s" % paint)
+        out.append("")
+        for case in sorted(cases):
+            out.append("- `.%s` → `%s`" % (case, configs[case]["struct"]))
+        out.append("")
+    return "\n".join(out)
+
+
 # ---------------------------------------------------------------- released versions
 
 
@@ -709,6 +929,12 @@ def main():
     verify_mapsgl_cdn(mgl_version)
     version_change = apply_mapsgl_version(mgl_version)
 
+    apple_version = fetch_released_version("mapsgl-apple-sdk")
+    print("  mapsgl-apple-sdk %s" % apple_version, file=sys.stderr)
+    print("Fetching MapsGL Apple SDK DocC symbol index…", file=sys.stderr)
+    apple_codes, apple_configs = fetch_apple_layers(apple_version)
+    print("  %d weather layer codes" % len(apple_codes), file=sys.stderr)
+
     print("Fetching Weather API endpoint catalog and doc pages…", file=sys.stderr)
     endpoints = fetch_weather_api()
     print("  %d endpoints" % len(endpoints), file=sys.stderr)
@@ -719,6 +945,7 @@ def main():
         WX_REF / "filters.md": render_filters(endpoints),
         RM_REF / "layers.md": render_layers(layers),
         MGL_REF / "layers.md": render_mapsgl_layers(mgl_layers),
+        APPLE_REF / "layers.md": render_apple_layers(apple_version, apple_codes, apple_configs),
     }
 
     for path, text in generated.items():
