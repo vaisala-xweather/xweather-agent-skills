@@ -12,6 +12,7 @@ on:
       - "plugins/xweather/skills/weather-api/references/**"
       - "plugins/xweather/skills/raster-maps/references/**"
       - "plugins/xweather/skills/mapsgl/references/**"
+      - "plugins/xweather/skills/mapsgl-apple/references/**"
       - "scripts/regenerate_references.py"
 
 permissions:

@@ -1,6 +1,6 @@
 {
   "name": "vaisala-xweather",
-  "description": "Xweather plugins for Claude Code, ChatGPT, and Codex — Weather API, Raster Maps, MapsGL, and Webhooks",
+  "description": "Xweather plugins for Claude Code, ChatGPT, and Codex — Weather API, Raster Maps, MapsGL for web and Apple platforms, and Webhooks",
   "owner": {
     "name": "Vaisala Xweather",
     "url": "https://www.xweather.com"
@@ -9,7 +9,7 @@
     {
       "name": "xweather",
       "displayName": "Xweather API & Maps",
-      "description": "Weather API URL builder with access-cost reporting, Raster Maps static image and tile URLs, MapsGL SDK guidance, and Webhooks receiver setup",
+      "description": "Weather API URL builder with access-cost reporting, Raster Maps static image and tile URLs, MapsGL guidance for the WebGL and Apple SDKs, and Webhooks receiver setup",
       "author": {
         "name": "Vaisala Xweather",
         "url": "https://www.xweather.com"

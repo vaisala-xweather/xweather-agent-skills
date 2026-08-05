@@ -4,7 +4,7 @@ description: This skill should be used when working with the Xweather MapsGL JS 
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.11.0"
+  version: "0.12.0"
 ---
 
 # MapsGL
@@ -12,6 +12,11 @@ metadata:
 MapsGL (`@xweather/mapsgl`) renders weather and custom map data client-side in WebGL, layered on
 top of Mapbox GL, MapLibre GL, Google Maps, or Leaflet. It requires an active Xweather account
 with Weather API + Maps access (client id + secret).
+
+**This skill is the JavaScript SDK.** For a native Swift app on iOS, iPadOS, Mac Catalyst, or
+visionOS, use the `mapsgl-apple` skill instead — that's a separate SDK with a Swift API
+(`MapboxMapController`, `WeatherService.LayerCode`), its own install channels, and a smaller layer
+set. The concepts below transfer; none of the code does.
 
 ## How to write MapsGL code examples
 

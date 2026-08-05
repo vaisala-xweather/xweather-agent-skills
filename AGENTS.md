@@ -1,6 +1,6 @@
 # Xweather API & Maps — agent skills
 
-This repository packages four [Agent Skills](https://agentskills.io) for the Xweather developer
+This repository packages five [Agent Skills](https://agentskills.io) for the Xweather developer
 platform. They are provider-neutral: any skills-compatible agent can load them, and the same content
 also ships as plugins for Claude Code and OpenAI's ChatGPT and Codex plugin surfaces.
 
@@ -11,6 +11,7 @@ also ships as plugins for Claude Code and OpenAI's ChatGPT and Codex plugin surf
 | `plugins/xweather/skills/weather-api/` | Building `data.api.xweather.com` request URLs — 59 endpoints, 8 actions, filters, query syntax, and access-cost reporting |
 | `plugins/xweather/skills/raster-maps/` | Building `maps.api.xweather.com` URLs — static map images and XYZ tile templates across 159 layers, with map-unit cost reporting |
 | `plugins/xweather/skills/mapsgl/` | The `@xweather/mapsgl` WebGL SDK — controllers, weather layers, styling, expressions, legends, timeline animation, session cost |
+| `plugins/xweather/skills/mapsgl-apple/` | The MapsGL SDK for Apple platforms — install channels, `MapboxMapController`/`MapLibreMapController`, `WeatherService.LayerCode` layers, SwiftUI and UIKit setup, paint, expressions, legends, timeline, session cost |
 | `plugins/xweather/skills/webhooks/` | Pushed data delivery — receiver design, securing the endpoint, retry and idempotency behaviour, registration |
 
 Each skill is a directory with a `SKILL.md`, plus `references/` for detail loaded on demand and
@@ -19,7 +20,7 @@ Each skill is a directory with a `SKILL.md`, plus `references/` for detail loade
 
 ## Working in this repository
 
-**Never hand-edit the generated reference files.** Five are derived from live Xweather catalogs:
+**Never hand-edit the generated reference files.** Six are derived from live Xweather sources:
 
 ```
 plugins/xweather/skills/weather-api/references/endpoints.md
@@ -27,7 +28,15 @@ plugins/xweather/skills/weather-api/references/examples.md
 plugins/xweather/skills/weather-api/references/filters.md
 plugins/xweather/skills/raster-maps/references/layers.md
 plugins/xweather/skills/mapsgl/references/layers.md
+plugins/xweather/skills/mapsgl-apple/references/layers.md
 ```
+
+The Apple SDK one is the odd case: there is no public layer catalog endpoint for it, so it is generated
+from the SDK's published DocC symbol index at
+`cdn.aerisapi.com/sdk/ios/mapsgl/docs/v<version>/index/index.json`, with the version resolved from the
+releases endpoint. The Swift `WeatherService.LayerCode` case names are not mechanical transforms of the
+JS layer codes (`air-quality-pm2p5` is `.particulateMatter2p5Micron`), so the two catalogs cannot be
+cross-derived.
 
 Regenerate them instead:
 
@@ -72,7 +81,7 @@ them; fix them by hand when it flags one.
 - **Every skill states the attribution requirement.** Xweather requires a "Powered by Vaisala
   Xweather" credit wherever its data or imagery is displayed, so each `SKILL.md` carries an
   "Attribution is required" section, and `mapsgl` and `raster-maps` build it into their generated
-  markup. Keep it in all four — skills install independently, so none can rely on another to carry it.
+  markup. Keep it in all five — skills install independently, so none can rely on another to carry it.
 - **Descriptions are long prose in a YAML scalar.** A `: ` sequence inside one silently breaks the
   frontmatter and the skill then loads with no metadata. Use an em dash instead of a colon.
 

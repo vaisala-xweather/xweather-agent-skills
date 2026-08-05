@@ -1,7 +1,7 @@
 {
   "name": "xweather",
-  "version": "0.11.0",
-  "description": "Xweather Weather API, Raster Maps, MapsGL, and Webhooks — build and run Weather API request URLs, generate static map images and tile URLs, work with the MapsGL WebGL SDK, and set up push data delivery.",
+  "version": "0.12.0",
+  "description": "Xweather Weather API, Raster Maps, MapsGL, and Webhooks — build and run Weather API request URLs, generate static map images and tile URLs, work with the MapsGL WebGL and Apple-platform SDKs, and set up push data delivery.",
   "author": {
     "name": "Vaisala Xweather",
     "url": "https://www.xweather.com"
@@ -15,6 +15,9 @@
     "weather-api",
     "raster-maps",
     "mapsgl",
+    "mapsgl-apple",
+    "ios",
+    "swift",
     "webhooks",
     "radar",
     "geospatial"
@@ -22,8 +25,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Xweather API & Maps",
-    "shortDescription": "Build Xweather API, Raster Maps, MapsGL, and webhook integrations",
-    "longDescription": "Reusable Xweather skills for building Weather API requests, Raster Maps imagery and tiles, MapsGL integrations, and webhook receivers.",
+    "shortDescription": "Build Xweather API, Raster Maps, MapsGL web and iOS, and webhook integrations",
+    "longDescription": "Reusable Xweather skills for building Weather API requests, Raster Maps imagery and tiles, MapsGL integrations for the web and for Apple platforms, and webhook receivers.",
     "developerName": "Vaisala Xweather",
     "category": "Developer Tools",
     "capabilities": [
@@ -34,6 +37,7 @@
     "defaultPrompt": [
       "Build an Xweather Weather API request and report its access cost.",
       "Create an Xweather weather map integration for my application.",
+      "Add an Xweather MapsGL weather map to my SwiftUI app.",
       "Help me design an Xweather webhook receiver."
     ]
   }
