@@ -5,7 +5,7 @@ compatibility: Skill instructions are provider-neutral. The bundled scripts/xwma
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.12.0"
+  version: "0.12.1"
 ---
 
 # Xweather Raster Maps URL builder
@@ -313,6 +313,6 @@ Full guide: https://www.xweather.com/docs/weather-api/resources/attribution
   the image using `XWEATHER_CLIENT_ID` / `XWEATHER_CLIENT_SECRET` from the environment.
 
 Related: the `weather-api` skill covers the Weather **data** API
-(`data.api.xweather.com`), and `mapsgl` covers the client-side WebGL SDK. Raster Maps is
+(`data.api.xweather.com`), and `mapsgl` covers the MapsGL JavaScript SDK. Raster Maps is
 the server-rendered image product — reach for MapsGL instead when the user wants animated,
 styleable, client-side layers.

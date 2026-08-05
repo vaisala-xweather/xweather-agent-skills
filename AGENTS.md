@@ -10,7 +10,7 @@ also ships as plugins for Claude Code and OpenAI's ChatGPT and Codex plugin surf
 |---|---|
 | `plugins/xweather/skills/weather-api/` | Building `data.api.xweather.com` request URLs — 59 endpoints, 8 actions, filters, query syntax, and access-cost reporting |
 | `plugins/xweather/skills/raster-maps/` | Building `maps.api.xweather.com` URLs — static map images and XYZ tile templates across 159 layers, with map-unit cost reporting |
-| `plugins/xweather/skills/mapsgl/` | The `@xweather/mapsgl` WebGL SDK — controllers, weather layers, styling, expressions, legends, timeline animation, session cost |
+| `plugins/xweather/skills/mapsgl/` | The MapsGL JavaScript SDK (`@xweather/mapsgl`) — controllers, weather layers, styling, expressions, legends, timeline animation, session cost |
 | `plugins/xweather/skills/mapsgl-apple/` | The MapsGL SDK for Apple platforms — install channels, `MapboxMapController`/`MapLibreMapController`, `WeatherService.LayerCode` layers, SwiftUI and UIKit setup, paint, expressions, legends, timeline, session cost |
 | `plugins/xweather/skills/webhooks/` | Pushed data delivery — receiver design, securing the endpoint, retry and idempotency behaviour, registration |
 

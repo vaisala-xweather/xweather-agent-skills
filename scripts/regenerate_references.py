@@ -25,8 +25,8 @@ Usage:
 --check is what CI runs. It writes nothing.
 
 The Apple SDK has no public layer catalog endpoint — its supported set is the
-`WeatherService.LayerCode` enum, which is a subset of the JS catalog and uses Swift case names rather
-than the JS string codes (`air-quality-pm2p5` is `.particulateMatter2p5Micron`). The two cannot be
+`WeatherService.LayerCode` enum, which is a subset of the MapsGL JavaScript SDK catalog and uses Swift
+case names rather than the JS string codes (`air-quality-pm2p5` is `.particulateMatter2p5Micron`). The two cannot be
 mapped mechanically, so that file is generated from the SDK's published DocC symbol index instead.
 
 The endpoint doc pages render their parameter tables client-side, so the useful data lives in the
@@ -674,11 +674,10 @@ def render_apple_layers(version, codes, configs):
         " convert a code",
         "from the web docs by hand. Look it up here, or let the compiler complete it.",
         "",
-        "The Apple SDK also supports **fewer** layers than the JS SDK (%d vs. 283). If a layer exists"
+        "The Apple SDK also supports **fewer** layers than the MapsGL JavaScript SDK (%d vs. 283)."
         % len(codes),
-        "in the JS catalog and not here, it is not available on Apple platforms — that is a real gap,"
-        " not a",
-        "naming problem.",
+        "If a layer exists in the MapsGL JavaScript catalog and not here, it is not available on Apple"
+        " platforms — that is a real gap, not a naming problem.",
         "",
         "Each entry reads: **`.case`** → its configuration struct. The struct is what you instantiate"
         " to",

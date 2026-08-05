@@ -4,7 +4,7 @@ description: This skill should be used when working with the Xweather MapsGL SDK
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.12.0"
+  version: "0.12.1"
 ---
 
 # MapsGL for Apple platforms
@@ -402,7 +402,8 @@ if let temps = controller.weatherLayer(for: .temperatures) {
 **Never guess a layer code.** `references/layers.md` lists all 182 `LayerCode` cases with the
 configuration struct and descriptor type for each — grep it first, no network call needed. The Swift
 case names are *not* transforms of the JS/Raster Maps codes (`air-quality-pm2p5` is
-`.particulateMatter2p5Micron`), and the Apple SDK supports fewer layers than the JS SDK, so a code
+`.particulateMatter2p5Micron`), and the Apple SDK supports fewer layers than the MapsGL JavaScript
+SDK, so a code
 that works on the web may not exist here at all.
 
 For descriptions, animatability, coverage, data range and cost multiplier — data attributes, identical

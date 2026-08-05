@@ -1,22 +1,27 @@
 ---
 name: mapsgl
-description: This skill should be used when working with the Xweather MapsGL JS SDK (@xweather/mapsgl) — setting up a MapsGL map controller for Mapbox GL, MapLibre GL, Google Maps, or Leaflet, and adding, removing, styling, filtering, masking, or animating MapsGL weather layers and custom data layers. Use it whenever a task mentions MapsGL, aerisweather.mapsgl, addWeatherLayer, weather map layers, or client-side WebGL weather rendering. Also use it for questions about how MapsGL usage or cost is measured — sessions, the 5-minute clock intervals, the 150x access multiplier, or how many accesses a MapsGL map consumes. Also covers Xweather's attribution requirement — the 'Powered by Vaisala Xweather' credit and logo rules that apply wherever Xweather data or imagery is displayed.
+description: This skill should be used when working with the Xweather MapsGL JavaScript SDK for the web (@xweather/mapsgl) — setting up a MapsGL map controller for Mapbox GL, MapLibre GL, Google Maps, or Leaflet, and adding, removing, styling, filtering, masking, or animating MapsGL weather layers and custom data layers. Use it whenever a task mentions MapsGL, aerisweather.mapsgl, addWeatherLayer, weather map layers, or client-side WebGL weather rendering. Also use it for questions about how MapsGL usage or cost is measured — sessions, the 5-minute clock intervals, the 150x access multiplier, or how many accesses a MapsGL map consumes. Also covers Xweather's attribution requirement — the 'Powered by Vaisala Xweather' credit and logo rules that apply wherever Xweather data or imagery is displayed.
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.12.0"
+  version: "0.12.1"
 ---
 
-# MapsGL
+# MapsGL JavaScript SDK
 
-MapsGL (`@xweather/mapsgl`) renders weather and custom map data client-side in WebGL, layered on
-top of Mapbox GL, MapLibre GL, Google Maps, or Leaflet. It requires an active Xweather account
-with Weather API + Maps access (client id + secret).
+The MapsGL JavaScript SDK (`@xweather/mapsgl`) renders weather and custom map data client-side in
+WebGL, layered on top of Mapbox GL, MapLibre GL, Google Maps, or Leaflet. It requires an active
+Xweather account with Weather API + Maps access (client id + secret).
 
-**This skill is the JavaScript SDK.** For a native Swift app on iOS, iPadOS, Mac Catalyst, or
-visionOS, use the `mapsgl-apple` skill instead — that's a separate SDK with a Swift API
-(`MapboxMapController`, `WeatherService.LayerCode`), its own install channels, and a smaller layer
-set. The concepts below transfer; none of the code does.
+**This skill is the web-based JavaScript SDK.** For a native Swift app on iOS, iPadOS, Mac Catalyst, or visionOS, use
+the `mapsgl-apple` skill instead — a separate SDK with a Swift API (`MapboxMapController`,
+`WeatherService.LayerCode`), its own install channels, and a smaller layer set. The concepts below
+transfer; none of the code does. MapsGL ships for Android as well.
+
+**Always qualify the name as the *MapsGL* JavaScript SDK.** Xweather ships an unrelated product simply
+called the JavaScript SDK (<https://www.xweather.com/docs/javascript-sdk>), so the bare term is
+ambiguous. Xweather's own naming for the family is MapsGL, MapsGL iOS, and MapsGL Android; "MapsGL
+JavaScript SDK" is the unambiguous way to name this one.
 
 ## How to write MapsGL code examples
 

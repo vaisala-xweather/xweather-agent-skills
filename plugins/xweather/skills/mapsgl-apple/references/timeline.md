@@ -101,7 +101,7 @@ controller.timeline.goTo(position: 0.5)         // useTotalDuration defaults to 
 
 **`goTo(offset:)` is `TimeInterval`, i.e. seconds** — the API documents it as "the time interval to
 advance from the start date". The web docs page shows `goTo(offset: 3600 * 1000)`, which is a
-millisecond value carried over from the JS SDK; passing that in Swift jumps a thousand hours and
+millisecond value carried over from the MapsGL JavaScript SDK; passing that in Swift jumps a thousand hours and
 clamps to the end of the range. Every offset in this API is seconds.
 
 ## Reading current state
