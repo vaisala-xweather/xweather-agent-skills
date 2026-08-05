@@ -85,6 +85,35 @@ them; fix them by hand when it flags one.
 - **Descriptions are long prose in a YAML scalar.** A `: ` sequence inside one silently breaks the
   frontmatter and the skill then loads with no metadata. Use an em dash instead of a colon.
 
+## Keep the two plugin manifests in sync
+
+The plugin ships two manifests, and **every property they share must hold the same value** — CI
+enforces it:
+
+```
+plugins/xweather/.claude-plugin/plugin.json
+plugins/xweather/.codex-plugin/plugin.json
+```
+
+Shared: `name`, `version`, `description`, `author`, `homepage`, `license`, `keywords`. The
+human-facing name also has to agree across three places, despite living at a different path in each —
+`displayName` in the marketplace entry and the Claude manifest, `interface.displayName` in the Codex
+one.
+
+Check before pushing:
+
+```bash
+python3 scripts/validate_packaging.py
+```
+
+Enable the pre-push hook once per clone so this can't reach the remote broken:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+Bumping `version` in one manifest and forgetting the other is the failure that actually happens.
+
 ## Bumping the version
 
 Both `plugins/xweather/.claude-plugin/plugin.json` and

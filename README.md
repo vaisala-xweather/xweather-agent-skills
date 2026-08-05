@@ -197,6 +197,25 @@ skills-ref validate ./plugins/xweather/skills/weather-api   # validate against t
 requests. `skills-ref` comes from <https://github.com/agentskills/agentskills>. `/reload-plugins`
 picks up edits without restarting a Claude Code session.
 
+## Local checks before pushing
+
+```bash
+git config core.hooksPath .githooks    # once per clone
+```
+
+That enables a pre-push hook running `scripts/validate_packaging.py`, which asserts that the Claude
+and Codex plugin manifests agree on every shared property, plus `claude plugin validate . --strict`
+when the CLI is on PATH. Both are local and instant. `SKIP_PREPUSH=1 git push` bypasses it.
+
+Run the packaging check on its own at any time:
+
+```bash
+python3 scripts/validate_packaging.py
+```
+
+The reference regeneration is deliberately *not* in the hook — it fetches ~60 doc pages, which is too
+slow for a push. CI covers it.
+
 ## Regenerating the references
 
 Five reference files are generated from live Xweather catalogs rather than hand-written, so they go

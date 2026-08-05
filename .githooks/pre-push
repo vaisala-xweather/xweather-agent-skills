@@ -1,0 +1,50 @@
+#!/bin/sh
+# Catch packaging drift before it reaches the remote and fails CI.
+#
+# The Claude and Codex manifests must agree on every shared property. They live in separate files, so
+# bumping a version in one and forgetting the other is easy — and the failure only shows up in the
+# GitHub Actions run, after the push.
+#
+# Enable once per clone:
+#     git config core.hooksPath .githooks
+#
+# Skip for a single push when you genuinely need to:
+#     SKIP_PREPUSH=1 git push
+
+set -e
+
+if [ -n "$SKIP_PREPUSH" ]; then
+    echo "pre-push: skipped (SKIP_PREPUSH set)"
+    exit 0
+fi
+
+repo_root=$(git rev-parse --show-toplevel)
+cd "$repo_root"
+
+echo "pre-push: validating plugin packaging…"
+if ! python3 scripts/validate_packaging.py; then
+    cat >&2 <<'MSG'
+
+pre-push: BLOCKED — packaging validation failed.
+
+The Claude and Codex manifests disagree on a shared property. Fix the values above so they match,
+then push again. The usual cause is bumping `version` in one manifest but not the other:
+
+    plugins/xweather/.claude-plugin/plugin.json
+    plugins/xweather/.codex-plugin/plugin.json
+
+MSG
+    exit 1
+fi
+
+# Manifest and skill-frontmatter validation, when the CLI is available. Cheap, and it catches the
+# frontmatter breakages that a bad `: ` in a description silently causes.
+if command -v claude >/dev/null 2>&1; then
+    echo "pre-push: validating manifests and skills…"
+    claude plugin validate . --strict >/dev/null || {
+        echo "pre-push: BLOCKED — 'claude plugin validate . --strict' failed. Run it to see why." >&2
+        exit 1
+    }
+fi
+
+echo "pre-push: ok"
