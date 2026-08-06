@@ -1,4 +1,4 @@
-# Legends & data inspector - MapsGL Android (1.6.x)
+# Legends & data inspector - MapsGL Android
 
 Verified against SDK `LegendControl`, `DataInspectorControl`, `Presentation`, `Units` (1.6.x).
 Docs are secondary if they disagree:

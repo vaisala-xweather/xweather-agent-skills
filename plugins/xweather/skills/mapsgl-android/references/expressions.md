@@ -1,4 +1,4 @@
-# Expressions & StyleValue - MapsGL Android (1.6.x)
+# Expressions & StyleValue - MapsGL Android
 
 ## StyleValue
 

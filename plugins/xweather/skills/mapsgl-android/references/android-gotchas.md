@@ -1,4 +1,4 @@
-# Android gotchas - MapsGL (1.6.x)
+# Android gotchas - MapsGL
 
 ## Requirements
 

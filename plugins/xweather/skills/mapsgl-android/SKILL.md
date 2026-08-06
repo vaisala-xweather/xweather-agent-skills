@@ -11,7 +11,7 @@ description: >-
   WeatherService, XweatherAccount, or weather overlays on Mapbox Maps SDK for
   Android. Also covers MapsGL session-based usage/cost (shared with the JS SDK)
   and common Android gotchas (Mercator, OpenGL ES 3.0, minSdk 28, Mapbox peer
-  dependency). Scoped to public MapsGL Android 1.6.x. When docs and SDK disagree,
+  dependency). Covers only public MapsGL Android APIs. When docs and SDK disagree,
   prefer the SDK (source / KDoc / demos) over xweather.com documentation.
 license: MIT
 metadata:
@@ -19,7 +19,6 @@ metadata:
   version: "0.12.1"
   platform: android
   sdk: mapsgl-android-sdk
-  sdk_api: "1.6.x"
 ---
 
 # MapsGL Android
@@ -48,7 +47,25 @@ JS-only or unreleased APIs.
 Docs hub (optional context only):
 https://www.xweather.com/docs/mapsgl-android-sdk/
 
-**API scope:** public **MapsGL Android 1.6.x**.
+**API scope:** public MapsGL Android APIs only - no internals.
+
+**Never hardcode a version number.** Resolve the current release when you need
+one:
+
+```bash
+curl -s https://www.xweather.com/docs/api/releases/versions \
+  | python3 -c 'import json,sys; print(json.load(sys.stdin)["products"]["mapsgl-android-sdk"]["version"])'
+```
+
+That endpoint is the release source of truth for every Xweather product, keyed by
+product id - `mapsgl-android-sdk` here, alongside `mapsgl`, `mapsgl-apple-sdk`,
+`weather-api`, `maps`, and others. It's a small public JSON document, no auth
+needed.
+
+A version is only needed for a deliberate Gradle pin or an API-reference URL.
+Where this skill's `references/` note behaviour "on 1.6.x", that records what the
+guidance was checked against - verify against the release you're actually on
+before relying on it.
 
 ## How to write examples
 
@@ -63,12 +80,7 @@ val account = XweatherAccount(
 val controller = MapboxMapController(mapView, account)
 ```
 
-Look up the release tag before pinning:
-
-```bash
-curl -s https://www.xweather.com/docs/api/releases/versions
-# products["mapsgl-android-sdk"].version
-```
+Resolve the release tag (above) before pinning, rather than copying `vX.Y.Z`:
 
 ```gradle
 implementation "com.github.vaisala-xweather:mapsgl-android-sdk:vX.Y.Z"

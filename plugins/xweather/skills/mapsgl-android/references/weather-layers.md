@@ -1,4 +1,4 @@
-# Weather layers - MapsGL Android (1.6.x)
+# Weather layers - MapsGL Android
 
 Verified against SDK `LayerCode`, `WeatherService`, `MapController` weather APIs (1.6.x).
 Docs are secondary:

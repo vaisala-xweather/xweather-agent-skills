@@ -1,4 +1,4 @@
-# Custom data sources - MapsGL Android (1.6.x)
+# Custom data sources - MapsGL Android
 
 Verified against SDK source descriptors + `MapController.addSource` (1.6.x).
 Docs are secondary:

@@ -1,4 +1,4 @@
-# Weather layer styling - MapsGL Android (1.6.x)
+# Weather layer styling - MapsGL Android
 
 Verified against SDK paint types + `WeatherService` factories (1.6.x).
 Docs recipes are secondary:

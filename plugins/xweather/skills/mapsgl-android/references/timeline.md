@@ -1,4 +1,4 @@
-# Timeline & animation - MapsGL Android (1.6.x)
+# Timeline & animation - MapsGL Android
 
 Verified against SDK `Timeline` / `AnimationOptions` / `AnimationEvent` (1.6.x).
 Docs pages are secondary if they disagree:

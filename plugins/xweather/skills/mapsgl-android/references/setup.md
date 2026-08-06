@@ -1,4 +1,4 @@
-# Setup - MapsGL Android (1.6.x)
+# Setup - MapsGL Android
 
 Verified against SDK constructors, demos, and Gradle packaging (1.6.x).
 Getting-started docs are secondary when they disagree (e.g. deprecated 4-arg controller).

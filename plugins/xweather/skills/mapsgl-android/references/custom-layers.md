@@ -1,4 +1,4 @@
-# Custom map layers - MapsGL Android (1.6.x)
+# Custom map layers - MapsGL Android
 
 Verified against SDK layer descriptors + `MapController.addLayer(descriptor, beforeID)` (1.6.x).
 Docs are secondary:

@@ -1,4 +1,4 @@
-# Styles, descriptors & paint - MapsGL Android (1.6.x)
+# Styles, descriptors & paint - MapsGL Android
 
 Verified against SDK descriptors and paint types (1.6.x).
 Docs overview is secondary:

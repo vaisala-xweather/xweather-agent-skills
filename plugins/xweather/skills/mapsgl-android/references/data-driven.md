@@ -1,4 +1,4 @@
-# Data-driven styling - MapsGL Android (1.6.x)
+# Data-driven styling - MapsGL Android
 
 Verified against SDK `Expression` / `StyleValue` / paint APIs (1.6.x).
 Docs cookbooks are secondary:

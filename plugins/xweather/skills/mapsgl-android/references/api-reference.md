@@ -1,4 +1,4 @@
-# API reference cheat sheet - MapsGL Android (1.6.x)
+# API reference cheat sheet - MapsGL Android
 
 Packages under `com.xweather.mapsgl.*`.  
 KDoc hub: https://www.xweather.com/docs/mapsgl-android-sdk/api-reference
