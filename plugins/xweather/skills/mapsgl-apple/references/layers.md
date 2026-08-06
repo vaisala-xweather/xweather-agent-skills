@@ -7,7 +7,7 @@ The case names are *not* mechanical transforms of the JS/Raster Maps layer codes
 is `.particulateMatter2p5Micron` and `air-quality-no2` is `.nitrogenDioxide` — so never convert a code
 from the web docs by hand. Look it up here, or let the compiler complete it.
 
-The Apple SDK also supports **fewer** layers than the MapsGL JavaScript SDK (182 vs. 283).
+The Apple SDK also supports **fewer** layers than the MapsGL JavaScript SDK (182 vs. 285).
 If a layer exists in the MapsGL JavaScript catalog and not here, it is not available on Apple platforms — that is a real gap, not a naming problem.
 
 Each entry reads: **`.case`** → its configuration struct. The struct is what you instantiate to

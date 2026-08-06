@@ -4,7 +4,7 @@ description: This skill should be used when working with the Xweather MapsGL Jav
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.12.3"
+  version: "0.13.0"
 ---
 
 # MapsGL JavaScript SDK
@@ -439,7 +439,7 @@ capture what `addWeatherLayer` returns (or call `getWeatherLayer(code)` later) a
 they don't recognize. Composite codes return an **array** of layers to iterate over. Full
 explanation and verified example in `references/weather-layers.md`.
 
-**Never guess a layer code — look it up.** `references/layers.md` lists all 283 layers by category
+**Never guess a layer code — look it up.** `references/layers.md` lists every layer by category
 with their render type, animatability, cost multiplier, coverage, data range, and update interval. It
 is generated from the public catalog and refreshed weekly, so grep it first; no network call needed.
 
@@ -683,7 +683,7 @@ Full guide: https://www.xweather.com/docs/weather-api/resources/attribution
 ## Reference files
 
 - `references/api-reference.md` — full `Account`, `MapController`, and `DataSource` API (all methods, properties, events, per-provider setup)
-- `references/layers.md` — all 283 weather layers by category: code, description, render type, animatability, cost multiplier, coverage, data range, update interval; composite codes and cost multipliers grouped up front
+- `references/layers.md` — every weather layer by category: code, description, render type, animatability, cost multiplier, coverage, data range, update interval; composite codes and cost multipliers grouped up front
 - `references/weather-layers.md` — how to discover layer codes, the catalog schema, and the code-vs-layer-id gotcha that silently breaks style updates
 - `references/styles.md` — paint property spec for every render type, plus filters and masks
 - `references/color-scales.md` — color scale config format and built-in named palettes

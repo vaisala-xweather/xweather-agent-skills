@@ -7,18 +7,22 @@ subscription allowance is:
 accesses = endpoint multiplier × spatial multiplier × temporal multiplier
 ```
 
-Only the **endpoint multiplier is knowable before sending the request** — it is a fixed per-endpoint
-constant, published in the catalog and tabulated below. The spatial and temporal multipliers are
-computed server-side from the area and time range the request actually covers, and the API does not
-publish the formula. So:
+**The spatial multiplier is always 1 today.** No current Weather API endpoint uses it. It exists in
+the cost header for endpoints Xweather may introduce later, so don't factor area, radius, or query
+geometry into an estimate — a `within` polygon spanning three states costs the same as a single-point
+`:id` lookup. In practice:
 
-- Before sending: report the endpoint multiplier as a **floor** — "at least N accesses" — and flag
-  any parameter that will push the spatial or temporal multiplier above 1.
-- After sending: `X-Cost-Tokens` on the response is the **exact** charge. Prefer it over any estimate.
+```
+accesses = endpoint multiplier × temporal multiplier
+```
 
-Do not invent spatial or temporal multiplier values. Saying "5 accesses minimum, more if the 30-day
-range raises the temporal multiplier" is accurate; saying "15 accesses" when the temporal multiplier
-was guessed is not.
+The **endpoint multiplier** is a fixed per-endpoint constant, published in the catalog and tabulated
+below. The **temporal multiplier** is the number of time intervals a single request covers, on the
+endpoints that bill that way — see below. Both are knowable before sending, so a cost estimate is
+usually exact rather than a floor.
+
+`X-Cost-Tokens` on the response is the authoritative charge. Prefer it when the request has actually
+run, and use it to check any estimate you weren't sure about.
 
 ## Endpoint multipliers
 
@@ -65,27 +69,41 @@ curl -s https://www.xweather.com/docs/api/weather-api/endpoints \
 Two endpoints (`/lightning/density`, `/lightning/turbinerisk`) have no multiplier on their doc pages;
 the catalog reports `1` for both, which is what's used here.
 
-## What raises the spatial multiplier
+## The spatial multiplier
 
-Bigger query area → bigger multiplier. In rough order of impact:
+**Always 1.** Nothing in the Weather API currently uses it. The factor is present in the
+`X-Cost-Multipliers` header, and Xweather may attach it to future endpoints, but today it never
+raises a bill.
 
-- A `within` polygon or rectangle covering a large region, vs. a single point.
-- A large `radius` on `closest` / `within` (`radius=300miles` costs more than `radius=10miles`).
-- `search` with no geographic constraint — an unbounded query is the largest possible area.
-- `affects`, which resolves an event's footprint to every place inside it.
+So area is *not* a cost lever. A `within` polygon covering several states, `radius=300miles`, and a
+single-point `:id` lookup all carry the same spatial factor. Don't tell anyone to shrink a radius or
+tighten a bounding box to save accesses — it won't, and it may cost them the data they needed.
 
-A plain `:id` lookup for one location is the spatial-multiplier floor.
+## The temporal multiplier
 
-## What raises the temporal multiplier
+**This is the one that actually varies.** On endpoints that return a series over a requested range,
+one request is charged **one access per interval returned**, not one access for the request.
 
-Longer time range → bigger multiplier. A `for=` single point in time, or no time parameter at all,
-is the floor. A `from`/`to` span raises it in proportion to the span.
+The clearest example is `/conditions/summary`, which bills **one access per day**:
 
-The docs give one concrete data point:
+```
+/conditions/summary/minneapolis,mn?from=-30days&to=now   → 30 days = 30 accesses
+/conditions/summary/minneapolis,mn                       → 1 day   =  1 access
+```
+
+The docs give the same shape for `/conditions`:
 `/conditions/seoul,kr?from=2024-01-01&to=+1month` — "this will count as 31 API accesses."
-`/conditions` is a ×1 endpoint, so a one-month hourly range carried a ~31× temporal multiplier —
-roughly one access per day of data returned. Treat that as a rule of thumb for daily-resolution time
-series on ×1 endpoints, not as a formula that generalizes across endpoints.
+
+So the arithmetic is `endpoint multiplier × intervals requested`. A 30-day pull from a ×5 endpoint
+that bills daily is 150 accesses, not 5.
+
+**Not every endpoint bills this way**, and Xweather doesn't publish an exhaustive list of which do.
+Treat a multi-interval `from`/`to` range as the signal: if a single request will return N days or N
+hours of data, assume N intervals and say so. A request for a single point in time — `for=`, or no
+time parameter at all — is one interval.
+
+When you're unsure whether a given endpoint bills per interval, say the range is the thing that could
+multiply the cost and point at `X-Cost-Tokens` for the exact figure, rather than guessing a number.
 
 ## Cases charged by an exact, documented rule
 
@@ -127,14 +145,15 @@ either returns `429` with `maxhits_min` or `maxhits`.
 
 ## Reducing cost
 
-- **Narrow the time range.** This is usually the largest factor. `for=` instead of `from`/`to` when a
-  single valid time answers the question.
-- **Narrow the area.** Smallest `radius` that still returns data; a point instead of a polygon.
+- **Narrow the time range.** The only real lever. Each day or hour you ask for on a per-interval
+  endpoint is another access, so `for=` instead of a `from`/`to` span when a single valid time answers
+  the question, and don't request 30 days when 7 will do.
 - **Prefer a cheaper endpoint for the same question.** `/airquality/index` (×1) instead of
   `/airquality` (×5) when only the index value is needed. `/lightning/summary` (×1) instead of
   `/lightning` (×10) when aggregate counts suffice. `/roadweather` (×1) instead of
   `/roadweather/analytics` (×10) without the analytics fields.
 - **Thin route points.** Directions APIs emit points every few metres; most are redundant for weather.
 - **`fields=` does not reduce cost.** It reduces payload size only — the request is charged the same.
-- **`limit` does not reduce cost** either, beyond whatever effect a smaller result set has on the
-  spatial/temporal factors. Cost tracks the data queried, not the rows returned.
+- **`limit` does not reduce cost** either. Cost tracks the time range queried, not the rows returned.
+- **Narrowing the area does nothing.** The spatial multiplier is always 1, so a smaller `radius` or a
+  tighter bounding box saves no accesses — it only risks returning less data than the user needed.

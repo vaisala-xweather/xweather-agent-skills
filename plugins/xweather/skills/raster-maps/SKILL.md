@@ -5,7 +5,7 @@ compatibility: Skill instructions are provider-neutral. The bundled scripts/xwma
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.12.3"
+  version: "0.13.0"
 ---
 
 # Xweather Raster Maps URL builder

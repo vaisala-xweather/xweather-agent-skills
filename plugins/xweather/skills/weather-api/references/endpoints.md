@@ -3,8 +3,10 @@
 Every endpoint below is a path under `https://data.api.xweather.com`. Full request shape:
 `https://data.api.xweather.com/{endpoint}/{action}/{:id}?{params}&client_id=…&client_secret=…`
 
-`Cost` is the endpoint access multiplier — the base token cost of one request before spatial and
-temporal multipliers are applied (see `parameters.md` → Cost headers).
+`Cost` is the endpoint access multiplier. Multiply it by the number of time intervals a request
+covers to get the accesses charged — `/conditions/summary` bills one access per day, so 30 days
+is 30. The spatial multiplier in the cost header is always 1 today, so query area never affects
+cost (see `access-cost.md`).
 
 Filter tokens containing `#` are templates, not literals: `#hr` → `1hr`, `3hr`, `6hr`, `24hr`;
 `#min` → `1min`, `5min`, `15min`; `day#` → `day1` … `day8`. A trailing `*` (only `pop*`, on

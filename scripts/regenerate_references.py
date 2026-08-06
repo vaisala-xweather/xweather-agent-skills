@@ -185,8 +185,10 @@ def render_endpoints(endpoints):
         "Every endpoint below is a path under `https://data.api.xweather.com`. Full request shape:",
         "`https://data.api.xweather.com/{endpoint}/{action}/{:id}?{params}&client_id=…&client_secret=…`",
         "",
-        "`Cost` is the endpoint access multiplier — the base token cost of one request before spatial and",
-        "temporal multipliers are applied (see `parameters.md` → Cost headers).",
+        "`Cost` is the endpoint access multiplier. Multiply it by the number of time intervals a request",
+        "covers to get the accesses charged — `/conditions/summary` bills one access per day, so 30 days",
+        "is 30. The spatial multiplier in the cost header is always 1 today, so query area never affects",
+        "cost (see `access-cost.md`).",
         "",
         "Filter tokens containing `#` are templates, not literals: `#hr` → `1hr`, `3hr`, `6hr`, `24hr`;",
         "`#min` → `1min`, `5min`, `15min`; `day#` → `day1` … `day8`. A trailing `*` (only `pop*`, on",
@@ -655,7 +657,7 @@ def fetch_apple_layers(version):
     return codes, configs
 
 
-def render_apple_layers(version, codes, configs):
+def render_apple_layers(version, codes, configs, mgl_count):
     missing = [c for c in codes if c not in configs]
     if missing:
         raise SystemExit(
@@ -688,8 +690,8 @@ def render_apple_layers(version, codes, configs):
         " convert a code",
         "from the web docs by hand. Look it up here, or let the compiler complete it.",
         "",
-        "The Apple SDK also supports **fewer** layers than the MapsGL JavaScript SDK (%d vs. 283)."
-        % len(codes),
+        "The Apple SDK also supports **fewer** layers than the MapsGL JavaScript SDK (%d vs. %d)."
+        % (len(codes), mgl_count),
         "If a layer exists in the MapsGL JavaScript catalog and not here, it is not available on Apple"
         " platforms — that is a real gap, not a naming problem.",
         "",
@@ -959,7 +961,7 @@ def main():
         WX_REF / "filters.md": render_filters(endpoints),
         RM_REF / "layers.md": render_layers(layers),
         MGL_REF / "layers.md": render_mapsgl_layers(mgl_layers),
-        APPLE_REF / "layers.md": render_apple_layers(apple_version, apple_codes, apple_configs),
+        APPLE_REF / "layers.md": render_apple_layers(apple_version, apple_codes, apple_configs, len(mgl_layers)),
     }
 
     for path, text in generated.items():
