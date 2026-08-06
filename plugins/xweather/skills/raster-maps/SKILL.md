@@ -5,7 +5,7 @@ compatibility: Skill instructions are provider-neutral. The bundled scripts/xwma
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.12.1"
+  version: "0.12.2"
 ---
 
 # Xweather Raster Maps URL builder
@@ -72,6 +72,7 @@ dataCoverage, updateInterval }] }`) is the authoritative list of all 159 layers 
 |---|---|
 | Radar | `radar` (regional, higher res) · `radar-global` (satellite-derived fill where radar is absent) |
 | Future radar | `fradar` — add `-hrrr` / `-nam` / `-gfs` to pick the model |
+| *Forecast of any `f`-prefixed layer* | Raster Maps splits observed from forecast — `temperatures` vs `ftemperatures`. **MapsGL doesn't**: one layer spans both there, so don't carry `f`-prefixed codes across. |
 | Satellite | `satellite-geocolor` (the good-looking default) · `satellite-visible` · `satellite-infrared-color` · `satellite-water-vapor` |
 | Watches and warnings | `alerts` — `-severe`, `-fire`, `-flood`, `-winter`, `-heat`, `-wind`, `-surge`, `-frost-freeze`; `-watches` / `-warnings` |
 | Temperature | `temperatures` · forecast `ftemperatures` · labels `temperatures-text` |

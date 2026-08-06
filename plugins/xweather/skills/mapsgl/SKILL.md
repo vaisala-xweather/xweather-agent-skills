@@ -4,7 +4,7 @@ description: This skill should be used when working with the Xweather MapsGL Jav
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.12.1"
+  version: "0.12.2"
 ---
 
 # MapsGL JavaScript SDK
@@ -457,6 +457,32 @@ entitlements — ask at runtime:
 ```javascript
 controller.weatherProvider.getLayerMetadata().then((data) => console.log(data));
 ```
+
+### No separate forecast layers — one layer spans past and future
+
+Raster Maps splits time across two layers: `temperatures` is observed, `ftemperatures` is forecast.
+**MapsGL does not.** A single `temperatures` layer covers `-7 to +15 days`, and the timeline decides
+which interval renders.
+
+So don't look for `ftemperatures`, `fradar`, or `fwind-speeds` here — they don't exist. Twelve Raster
+Maps pairs collapse into one MapsGL layer each:
+
+`dew-points` · `feels-like` · `heat-index` · `humidity` · `radar` · `satellite` · `snow-depth` ·
+`temperatures` · `visibility` · `wind-chill` · `wind-gusts` · `wind-speeds`
+
+Reach a forecast interval by moving the timeline, not by adding a different layer —
+`controller.timeline.containsFuture` reports whether the current range includes one. See
+`references/timeline.md`.
+
+**Range is per-layer, so check it rather than assuming.** `layers.md` lists it for every code. Two
+cases don't follow the pattern:
+
+- **`satellite` is past-only** (`-7 days`). Raster Maps has `fsatellite` reaching +15 days; MapsGL has
+  no forecast satellite at all. That's a missing capability, not a renamed one — don't promise a
+  satellite forecast on MapsGL.
+- **Road weather keeps an `f` split, meaning something different.** `road-weather-*` is a +2 hour
+  nowcast refreshed every 15 minutes; `froad-weather-*` is a +24 hour forecast refreshed every 6
+  hours. Both are forecasts, so there the prefix marks *range*, not past-versus-future.
 
 Some codes are **composite** (expand to multiple sub-layers, e.g. `boundaries`, `roads`,
 `stormcells`) — `addWeatherLayer` returns an array for these, and `overrides.childLayers` can

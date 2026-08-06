@@ -18,6 +18,14 @@ The **render type** determines which `paint` namespace styles the layer — a `s
 is styled through `paint.sample`, a `line` layer through `paint.stroke`, and so on. See
 `styles.md` for the property tables per type.
 
+**There are no separate forecast layers.** Raster Maps splits observed from forecast (`temperatures`
+vs. `ftemperatures`); MapsGL does not. One layer spans both, and the **data range** below is what
+tells you how far each reaches — move the timeline to render a forecast interval rather than adding
+a different layer. Two exceptions: the `satellite` layers are past-only (`-7 days`), with no MapsGL
+forecast equivalent at all; and the `road-weather-*` / `froad-weather-*` pair is a genuine split, but
+between a +2 hour nowcast and a +24 hour forecast — both forecasts, so there `f` marks range, not
+past-versus-future.
+
 ---
 
 ## Composite layers
