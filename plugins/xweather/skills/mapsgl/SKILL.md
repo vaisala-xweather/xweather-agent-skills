@@ -4,7 +4,7 @@ description: This skill should be used when working with the Xweather MapsGL Jav
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.12.2"
+  version: "0.12.3"
 ---
 
 # MapsGL JavaScript SDK

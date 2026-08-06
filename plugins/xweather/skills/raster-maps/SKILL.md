@@ -5,7 +5,7 @@ compatibility: Skill instructions are provider-neutral. The bundled scripts/xwma
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.12.2"
+  version: "0.12.3"
 ---
 
 # Xweather Raster Maps URL builder
@@ -221,7 +221,7 @@ catalog. Full model, the multiplier tables, and reduction tactics: `references/m
 ## Credentials and returning the image
 
 **Without credentials:** hand over the URL with `{client_id}` and `{client_secret}` placeholders and
-say where keys come from (the Apps section of https://data.portal.xweather.com/account/keys). Nothing
+say where keys come from (the API Keys page at https://data.portal.xweather.com/account/keys). Nothing
 else to do.
 
 **With credentials — ask before fetching.** If the user has supplied a client id and secret, ask

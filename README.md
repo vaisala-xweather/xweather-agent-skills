@@ -111,7 +111,7 @@ skills never assume that.
 
 ## Credentials
 
-Keys come from the Apps section of <https://data.portal.xweather.com/account/keys>. Each key pair is
+Keys come from the **API Keys** page at <https://data.portal.xweather.com/account/keys>. Each key pair is
 bound to a **namespace** — a top-level domain for web, or a reverse-DNS bundle id for mobile. A
 request from outside that namespace fails with `unauthorized_namespace` on the Weather API, or a 403
 `authorization_error` on Raster Maps, regardless of whether the URL is otherwise correct.

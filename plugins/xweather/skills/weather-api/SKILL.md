@@ -5,7 +5,7 @@ compatibility: Skill instructions are provider-neutral. The bundled scripts/xwre
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.12.2"
+  version: "0.12.3"
 ---
 
 # Xweather Weather API URL builder
@@ -203,7 +203,7 @@ Full model, the complete multiplier table, and cost-reduction tactics: `referenc
 ## Executing the request
 
 Default behavior with no credentials: **produce the URL only**, with `{client_id}` and
-`{client_secret}` placeholders, and explain what it returns. Mention that keys from the Apps section
+`{client_secret}` placeholders, and explain what it returns. Mention that keys from the API Keys page
 of https://data.portal.xweather.com/account/keys let you run it and return live data.
 
 When the user supplies a client id and secret — in the prompt, in a `.env`, or already exported —
