@@ -5,7 +5,7 @@ compatibility: Skill instructions are provider-neutral. The bundled scripts/xwre
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.13.0"
+  version: "0.14.0"
 ---
 
 # Xweather Weather API URL builder
@@ -375,7 +375,7 @@ Full guide: https://www.xweather.com/docs/weather-api/resources/attribution
 
 ## Reference files
 
-- `references/endpoints.md` — all 59 endpoints: description, coverage, data range, update interval,
+- `references/endpoints.md` — every endpoint: description, coverage, data range, update interval,
   cost multiplier, and the exact supported actions / params / filters / query props / sort fields.
 - `references/access-cost.md` — the access-cost model, every endpoint grouped by multiplier, what
   raises the spatial and temporal factors, the exact `route`/`batch`/error rules, cost-reduction

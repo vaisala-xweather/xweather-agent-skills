@@ -5,7 +5,7 @@ compatibility: Skill instructions are provider-neutral. The bundled scripts/xwma
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.13.0"
+  version: "0.14.0"
 ---
 
 # Xweather Raster Maps URL builder
@@ -63,7 +63,7 @@ curl -s https://www.xweather.com/docs/api/maps/layers
 ```
 
 That JSON (`{ layers: [{ id, title, description, multiplier, modifiers, categories, dataRange,
-dataCoverage, updateInterval }] }`) is the authoritative list of all 159 layers and is what
+dataCoverage, updateInterval }] }`) is the authoritative layer list and is what
 `references/layers.md` was generated from.
 
 ## Intent → layer
@@ -301,7 +301,7 @@ Full guide: https://www.xweather.com/docs/weather-api/resources/attribution
 
 ## Reference files
 
-- `references/layers.md` — all 159 layers by category: code, description, multiplier, coverage, data
+- `references/layers.md` — every layer by category: code, description, multiplier, coverage, data
   range, update interval, and each layer's dash-joined modifier options.
 - `references/url-formats.md` — static centre-point and bounding-box forms, tile form, library
   snippets for Leaflet / Mapbox GL / Google Maps / OpenLayers, time offsets, image-quality

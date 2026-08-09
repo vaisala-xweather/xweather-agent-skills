@@ -507,6 +507,38 @@ Historical maritime data available around the globe.
 
 Docs: https://www.xweather.com/docs/weather-api/endpoints/maritime-archive
 
+## `/models/:model`
+
+Returns raw forecast model data for a single forecast model at a requested location. Each response is a time series of forecast periods drawn from one model run. Use the Models Catalog endpoint to discover which models, run times, and datasets are available before making a request.
+
+*Coverage: Global · Range: Varies by model · Updates: Per model run cycle · Cost: x1*
+
+| | |
+|---|---|
+| Actions | `:id` |
+| Params | `fields`, `p` |
+| Filters | `skipnulls` |
+| Query props | — |
+| Sort fields | — |
+
+Docs: https://www.xweather.com/docs/weather-api/endpoints/models
+
+## `/models/catalog`
+
+Returns a catalog of the forecast models available through the API, including each model's accessible run times, forecast coverage, and the datasets (variables) it produces. Use this endpoint to discover what's available before requesting raw forecast data for a specific model from the /models/:model endpoint.
+
+*Coverage: Global · Range: +15 days · Updates: Per model run cycle · Cost: x1*
+
+| | |
+|---|---|
+| Actions | `:all` |
+| Params | `fields` |
+| Filters | — |
+| Query props | — |
+| Sort fields | — |
+
+Docs: https://www.xweather.com/docs/weather-api/endpoints/models-catalog
+
 ## `/normals`
 
 The normals endpoint provides access to the 30-year climate normals for US locations. This endpoint allows the receipt of up to one month of information per request.

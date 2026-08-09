@@ -64,6 +64,44 @@ controller.timeline.goToDate(new Date(controller.timeline.startDate.getTime() + 
 controller.timeline.goTo(0.5);               // normalized position, 0..1 of total duration
 ```
 
+### `goToDate` only works inside the current range
+
+**`goToDate(date)` cannot move outside `startDate`…`endDate`.** The timeline is a fixed window and
+`goToDate` seeks *within* it — it does not extend the window to reach the date you asked for. Pass a
+date outside the range and you won't get that data; the map stays where it was or clamps to an end,
+with no error to tell you why.
+
+Note the example above: it deliberately jumps to `startDate + 30 minutes`, a time already inside the
+window. That is the only kind of date `goToDate` can honour.
+
+So **set the range first, then seek**:
+
+```javascript
+const target = new Date('2026-08-09T18:00:00Z');
+
+// Widen the window so it contains the target before seeking to it.
+controller.timeline.startDate = new Date(target.getTime() - 3 * 3600 * 1000);
+controller.timeline.endDate   = new Date(target.getTime() + 3 * 3600 * 1000);
+controller.timeline.goToDate(target);
+```
+
+If a date might fall outside the current window, check before seeking and widen when it doesn't:
+
+```javascript
+function showAt(controller, target) {
+  const { startDate, endDate } = controller.timeline;
+  if (target < startDate || target > endDate) {
+    controller.timeline.startDate = new Date(target.getTime() - 3 * 3600 * 1000);
+    controller.timeline.endDate   = new Date(target.getTime() + 3 * 3600 * 1000);
+  }
+  controller.timeline.goToDate(target);
+}
+```
+
+The window still has to sit inside what the *layer* actually carries — a range extending past a
+layer's `dataRange` renders nothing for the part it doesn't cover, however the timeline is set. Check
+the layer's range in `layers.md`.
+
 ## Read-only state
 
 ```
@@ -79,6 +117,9 @@ controller.timeline.info             // { isActive, currentDate, startDate, endD
 ## Constraints & gotchas
 
 - Start date must precede end date, or the setter throws.
+- `goToDate(date)` seeks only *within* `startDate`…`endDate` — it never widens the window. A
+  date outside the range silently fails to display. Set the range first; see "Jumping to a
+  specific moment".
 - Not all layer types animate — polygon/shape-only sources (e.g. static admin boundaries) don't
   respond to timeline changes; sample/grid/contour/particle weather layers do.
 - The timeline repeats indefinitely by default (`repeat: true`); set `repeat: false` via the

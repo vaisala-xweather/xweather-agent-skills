@@ -8,8 +8,8 @@ also ships as plugins for Claude Code and OpenAI's ChatGPT and Codex plugin surf
 
 | Skill | Use it for |
 |---|---|
-| `plugins/xweather/skills/weather-api/` | Building `data.api.xweather.com` request URLs — 59 endpoints, 8 actions, filters, query syntax, and access-cost reporting |
-| `plugins/xweather/skills/raster-maps/` | Building `maps.api.xweather.com` URLs — static map images and XYZ tile templates across 159 layers, with map-unit cost reporting |
+| `plugins/xweather/skills/weather-api/` | Building `data.api.xweather.com` request URLs — every endpoint, all 8 actions, filters, query syntax, and access-cost reporting |
+| `plugins/xweather/skills/raster-maps/` | Building `maps.api.xweather.com` URLs — static map images and XYZ tile templates across the full layer catalog, with map-unit cost reporting |
 | `plugins/xweather/skills/mapsgl/` | The MapsGL JavaScript SDK (`@xweather/mapsgl`) — controllers, weather layers, styling, expressions, legends, timeline animation, session cost |
 | `plugins/xweather/skills/mapsgl-apple/` | The MapsGL SDK for Apple platforms — install channels, `MapboxMapController`/`MapLibreMapController`, `WeatherService.LayerCode` layers, SwiftUI and UIKit setup, paint, expressions, legends, timeline, session cost |
 | `plugins/xweather/skills/webhooks/` | Pushed data delivery — receiver design, securing the endpoint, retry and idempotency behaviour, registration |
@@ -82,6 +82,9 @@ them; fix them by hand when it flags one.
   Xweather" credit wherever its data or imagery is displayed, so each `SKILL.md` carries an
   "Attribution is required" section, and `mapsgl` and `raster-maps` build it into their generated
   markup. Keep it in all five — skills install independently, so none can rely on another to carry it.
+- **Never hardcode a catalog count in prose.** Endpoint and layer counts change upstream — the
+  Weather API went 59 → 61 and MapsGL 283 → 285 within days. Generated files derive their counts;
+  hand-written text should say "every endpoint" or "the full catalog" instead of a number.
 - **Descriptions are long prose in a YAML scalar.** A `: ` sequence inside one silently breaks the
   frontmatter and the skill then loads with no metadata. Use an em dash instead of a colon.
 

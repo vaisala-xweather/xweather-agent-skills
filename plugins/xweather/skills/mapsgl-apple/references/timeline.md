@@ -99,6 +99,21 @@ controller.timeline.goTo(date: date)
 controller.timeline.goTo(position: 0.5)         // useTotalDuration defaults to false
 ```
 
+**`goTo(date:)` seeks only within `startDate`…`endDate`.** Like the offset and position forms, it
+moves the playhead inside the existing window — it does not widen the window to reach a date outside
+it. So set the range before seeking to a specific time:
+
+```swift
+let target = Date()  // whatever moment you want to show
+controller.timeline.startDate = target.addingTimeInterval(-3 * 3600)
+controller.timeline.endDate   = target.addingTimeInterval(3 * 3600)
+controller.timeline.goTo(date: target)
+```
+
+This is documented behaviour for the MapsGL JavaScript SDK and the timeline model is shared, but it
+has not been separately verified against this SDK. Setting the range first is correct either way, so
+prefer it over seeking blind. The window must also sit inside the layer's own data range.
+
 **`goTo(offset:)` is `TimeInterval`, i.e. seconds** — the API documents it as "the time interval to
 advance from the start date". The web docs page shows `goTo(offset: 3600 * 1000)`, which is a
 millisecond value carried over from the MapsGL JavaScript SDK; passing that in Swift jumps a thousand hours and

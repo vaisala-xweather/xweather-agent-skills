@@ -4,7 +4,7 @@ description: This skill should be used when working with the Xweather MapsGL Jav
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.13.0"
+  version: "0.14.0"
 ---
 
 # MapsGL JavaScript SDK
@@ -576,6 +576,22 @@ controller.on('load', () => {
 });
 ```
 
+**To show one specific time, set the range before seeking to it.** `goToDate(date)` moves *within*
+`startDate`…`endDate` — it never widens the window, and a date outside the range simply doesn't
+display, with no error:
+
+```javascript
+const target = new Date('2026-08-09T18:00:00Z');
+
+controller.timeline.startDate = new Date(target.getTime() - 3 * 3600 * 1000);
+controller.timeline.endDate   = new Date(target.getTime() + 3 * 3600 * 1000);
+controller.timeline.goToDate(target);
+```
+
+This is the most common reason a "jump to this timestamp" feature silently does nothing. If the target
+can be arbitrary, test it against the current range and widen when it falls outside — worked example in
+`references/timeline.md`. The window also has to sit inside the layer's own `dataRange`.
+
 ## Legends & data inspection
 
 ```javascript
@@ -633,6 +649,9 @@ const results = await controller.queryPromise({ lat: 40, lon: -74.5 });
   `['match', ['get', 'FIELD'], ...]` for categorical colors/sizes, `['interpolate', ['linear'],
   ['get', 'FIELD'], ...]` for continuous ranges. See `references/expressions.md`.
 - **"Animate over time / add a time slider"** → `controller.timeline`, see `references/timeline.md`.
+- **"Jump to a specific timestamp" / `goToDate` does nothing** → the date is outside
+  `startDate`…`endDate`. `goToDate` seeks within the range and never widens it, so set the range
+  first, then seek. Silent failure, no error thrown.
 - **"Show a legend"** → `addLegendControl`; override `legend.points` (categorical) or `legend.bar`
   (gradient) if paint was customized — see `references/legends.md`.
 - **"Add my own data (not a built-in weather layer)"** → `addSource` + `addLayer` with an explicit
