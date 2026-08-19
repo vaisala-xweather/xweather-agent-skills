@@ -137,16 +137,37 @@ Presentations: `references/legends-inspector.md`.
 
 `references/sources.md`, `references/custom-layers.md`, `references/data-driven.md`.
 
-## Sessions & cost
+## Usage is measured in sessions
 
-MapsGL bills in **sessions** - clock-aligned 5-minute buckets, not tiles or
-requests - at 150 accesses per session on Weather API + Maps. Layer count and
-interaction inside a bucket are free, so the only cost lever is *when* weather
-layers are attached, which on Android means the Activity lifecycle.
+MapsGL bills in **sessions** - clock-aligned 5-minute buckets that start when a
+weather layer is added - not per tile, layer, or request. **The model is
+identical on Android and on the web, and this skill is not its source of truth.**
 
-`references/sessions.md` has the rules, the capacity-planning formula and
-duration table, the lifecycle teardown guidance, and how to answer a "how many
-accesses will this consume?" question. Read it before quoting any number.
+For anything quantitative - the billing rules, the access multiplier, worked
+examples, capacity-planning figures, the Raster Maps comparison - use the
+authoritative source rather than answering from memory: the `mapsgl` skill's
+`references/sessions.md` (both skills ship in the same plugin), or
+https://www.xweather.com/docs/mapsgl/getting-started/sessions.
+
+What matters here is the **Android-specific** consequence: since interaction
+inside a session is free and layer count doesn't affect cost, consumption is
+governed purely by *how long weather layers are attached to a map*. On Android
+that means lifecycle -
+
+- add layers when the weather UI is reached, not when the controller is built;
+- remove them in `onStop`, not `onDestroy`, which isn't guaranteed to run;
+- an app pocketed on the weather screen keeps billing - the failure mode with no
+  web analogue;
+- treat always-on kiosk and wall displays as the expensive pattern, and say so
+  unprompted.
+
+Two traps worth stating whenever cost comes up: `setWeatherLayerVisibility` is
+the cheap toggle but `removeWeatherLayer` is the one that stops consumption, and
+**`DataQuality` is a performance lever, not a cost lever** - it cuts requests,
+and sessions don't count requests.
+
+Code for each of these, and the full list of what is *not* worth optimizing:
+`references/sessions.md`.
 
 ## Android rules
 
@@ -197,6 +218,6 @@ Full guide: https://www.xweather.com/docs/weather-api/resources/attribution
 | `references/sources.md` | Vector / GeoJSON / encoded sources |
 | `references/custom-layers.md` | addLayer fill/circle/... |
 | `references/legends-inspector.md` | Legends + Presentation |
-| `references/sessions.md` | Session cost, access estimation, lifecycle teardown |
+| `references/sessions.md` | The Android half of session cost: lifecycle teardown + traps. Points at the `mapsgl` skill for the billing model itself |
 | `references/api-reference.md` | Method map |
 | `references/android-gotchas.md` | Platform pitfalls |
