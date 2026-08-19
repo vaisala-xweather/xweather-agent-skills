@@ -137,9 +137,16 @@ Presentations: `references/legends-inspector.md`.
 
 `references/sources.md`, `references/custom-layers.md`, `references/data-driven.md`.
 
-## Sessions
+## Sessions & cost
 
-MapsGL bills in **sessions** (same model as JS). See `references/sessions.md`.
+MapsGL bills in **sessions** - clock-aligned 5-minute buckets, not tiles or
+requests - at 150 accesses per session on Weather API + Maps. Layer count and
+interaction inside a bucket are free, so the only cost lever is *when* weather
+layers are attached, which on Android means the Activity lifecycle.
+
+`references/sessions.md` has the rules, the capacity-planning formula and
+duration table, the lifecycle teardown guidance, and how to answer a "how many
+accesses will this consume?" question. Read it before quoting any number.
 
 ## Android rules
 
@@ -190,6 +197,6 @@ Full guide: https://www.xweather.com/docs/weather-api/resources/attribution
 | `references/sources.md` | Vector / GeoJSON / encoded sources |
 | `references/custom-layers.md` | addLayer fill/circle/... |
 | `references/legends-inspector.md` | Legends + Presentation |
-| `references/sessions.md` | Billing |
+| `references/sessions.md` | Session cost, access estimation, lifecycle teardown |
 | `references/api-reference.md` | Method map |
 | `references/android-gotchas.md` | Platform pitfalls |
