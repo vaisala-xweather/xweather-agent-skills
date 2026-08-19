@@ -111,6 +111,7 @@ controller.addWeatherLayer(WeatherService.Temperatures(controller.service))
 controller.removeWeatherLayer(LayerCode.TEMPERATURES)
 ```
 
+Which codes exist, with wire code, factory and render type: `references/layers.md`.  
 Details + LayerCode vs id: `references/weather-layers.md`.  
 Paint overrides: `references/weather-styling.md`.
 
@@ -209,6 +210,7 @@ Full guide: https://www.xweather.com/docs/weather-api/resources/attribution
 | File | Use when |
 |---|---|
 | `references/setup.md` | Install, MapLoaded, credentials |
+| `references/layers.md` | The 181-layer catalog - which LayerCode exists, its wire code, factory and render type |
 | `references/weather-layers.md` | LayerCode / WeatherService add/remove |
 | `references/weather-styling.md` | Raster/sample/particle/grid paint |
 | `references/timeline.md` | Range, playback, events, load UI |
