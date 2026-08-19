@@ -1,8 +1,8 @@
 # Xweather API & Maps — Agent Skills
 
-Five [Agent Skills](https://agentskills.io) for the Xweather developer platform: build Weather API
+Six [Agent Skills](https://agentskills.io) for the Xweather developer platform: build Weather API
 request URLs, generate Raster Maps imagery and tile URLs, work with the MapsGL SDKs for the web and for
-Apple platforms, and set up pushed data delivery.
+Apple and Android platforms, and set up pushed data delivery.
 
 Agent Skills is an open standard originally published by Anthropic, so these work in any
 skills-compatible agent — **OpenAI Codex, Cursor, GitHub Copilot, VS Code, Gemini CLI, Goose,
@@ -17,6 +17,7 @@ as installable plugins for Claude Code and OpenAI's ChatGPT and Codex plugin sur
 | `raster-maps` | `maps.api.xweather.com` URLs — static map images and XYZ tile templates across 159 layers, dash-joined data modifiers, opacity/blur/blend/scale-hsla, time offsets, and map-unit cost reporting. |
 | `mapsgl` | The MapsGL JavaScript SDK (`@xweather/mapsgl`) — controllers for Mapbox GL, MapLibre GL, Google Maps and Leaflet, all 283 layers, styling, expressions, legends, timeline animation, and session-based cost. |
 | `mapsgl-apple` | The MapsGL SDK for Apple platforms — Swift Package/CocoaPods/Carthage install, `MapboxMapController` and `MapLibreMapController`, all 182 `WeatherService.LayerCode` layers, SwiftUI and UIKit setup, paint properties, expressions, legends, timeline, and session-based cost. |
+| `mapsgl-android` | The MapsGL Android SDK (`com.xweather.mapsgl`) — AAR/JitPack install over the Mapbox Maps SDK for Android, `MapboxMapController`, all 209 `LayerCode` layers, `StyleValue`/`Expression` styling, custom sources and layers, legends and the data inspector, timeline animation, and session-based cost. |
 | `webhooks` | Pushed data delivery — receiver design, securing the endpoint, available data sets, retry and idempotency behaviour, and the registration details Xweather needs. |
 
 ## Install
@@ -168,11 +169,12 @@ plugins/xweather/                     the plugin
 ├── .claude-plugin/plugin.json        Claude Code plugin manifest
 ├── .codex-plugin/plugin.json         ChatGPT and Codex plugin manifest
 ├── bin/                              xwrequest, xwmap — Claude Code puts these on PATH
-└── skills/                           the five skills — the portable payload
+└── skills/                           the six skills — the portable payload
     ├── weather-api/
     ├── raster-maps/
     ├── mapsgl/
     ├── mapsgl-apple/
+    ├── mapsgl-android/
     └── webhooks/
 ```
 

@@ -1,7 +1,7 @@
 {
   "name": "xweather",
-  "version": "0.12.1",
-  "description": "Xweather Weather API, Raster Maps, MapsGL, and Webhooks — build and run Weather API request URLs, generate static map images and tile URLs, work with the MapsGL JavaScript and Apple-platform SDKs, and set up push data delivery.",
+  "version": "0.13.0",
+  "description": "Xweather Weather API, Raster Maps, MapsGL, and Webhooks — build and run Weather API request URLs, generate static map images and tile URLs, work with the MapsGL JavaScript, Apple-platform, and Android SDKs, and set up push data delivery.",
   "author": {
     "name": "Vaisala Xweather",
     "url": "https://www.xweather.com"
@@ -18,6 +18,9 @@
     "mapsgl-apple",
     "ios",
     "swift",
+    "mapsgl-android",
+    "android",
+    "kotlin",
     "webhooks",
     "radar",
     "geospatial"
@@ -25,8 +28,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Xweather API & Maps",
-    "shortDescription": "Build Xweather API, Raster Maps, MapsGL web and iOS, and webhook integrations",
-    "longDescription": "Reusable Xweather skills for building Weather API requests, Raster Maps imagery and tiles, MapsGL integrations for the web and for Apple platforms, and webhook receivers.",
+    "shortDescription": "Build Xweather API, Raster Maps, MapsGL web, iOS and Android, and webhook integrations",
+    "longDescription": "Reusable Xweather skills for building Weather API requests, Raster Maps imagery and tiles, MapsGL integrations for the web and for Apple and Android platforms, and webhook receivers.",
     "developerName": "Vaisala Xweather",
     "category": "Developer Tools",
     "capabilities": [
@@ -38,6 +41,7 @@
       "Build an Xweather Weather API request and report its access cost.",
       "Create an Xweather weather map integration for my application.",
       "Add an Xweather MapsGL weather map to my SwiftUI app.",
+      "Add an Xweather MapsGL weather map to my Android app.",
       "Help me design an Xweather webhook receiver."
     ]
   }
