@@ -190,8 +190,16 @@ load `plugins/xweather/skills/` instead of maintaining vendor-specific copies.
 claude --plugin-dir ./plugins/xweather   # load in Claude Code without installing
 claude plugin validate .                 # validate the manifests
 python3 scripts/validate_packaging.py    # compare shared marketplace, manifest, and skill metadata
+python3 scripts/check_skill_links.py --skip-links   # every references/*.md mention resolves
+python3 scripts/check_skill_links.py                # the above, plus probe every URL
 skills-ref validate ./plugins/xweather/skills/weather-api   # validate against the Agent Skills spec
 ```
+
+`check_skill_links.py` catches the two ways skill content rots without failing any
+other check: a `references/foo.md` mention that no longer resolves, and a URL that
+has gone dead. `.github/workflows/check-skills.yml` runs the reference half on every
+skill change and the link half weekly — links stay off pull requests so a
+third-party outage can't block unrelated work.
 
 `.github/workflows/validate-packaging.yml` runs the metadata comparison for relevant pushes and pull
 requests. `skills-ref` comes from <https://github.com/agentskills/agentskills>. `/reload-plugins`

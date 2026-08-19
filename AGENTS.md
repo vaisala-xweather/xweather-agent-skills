@@ -63,6 +63,39 @@ Three further files embed generated content inside hand-written prose —
 `plugins/xweather/skills/mapsgl/references/weather-layers.md`. The script reports drift in those but won't rewrite
 them; fix them by hand when it flags one.
 
+## Checking the skills
+
+Two checks beyond `validate_packaging.py`:
+
+```bash
+python3 scripts/check_skill_links.py --skip-links   # references resolve; offline
+python3 scripts/check_skill_links.py                # also probe every URL
+```
+
+The reference check verifies that every `references/foo.md` a skill mentions
+actually exists, that each one is reachable from its `SKILL.md`, and that none is
+orphaned. It understands a qualified cross-skill mention - "the `mapsgl` skill's
+`references/sessions.md`" resolves against `mapsgl`, not against the skill doing
+the mentioning.
+
+`.github/workflows/check-skills.yml` runs the offline half on every change under
+`plugins/xweather/skills/`, and the link half weekly. Links are deliberately kept
+off pull requests: a third-party outage should not block an unrelated change.
+
+**The `mapsgl-android` layer catalog is generated, but not by CI.**
+
+```bash
+python3 scripts/regenerate_mapsgl_android_layers.py --sdk ../mapsgl-android-sdk
+python3 scripts/regenerate_mapsgl_android_layers.py --sdk ../mapsgl-android-sdk --check
+```
+
+Unlike `regenerate_references.py`, this one reads a local SDK checkout rather than
+a public endpoint, so it cannot run in CI. That follows from the skill tracking the
+SDK's development branch, whose source is not published anywhere CI could fetch.
+Run `--check` by hand after the SDK moves; it writes nothing and exits non-zero on
+drift. The set of codes comes from the checkout, and each is compared against the
+released KDoc so anything only on the branch is marked *(unreleased)*.
+
 ## Conventions
 
 - **Skill frontmatter follows the Agent Skills spec**: `name` and `description` required, `name`
