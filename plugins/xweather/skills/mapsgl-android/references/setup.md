@@ -67,12 +67,20 @@ dependencyResolutionManagement {
                 password = MAPBOX_DOWNLOADS_TOKEN
             }
         }
+        // The SDK has a transitive `api` dependency on
+        // no.ecc.vectortile:java-vector-tile, published only here.
+        maven { url = uri("https://maven.ecc.no/releases") }
     }
 }
 ```
 
-The official getting-started shows only JitPack. **Also add Mapbox Maven** - MapsGL treats Mapbox as
-a peer dependency and does not ship it transitively.
+The official getting-started shows only JitPack. **All four repositories are required.**
+
+- **Mapbox Maven** - MapsGL treats Mapbox as a peer dependency and does not ship it transitively.
+- **`maven.ecc.no`** - hosts `no.ecc.vectortile:java-vector-tile`, which the SDK exposes as an `api`
+  dependency. Omitting it fails at dependency resolution with
+  `Could not find no.ecc.vectortile:java-vector-tile:1.4.1`, which looks like a broken SDK release
+  rather than a missing repository. This is the single most likely reason a first build fails.
 
 The `metadataSources` block is worth keeping: JitPack publishes a rewritten Gradle `*.module`
 descriptor that resolves fine but loses the sources/KDoc wiring, so the IDE shows no documentation
@@ -117,10 +125,11 @@ add `tools:replace` for it.
 
 **Transitive dependencies.** The SDK exposes several deps as `api`, so they land on your compile
 classpath whether you asked or not: `androidx.appcompat`, `com.google.android.material`,
-`androidx.compose.ui:ui-graphics`, `androidx.navigation:navigation-compose`, Glide, and
-`hilt-android`. That is why `LegendControl.backgroundColor` is a Compose `Color`. You do not have to
-adopt Compose or Hilt to use the SDK, but version conflicts with your own copies of these will
-surface as duplicate-class or resolution errors.
+`androidx.compose.ui:ui-graphics`, `androidx.navigation:navigation-compose`, Glide, `hilt-android`,
+and `no.ecc.vectortile:java-vector-tile`. That is why `LegendControl.backgroundColor` is a Compose
+`Color`, and why `maven.ecc.no` has to be in your repository list. You do not have to adopt Compose
+or Hilt to use the SDK, but version conflicts with your own copies of these will surface as
+duplicate-class or resolution errors.
 
 ## Strings
 
@@ -240,6 +249,8 @@ These are `LiveData` - observe them with a `LifecycleOwner`, not a raw callback.
 
 | Symptom | Cause |
 |---|---|
+| `Could not find no.ecc.vectortile:java-vector-tile` | `maven.ecc.no` missing from `settings.gradle` - the most common first-build failure |
+| `ActivityXBinding` unresolved in an example | `buildFeatures { viewBinding true }` not enabled |
 | Dependency resolution fails on `com.mapbox.maps` | Mapbox Maven repo missing from `settings.gradle`, or `MAPBOX_DOWNLOADS_TOKEN` unset |
 | 401 from `api.mapbox.com` during build | Downloads token is wrong, expired, or is a `pk.` public token where an `sk.` secret one is needed |
 | Manifest merger error on an `<application>` attribute | The library sets it too - add `tools:replace` for that attribute |
