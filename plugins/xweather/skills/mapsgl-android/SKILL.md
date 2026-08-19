@@ -80,24 +80,21 @@ before relying on it.
 ## How to write examples
 
 **Default:** one Kotlin `Activity` / Fragment with ViewBinding + Mapbox `MapView`.
-No Compose unless asked.
+No Compose unless asked. Match the surrounding project when it disagrees with that
+default - if it is a Fragment codebase, or already uses Compose interop, follow it.
 
-```kotlin
-val account = XweatherAccount(
-    getString(R.string.xweather_client_id),
-    getString(R.string.xweather_client_secret),
-)
-val controller = MapboxMapController(mapView, account)
+## API reference
+
+`references/api-reference.md` carries real signatures for every public type. The
+published KDoc is the per-version authority:
+
+```
+https://cdn.aerisapi.com/sdk/android/mapsgl/docs/v{version}/mapsglmaps/{package}/{-class-name}/index.html
 ```
 
-Resolve the release tag (above) before pinning, rather than copying `vX.Y.Z`:
-
-```gradle
-implementation "com.github.vaisala-xweather:mapsgl-android-sdk:vX.Y.Z"
-implementation "com.mapbox.maps:android-ndk27:11.15.3"
-```
-
-Full install + **MapLoaded** pattern: `references/setup.md`.
+There is **no `latest` alias** - `/docs/latest/` returns 404. Resolve the version
+first (above). Class paths dash-case the name: `MapController` becomes
+`-map-controller`.
 
 ## Core concepts
 
@@ -111,42 +108,327 @@ Full install + **MapLoaded** pattern: `references/setup.md`.
 | `LegendControl` / `DataInspectorControl` | On-map UI |
 | `timeline` / `animationOptions` | Shared animation clock |
 
-## Common tasks
+## Setup
 
-### Weather layers
+### 1. Credentials - both sets are required
 
-```kotlin
-controller.addWeatherLayer(LayerCode.TEMPERATURES)
-controller.addWeatherLayer(WeatherService.Temperatures(controller.service))
-controller.removeWeatherLayer(LayerCode.TEMPERATURES)
+| | Where | Used for |
+|---|---|---|
+| Xweather client id + secret | https://data.portal.xweather.com/account/keys | `XweatherAccount(id, secret)` |
+| Mapbox access token | `mapbox_access_token` string resource | Map rendering at runtime |
+| Mapbox downloads token | `MAPBOX_DOWNLOADS_TOKEN` in `gradle.properties` | Resolving the Mapbox SDK at build time |
+
+If nothing renders or auth fails, check **both** credential sets before digging
+into MapsGL. A missing Mapbox token looks like a MapsGL failure but isn't.
+
+### 2. Install
+
+**Mapbox is a peer dependency** - MapsGL does not bring it transitively, and the
+official getting-started page shows only JitPack. Add both repositories and both
+dependencies:
+
+```gradle
+// settings.gradle
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url = uri("https://jitpack.io")
+            // Prefer POM + artifact over JitPack's rewritten *.module, which breaks IDE KDoc
+            metadataSources { mavenPom(); artifact() }
+        }
+        maven {
+            url = uri("https://api.mapbox.com/downloads/v2/releases/maven")
+            authentication { basic(BasicAuthentication) }
+            credentials { username = "mapbox"; password = MAPBOX_DOWNLOADS_TOKEN }
+        }
+    }
+}
 ```
 
-Which codes exist, with wire code, factory and render type: `references/layers.md`.  
-Details + LayerCode vs id: `references/weather-layers.md`.  
-Paint overrides: `references/weather-styling.md`.
+```gradle
+// app/build.gradle - resolve vX.Y.Z from the releases endpoint, don't copy a literal
+dependencies {
+    implementation "com.github.vaisala-xweather:mapsgl-android-sdk:vX.Y.Z"
+    implementation "com.mapbox.maps:android-ndk27:11.15.3"
+}
+```
 
-### Timeline
+Do **not** also add a `...:mapsglmaps` artifact - that duplicates the SDK.
+
+### 3. Create the controller, then wait for the map to load
+
+Two things have to be true before adding weather layers: the `MapView` must be
+attached, and the Mapbox map must have loaded. Adding layers earlier silently
+does nothing.
 
 ```kotlin
+val controller = MapboxMapController(mapView, account)
+mapView.mapboxMap.subscribeMapLoaded {
+    // safe to add weather layers here
+}
+```
+
+Use `MapboxMapController(mapView, account)`. The 4-argument constructor taking a
+`Context` and `LifecycleOwner` is **deprecated** and merely delegates to this one,
+despite still appearing throughout the website documentation.
+
+Full install detail, credential wiring and the string resources:
+`references/setup.md`.
+
+## Complete example
+
+A single Activity that renders an animated radar layer with a legend, tears down
+on `onStop` so it stops consuming sessions, and carries the required attribution.
+
+```xml
+<!-- res/layout/activity_weather_map.xml -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.mapbox.maps.MapView
+        android:id="@+id/mapView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/attribution"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Powered by Vaisala Xweather"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+```kotlin
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.view.ViewTreeObserver
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
+import com.mapbox.maps.extension.style.layers.properties.generated.ProjectionName
+import com.mapbox.maps.extension.style.projection.generated.projection
+import com.mapbox.maps.extension.style.projection.generated.setProjection
+import com.xweather.mapsgl.config.weather.account.XweatherAccount
+import com.xweather.mapsgl.controls.legend.LegendControl
+import com.xweather.mapsgl.types.Coordinate
+import com.xweather.mapsgl.map.mapbox.MapboxMapController
+import com.xweather.mapsgl.weather.LayerCode
+import java.util.Date
+
+class WeatherMapActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityWeatherMapBinding
+    private var controller: MapboxMapController? = null
+    private val activeCodes = listOf(LayerCode.RADAR)
+    private var weatherAttached = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityWeatherMapBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.attribution.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.xweather.com/")))
+        }
+
+        val account = XweatherAccount(
+            getString(R.string.xweather_client_id),
+            getString(R.string.xweather_client_secret),
+        )
+
+        // Wait for the MapView to be attached before constructing the controller.
+        binding.mapView.viewTreeObserver.addOnGlobalLayoutListener(
+            object : ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    binding.mapView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    if (binding.mapView.parent == null) return
+                    setUpMap(account)
+                }
+            })
+    }
+
+    private fun setUpMap(account: XweatherAccount) {
+        val c = MapboxMapController(binding.mapView, account)
+        controller = c
+
+        c.setCenter(Coordinate(39.5, -98.0))
+        c.setZoom(4.0)
+
+        // Loading UI, driven by the controller's own signals.
+        c.onLoadStart.observe(this) { binding.progress.isVisible = true }
+        c.onLoadComplete.observe(this) { binding.progress.isVisible = false }
+
+        binding.mapView.mapboxMap.subscribeMapLoaded {
+            // MapsGL requires Mercator.
+            binding.mapView.mapboxMap.style?.setProjection(projection(ProjectionName.MERCATOR))
+
+            c.add(LegendControl().apply { mapView = binding.mapView })
+            c.addDataInspectorControl(binding.mapView)
+
+            // Pre-fetch tiles across the range so play() doesn't stall.
+            c.animationOptions.shouldPreloadData = true
+            c.timeline.setStartDateUsingRelativeTime("-1 day")
+            c.timeline.end = Date()
+
+            attachWeather()
+        }
+    }
+
+    private fun attachWeather() {
+        val c = controller ?: return
+        if (weatherAttached) return
+        activeCodes.forEach { c.addWeatherLayer(it) }
+        weatherAttached = true
+        c.timeline.play()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (controller != null) attachWeather()
+    }
+
+    // Sessions accrue while layers are attached — detach when not visible.
+    override fun onStop() {
+        super.onStop()
+        val c = controller ?: return
+        c.timeline.pause()
+        activeCodes.forEach { c.removeWeatherLayer(it) }
+        weatherAttached = false
+    }
+}
+```
+
+Points worth carrying into any example you write: construct only after the view is
+attached, set Mercator, add layers inside `subscribeMapLoaded`, and detach in
+`onStop`.
+
+## Weather layers
+
+```kotlin
+controller.addWeatherLayer(LayerCode.TEMPERATURES)                        // defaults
+controller.addWeatherLayer(WeatherService.Temperatures(controller.service)) // to override paint
+controller.addWeatherLayer(LayerCode.RADAR) { config -> /* tweak */ }      // configure lambda
+controller.removeWeatherLayer(LayerCode.TEMPERATURES)                     // code only
+controller.setWeatherLayerVisibility(LayerCode.RADAR, false)
+```
+
+`removeWeatherLayer` takes **only** the code - the extra-argument forms in the
+website docs don't exist.
+
+**`LayerCode` is not the style layer id.** To stack something relative to a
+weather layer, get the real id first:
+
+```kotlin
+val id = controller.getWeatherLayer(LayerCode.TEMPERATURES)?.id
+controller.addWeatherLayer(WeatherService.WindParticles(controller.service), beforeId = id)
+```
+
+Which codes exist, with wire code, factory and render type: `references/layers.md`.
+Add/remove detail: `references/weather-layers.md`.
+
+## Styling
+
+Paint lives on the configuration's `layer.paint`, and its concrete type depends on
+the layer's render type. `opacity` is a plain `Float`:
+
+```kotlin
+val config = WeatherService.Temperatures(controller.service) as WeatherLayerConfiguration<*, *>
+val paint = config.layer.paint as SampleLayerPaint
+paint.opacity = 1.0f
+paint.sample.colorScale = ColorScaleOptions(stops = listOf(/* ... */))
+controller.addWeatherLayer(config)
+```
+
+Render types and their paint namespaces are listed per section in
+`references/layers.md`. `DataQuality` (`exact`, `high`, `medium`, `normal`, `low`)
+trades resolution for bandwidth - a performance lever, never a cost one.
+
+Paint by render type: `references/weather-styling.md`. Descriptor and paint
+overview: `references/styles.md`. `StyleValue` / `Expression`:
+`references/expressions.md`. Data-driven cookbooks: `references/data-driven.md`.
+
+## Custom sources and layers
+
+```kotlin
+val source = controller.addSource(
+    GeoJSONSourceDescriptor(id = "my-data", url = "https://example.com/data.geojson")
+)
+controller.addLayer(FillLayerDescriptor(/* ... */), beforeID = null)
+controller.removeLayer("my-layer")
+controller.removeSource("my-data")
+```
+
+Note `addLayer` takes **`beforeID`** while `addWeatherLayer` and `moveLayer` take
+**`beforeId`**, and `removeLayer`'s second parameter is spelled `isCompounLayer` in
+the public API.
+
+Source descriptors: `references/sources.md`. Layer descriptors and `addLayer`
+recipes: `references/custom-layers.md`.
+
+## Animating over time
+
+```kotlin
+controller.animationOptions.shouldPreloadData = true   // false by default
 controller.timeline.setStartDateUsingRelativeTime("-1 day")
 controller.timeline.end = Date()
 controller.timeline.play()
 ```
 
-Full API: `references/timeline.md`.
+`shouldPreloadData` is the difference between playback that starts immediately and
+playback that stalls while tiles arrive. Playback, range, events and the load-UI
+signals: `references/timeline.md`.
 
-### Legends / inspector
+## Legends and data inspection
 
 ```kotlin
-controller.add(LegendControl())
-val inspector = controller.addDataInspectorControl(mapView)
+controller.add(LegendControl().apply { mapView = binding.mapView })
+val inspector = controller.addDataInspectorControl(binding.mapView)
+inspector.setPresentation(layerId, presentation)
 ```
 
-Presentations: `references/legends-inspector.md`.
+`setPresentation` keys on the **style layer id**, not `LayerCode`.
+`LegendControl.backgroundColor` is a Compose `Color`, not `android.graphics.Color`.
 
-### Custom sources & layers
+Presentations, units and custom legends: `references/legends-inspector.md`.
 
-`references/sources.md`, `references/custom-layers.md`, `references/data-driven.md`.
+## Querying data at a point
+
+Tapping is handled for you by `DataInspectorControl` - prefer it. For a
+programmatic hit test, `MapboxMapController` exposes a suspend query:
+
+```kotlin
+suspend fun queryFeatures(
+    point: Point,
+    vectorLayerList: List<VectorTileLayer>,
+    onTouch: Boolean = true,
+): HashMap<String, FeatureQueryResult>?
+```
+
+It takes the vector layers to test explicitly and returns results keyed by layer
+id, or null when nothing was queried or the timeline is blocking queries. It is a
+`suspend` function - call it from a coroutine, not from a click listener directly.
 
 ## Usage is measured in sessions
 
@@ -188,6 +470,36 @@ Code for each of these, and the full list of what is *not* worth optimizing:
 
 More: `references/android-gotchas.md`.
 
+## Checklist for common tasks
+
+- **"Add a weather map to my app"** -> the complete example above. Construct after
+  the view is attached, set Mercator, add layers inside `subscribeMapLoaded`.
+- **"How do I install it / which version"** -> both repositories and both
+  dependencies; resolve the version from the releases endpoint, never a literal.
+  `references/setup.md`.
+- **"Add layer X"** -> find the `LayerCode` in `references/layers.md` first; the
+  enum name is not a transform of the wire code. Check it isn't marked
+  *(unreleased)* if the project depends on a published artifact.
+- **"Nothing renders"** -> check Mapbox tokens *and* Xweather credentials, then
+  that layers were added after `subscribeMapLoaded`, then Mercator.
+- **"Restyle a layer"** -> cast `config.layer.paint` to the paint type for its
+  render type (`references/layers.md` groups by descriptor), set fields, then add.
+  Opacity is a `Float`.
+- **"Animate over time / add a scrubber"** -> `controller.timeline`, and set
+  `animationOptions.shouldPreloadData = true`. `references/timeline.md`.
+- **"Show a legend"** -> `LegendControl` + `controller.add(legendControl)`; set its
+  `mapView`. Override `config.legend` when you customized a categorical paint.
+- **"Show values on tap"** -> `addDataInspectorControl(mapView)`, customize with
+  `setPresentation(layerId, presentation)` keyed by style layer id.
+- **"Stack layers in a specific order"** -> resolve the real style layer id via
+  `getWeatherLayer(code)?.id` and pass it as `beforeId`.
+- **"How many accesses will this cost?"** -> sessions, not tiles or layers. Get the
+  model and arithmetic from the `mapsgl` skill's `references/sessions.md` or the
+  public docs, then apply the Android lifecycle guidance in
+  `references/sessions.md`.
+- **"Where are the API docs?"** -> releases endpoint for the version, then the
+  KDoc URL pattern above. There is no `latest` alias.
+
 ## Attribution is required
 
 Xweather requires attribution wherever its data or imagery is displayed. This applies to **all
@@ -220,7 +532,8 @@ Full guide: https://www.xweather.com/docs/weather-api/resources/attribution
 | File | Use when |
 |---|---|
 | `references/setup.md` | Install, MapLoaded, credentials |
-| `references/layers.md` | The 181-layer catalog - which LayerCode exists, its wire code, factory and render type |
+| `references/layers.md` | The layer catalog - every `LayerCode`, its wire code, factory and render type |
+| `references/api-reference.md` | Real signatures for every public type, and the KDoc URL pattern |
 | `references/weather-layers.md` | LayerCode / WeatherService add/remove |
 | `references/weather-styling.md` | Raster/sample/particle/grid paint |
 | `references/timeline.md` | Range, playback, events, load UI |
@@ -231,5 +544,4 @@ Full guide: https://www.xweather.com/docs/weather-api/resources/attribution
 | `references/custom-layers.md` | addLayer fill/circle/... |
 | `references/legends-inspector.md` | Legends + Presentation |
 | `references/sessions.md` | The Android half of session cost: lifecycle teardown + traps. Points at the `mapsgl` skill for the billing model itself |
-| `references/api-reference.md` | Method map |
 | `references/android-gotchas.md` | Platform pitfalls |
