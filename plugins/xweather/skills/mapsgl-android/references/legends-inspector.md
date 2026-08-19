@@ -3,7 +3,9 @@
 Verified against SDK `LegendControl`, `DataInspectorControl`, `Presentation`, `Units` (1.6.x).
 Docs are secondary if they disagree:
 https://www.xweather.com/docs/mapsgl-android-sdk/getting-started/legends ,
-https://www.xweather.com/docs/mapsgl-android-sdk/controls/data-inspector\r\n\r\n## LegendControl
+https://www.xweather.com/docs/mapsgl-android-sdk/controls/data-inspector
+
+## LegendControl
 
 ```kotlin
 val legendControl = LegendControl()

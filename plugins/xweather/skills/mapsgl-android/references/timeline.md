@@ -3,7 +3,9 @@
 Verified against SDK `Timeline` / `AnimationOptions` / `AnimationEvent` (1.6.x).
 Docs pages are secondary if they disagree:
 https://www.xweather.com/docs/mapsgl-android-sdk/getting-started/animating-data ,
-https://www.xweather.com/docs/mapsgl-android-sdk/reference/timeline\r\n\r\n## Playback
+https://www.xweather.com/docs/mapsgl-android-sdk/reference/timeline
+
+## Playback
 
 ```kotlin
 controller.timeline.play()

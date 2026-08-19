@@ -2,7 +2,9 @@
 
 Verified against SDK source descriptors + `MapController.addSource` (1.6.x).
 Docs are secondary:
-https://www.xweather.com/docs/mapsgl-android-sdk/advanced/sources\r\n\r\n## Vector tiles
+https://www.xweather.com/docs/mapsgl-android-sdk/advanced/sources
+
+## Vector tiles
 
 URL templates support `{z}`, `{x}`, `{y}`, `{s}`. When `authenticator` is null,
 `addSource` wires the controller's WeatherService authenticator so

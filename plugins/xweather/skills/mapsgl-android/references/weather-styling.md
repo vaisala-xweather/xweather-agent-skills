@@ -3,7 +3,9 @@
 Verified against SDK paint types + `WeatherService` factories (1.6.x).
 Docs recipes are secondary:
 https://www.xweather.com/docs/mapsgl-android-sdk/getting-started/weather-data ,
-https://www.xweather.com/docs/mapsgl-android-sdk/styling/weather-data\r\n\r\n## Raster
+https://www.xweather.com/docs/mapsgl-android-sdk/styling/weather-data
+
+## Raster
 
 ```kotlin
 val config = WeatherService.Satellite(controller.service) as WeatherLayerConfiguration<*, *>

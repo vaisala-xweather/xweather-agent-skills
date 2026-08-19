@@ -2,7 +2,9 @@
 
 Verified against SDK constructors, demos, and Gradle packaging (1.6.x).
 Getting-started docs are secondary when they disagree (e.g. deprecated 4-arg controller).
-https://www.xweather.com/docs/mapsgl-android-sdk/getting-started\r\n\r\n## Credentials (both required)
+https://www.xweather.com/docs/mapsgl-android-sdk/getting-started
+
+## Credentials (both required)
 
 1. **Xweather** client id + secret - https://data.portal.xweather.com/account/keys  
    Passed to `XweatherAccount(id, secret)`.
@@ -112,7 +114,9 @@ mapController.onLoadStart.observe(this) { binding.loadingBar.isVisible = true }
 mapController.onLoadComplete.observe(this) { binding.loadingBar.isVisible = false }
 ```
 
-## External links (secondary to SDK)\r\n\r\n- Hub: https://www.xweather.com/docs/mapsgl-android-sdk/
+## External links (secondary to SDK)
+
+- Hub: https://www.xweather.com/docs/mapsgl-android-sdk/
 - Getting started: https://www.xweather.com/docs/mapsgl-android-sdk/getting-started
 - Layer catalog JSON: https://www.xweather.com/docs/api/mapsgl/layers
 - Releases JSON: https://www.xweather.com/docs/api/releases/versions

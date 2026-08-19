@@ -2,7 +2,9 @@
 
 Verified against SDK `LayerCode`, `WeatherService`, `MapController` weather APIs (1.6.x).
 Docs are secondary:
-https://www.xweather.com/docs/mapsgl-android-sdk/getting-started/weather-data\r\n\r\n## Critical: LayerCode != style layer id
+https://www.xweather.com/docs/mapsgl-android-sdk/getting-started/weather-data
+
+## Critical: LayerCode != style layer id
 
 ```kotlin
 val temperaturesLayer = controller.getWeatherLayer(LayerCode.TEMPERATURES)

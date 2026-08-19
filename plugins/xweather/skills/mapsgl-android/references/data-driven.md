@@ -3,7 +3,9 @@
 Verified against SDK `Expression` / `StyleValue` / paint APIs (1.6.x).
 Docs cookbooks are secondary:
 https://www.xweather.com/docs/mapsgl-android-sdk/styling/data-driven ,
-https://www.xweather.com/docs/mapsgl-android-sdk/advanced/layers\r\n\r\n## Property -> style (`get` / `concat`)
+https://www.xweather.com/docs/mapsgl-android-sdk/advanced/layers
+
+## Property -> style (`get` / `concat`)
 
 Alerts MVT features expose `COLOR` as hex **without** `#`:
 

@@ -2,7 +2,9 @@
 
 Verified against SDK layer descriptors + `MapController.addLayer(descriptor, beforeID)` (1.6.x).
 Docs are secondary:
-https://www.xweather.com/docs/mapsgl-android-sdk/advanced/layers\r\n\r\n## Fill example (alerts MVT)
+https://www.xweather.com/docs/mapsgl-android-sdk/advanced/layers
+
+## Fill example (alerts MVT)
 
 ```kotlin
 import androidx.compose.ui.graphics.Color

@@ -2,7 +2,9 @@
 
 Verified against SDK descriptors and paint types (1.6.x).
 Docs overview is secondary:
-https://www.xweather.com/docs/mapsgl-android-sdk/styling\r\n\r\n## Layer render types
+https://www.xweather.com/docs/mapsgl-android-sdk/styling
+
+## Layer render types
 
 | Type | Role |
 |---|---|
