@@ -11,8 +11,10 @@ description: >-
   WeatherService, XweatherAccount, or weather overlays on Mapbox Maps SDK for
   Android. Also covers MapsGL session-based usage/cost (shared with the JS SDK)
   and common Android gotchas (Mercator, OpenGL ES 3.0, minSdk 28, Mapbox peer
-  dependency). Covers only public MapsGL Android APIs. When docs and SDK disagree,
-  prefer the SDK (source / KDoc / demos) over xweather.com documentation.
+  dependency). Tracks the SDK's feature/maptime-filter branch, ahead of the
+  current release, so some documented APIs are unreleased and flagged. When docs
+  and SDK disagree, prefer the SDK (source / KDoc / demos) over xweather.com
+  documentation.
 license: MIT
 metadata:
   author: Vaisala Xweather
@@ -41,13 +43,21 @@ When answering or writing code, resolve conflicts in this order:
    shapes)
 
 **Prefer the SDK to the docs.** If a docs snippet disagrees with a real method
-signature, package, or demo in the SDK, follow the SDK and say so. Do not invent
-JS-only or unreleased APIs.
+signature, package, or demo in the SDK, follow the SDK and say so. Never invent an
+API - if it isn't in the SDK source, KDoc or a demo, it doesn't exist.
 
 Docs hub (optional context only):
 https://www.xweather.com/docs/mapsgl-android-sdk/
 
 **API scope:** public MapsGL Android APIs only - no internals.
+
+**This skill tracks the `feature/maptime-filter` branch**, which is ahead of the
+released SDK. Anything documented here that is not in the current release is
+marked *(unreleased)* where it appears - `references/layers.md` flags 28 layer
+codes that way. Unmarked APIs are in the released build. When writing code for a
+project that depends on a published JitPack artifact rather than the branch, stay
+on the unmarked surface, and say so if the user asks for something that is only
+on the branch.
 
 **Never hardcode a version number.** Resolve the current release when you need
 one:

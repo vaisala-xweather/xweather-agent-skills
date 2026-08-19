@@ -1,10 +1,11 @@
 # MapsGL Android SDK - weather layer catalog
 
-181 built-in weather layers - every `LayerCode` published in **MapsGL Android 1.6.1**.
+209 built-in weather layers, generated from the MapsGL Android SDK source on the
+`feature/maptime-filter` branch.
 
-The list of codes is taken from the released SDK's KDoc, so it never contains anything that only
-exists on an unreleased branch. Configuration factory and layer-descriptor types come from the SDK
-source for the same release.
+**28 of these are not in the latest release (1.6.1) yet** and are marked *(unreleased)* below. They
+compile only against the development branch - on a released artifact from JitPack they do not
+exist. Everything unmarked is in 1.6.1.
 
 **In Kotlin a layer is a `LayerCode` enum constant, not a string.** `LayerCode.TEMPERATURES`, not
 `"temperatures"`. The enum names are *not* mechanical transforms of the wire codes -
@@ -259,11 +260,87 @@ Paint namespaces: `paint.opacity`, `paint.heatmap`
 - `LayerCode.STORMCELLS_HEAT` (`stormcells-heat`) -> `WeatherService.StormcellsHeat`
 - `LayerCode.STORMREPORTS_HEAT` (`stormreports-heat`) -> `WeatherService.StormreportsHeat`
 
+## `DataQueryLayerDescriptor` - render type `query` (28)
+
+Paint namespaces: `paint.opacity`, `paint.text`
+
+**These have no `WeatherService` factory.** They all share one configuration built by
+`WeatherConfigurations.DataQueryText(service, code)`, which takes the code as a second
+argument - so there is no `WeatherService.TemperaturesText(...)` and writing one will not
+compile. Add them by `LayerCode`, or call `DataQueryText` directly if you need to override
+paint:
+
+```kotlin
+controller.addWeatherLayer(LayerCode.TEMPERATURES_TEXT)
+
+val config = WeatherConfigurations.DataQueryText(controller.service, LayerCode.TEMPERATURES_TEXT)
+```
+
+They render city labels sampled from their parent data layer, and are the `query` layer type.
+
+- `LayerCode.AIR_QUALITY_CO_TEXT` (`air-quality-co-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City CO labels sampled from `LayerCode.CARBON_MONOXIDE` (data-query / `query` layer type).
+- `LayerCode.AIR_QUALITY_INDEX_CAI_TEXT` (`air-quality-index-cai-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City CAI AQI labels sampled from `LayerCode.AIR_QUALITY_INDEX_CAI_CATEGORIES` (data-query / `query` layer type).
+- `LayerCode.AIR_QUALITY_INDEX_CHINA_TEXT` (`air-quality-index-china-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City China AQI labels sampled from `LayerCode.AIR_QUALITY_INDEX_CHINA_CATEGORIES` (data-query / `query` layer type).
+- `LayerCode.AIR_QUALITY_INDEX_EAQI_TEXT` (`air-quality-index-eaqi-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City EAQI labels sampled from `LayerCode.AIR_QUALITY_INDEX_EAQI_CATEGORIES` (data-query / `query` layer type).
+- `LayerCode.AIR_QUALITY_INDEX_INDIA_TEXT` (`air-quality-index-india-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City India AQI labels sampled from `LayerCode.AIR_QUALITY_INDEX_INDIA_CATEGORIES` (data-query / `query` layer type).
+- `LayerCode.AIR_QUALITY_INDEX_TEXT` (`air-quality-index-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City AQI labels sampled from `LayerCode.AIR_QUALITY_INDEX` (data-query / `query` layer type).
+- `LayerCode.AIR_QUALITY_INDEX_UBA_DAQI_TEXT` (`air-quality-index-uba-daqi-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City UBA DAQI labels sampled from `LayerCode.AIR_QUALITY_INDEX_UBA_DAQI_CATEGORIES` (data-query / `query` layer type).
+- `LayerCode.AIR_QUALITY_INDEX_UK_DAQI_TEXT` (`air-quality-index-uk-daqi-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City UK DAQI labels sampled from `LayerCode.AIR_QUALITY_INDEX_UK_DAQI_CATEGORIES` (data-query / `query` layer type).
+- `LayerCode.AIR_QUALITY_NO_TEXT` (`air-quality-no-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City NO labels sampled from `LayerCode.NITRIC_OXIDE` (data-query / `query` layer type).
+- `LayerCode.AIR_QUALITY_NO2_TEXT` (`air-quality-no2-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City NO₂ labels sampled from `LayerCode.NITROGEN_DIOXIDE` (data-query / `query` layer type).
+- `LayerCode.AIR_QUALITY_O3_TEXT` (`air-quality-o3-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City O₃ labels sampled from `LayerCode.OZONE` (data-query / `query` layer type).
+- `LayerCode.AIR_QUALITY_PM10_TEXT` (`air-quality-pm10-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City PM10 labels sampled from `LayerCode.PARTICULATE_MATTER_10_MICRON` (data-query / `query` layer type).
+- `LayerCode.AIR_QUALITY_PM2P5_TEXT` (`air-quality-pm2p5-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City PM2.5 labels sampled from `LayerCode.PARTICULATE_MATTER_2P5_MICRON` (data-query / `query` layer type).
+- `LayerCode.AIR_QUALITY_SO2_TEXT` (`air-quality-so2-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City SO₂ labels sampled from `LayerCode.SULFUR_DIOXIDE` (data-query / `query` layer type).
+- `LayerCode.DEW_POINTS_TEXT` (`dew-points-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City dew-point labels sampled from `LayerCode.DEW_POINTS` (data-query / `query` layer type).
+- `LayerCode.FEELS_LIKE_TEXT` (`feels-like-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City feels-like labels sampled from `LayerCode.FEELS_LIKE` (data-query / `query` layer type).
+- `LayerCode.HEAT_INDEX_TEXT` (`heat-index-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City heat-index labels sampled from `LayerCode.HEAT_INDEX` (data-query / `query` layer type).
+- `LayerCode.HUMIDITY_TEXT` (`humidity-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City humidity labels sampled from `LayerCode.HUMIDITY` (data-query / `query` layer type).
+- `LayerCode.PRECIP_TEXT` (`precip-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City precipitation labels sampled from `LayerCode.PRECIPITATION` (data-query / `query` layer type).
+- `LayerCode.PRESSURE_MSL_TEXT` (`pressure-msl-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City MSL pressure labels sampled from `LayerCode.PRESSURE_MEAN_SEA_LEVEL` (data-query / `query` layer type).
+- `LayerCode.SNOW_TEXT` (`snow-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City snow labels sampled from `LayerCode.SNOW` (data-query / `query` layer type).
+- `LayerCode.TEMPERATURES_24_HOUR_CHANGE_TEXT` (`temperatures-24hr-change-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City 24-hour temperature-change labels sampled from `LayerCode.TEMPERATURES_24_HOUR_CHANGE` (data-query / `query` layer type).
+- `LayerCode.TEMPERATURES_TEXT` (`temperatures-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City temperature labels sampled from `LayerCode.TEMPERATURES` (data-query / `query` layer type).
+- `LayerCode.UVI_TEXT` (`uvi-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City UV-index labels sampled from `LayerCode.ULTRAVIOLET_INDEX` (data-query / `query` layer type).
+- `LayerCode.VISIBILITY_TEXT` (`visibility-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City visibility labels sampled from `LayerCode.VISIBILITY` (data-query / `query` layer type).
+- `LayerCode.WIND_CHILL_TEXT` (`wind-chill-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City wind-chill labels sampled from `LayerCode.WIND_CHILL` (data-query / `query` layer type).
+- `LayerCode.WIND_GUSTS_TEXT` (`wind-gusts-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City wind-gust labels sampled from `LayerCode.WIND_GUSTS` (data-query / `query` layer type).
+- `LayerCode.WIND_SPEEDS_TEXT` (`wind-speeds-text`) -> `WeatherConfigurations.DataQueryText` *(unreleased)*
+  - City wind-speed labels sampled from `LayerCode.WIND_SPEEDS` (data-query / `query` layer type).
+
 ---
 
-Catalog for MapsGL Android **1.6.1**, the release reported by
-https://www.xweather.com/docs/api/releases/versions at generation time. Codes verified against the
-published KDoc at `cdn.aerisapi.com/sdk/android/mapsgl/docs/v1.6.1/`. If a layer appears in the
-MapsGL JavaScript catalog but not here, it is not available on Android - a real gap, not a naming
-problem. Check `LayerCode` in the IDE against the version you actually depend on before assuming
-this list is current.
+Generated from the MapsGL Android SDK source, branch `feature/maptime-filter` at `f5a20414` (2026-08-19).
+*(unreleased)* markers come from diffing against the published KDoc for 1.6.1 at
+`cdn.aerisapi.com/sdk/android/mapsgl/docs/v1.6.1/`.
+
+If a layer appears in the MapsGL JavaScript catalog but not here, it is not available on Android -
+a real gap, not a naming problem. Check `LayerCode` in the IDE against the build you actually
+depend on before assuming this list matches it.
