@@ -1,8 +1,13 @@
 # Setup - MapsGL Android
 
-Verified against the SDK's Gradle files, library manifest, constructors and demo app on the
-`feature/maptime-filter` branch. The getting-started page is secondary when it disagrees - it still
-shows the deprecated 4-argument controller and omits the Mapbox dependency entirely.
+**These instructions have been executed, not just written.** A blank Android project was scaffolded
+from this file and `SKILL.md`, built against MapsGL Android 1.6.1, and run. Everything below is what
+that took - including the `maven.ecc.no` repository and the ViewBinding flag, both of which were
+missing until the build failed on them.
+
+Read against the SDK's Gradle files, library manifest and constructors on the `feature/maptime-filter`
+branch. The getting-started page is secondary when it disagrees - it still shows the deprecated
+4-argument controller and omits the Mapbox dependency entirely.
 https://www.xweather.com/docs/mapsgl-android-sdk/getting-started
 
 ## Requirements

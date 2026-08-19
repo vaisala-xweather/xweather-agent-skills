@@ -96,6 +96,33 @@ There is **no `latest` alias** - `/docs/latest/` returns 404. Resolve the versio
 first (above). Class paths dash-case the name: `MapController` becomes
 `-map-controller`.
 
+## How much of this has been proven
+
+Not all of it to the same standard, and the difference matters when something here
+disagrees with what you observe.
+
+**Built and run.** The Setup section and the Complete example below were applied to
+a blank Android project, compiled, and run against MapsGL Android 1.6.1. That
+covers `XweatherAccount`, `MapboxMapController`, `setCenter`/`setZoom`,
+`onLoadStart`/`onLoadComplete`, `subscribeMapLoaded`, the Mercator `setProjection`,
+`LegendControl`, `addDataInspectorControl`, `animationOptions.shouldPreloadData`,
+`timeline.setStartDateUsingRelativeTime`/`end`/`play`/`pause`,
+`addWeatherLayer`/`removeWeatherLayer`, `LayerCode.RADAR`, and the five
+`com.xweather.mapsgl.*` import paths those need. The build also confirmed that a
+consuming app's merged manifest picks up `largeHeap="true"` and the GLES 3.0
+`uses-feature` from the SDK.
+
+**Generated from the SDK.** `references/layers.md` is produced mechanically from
+the `LayerCode` enum and the `WeatherService` factories, and re-checked against the
+released KDoc.
+
+**Read from the SDK source, not compiled.** Everything else - the rest of
+`references/api-reference.md`, the styling, expression, legend, source and custom
+layer material. The signatures were read out of the SDK rather than written from
+memory, but no build has exercised them.
+
+If a snippet from the third group does not compile, trust the SDK and say so.
+
 ## Core concepts
 
 | Concept | What it is |
@@ -199,6 +226,8 @@ Full install detail, credential wiring and the string resources:
 
 A single Activity that renders an animated radar layer with a legend, tears down
 on `onStop` so it stops consuming sessions, and carries the required attribution.
+**This example has been built and run** - see "How much of this has been proven"
+above.
 
 ```xml
 <!-- res/layout/activity_weather_map.xml -->

@@ -158,9 +158,10 @@ enum.
 
 ## A SeekBar scrubber
 
-A scrubber that drives the timeline when dragged and follows it during playback. This is the pattern
-the SDK's own demo app uses, including the two throttling decisions below, which were measured rather
-than guessed.
+A scrubber that drives the timeline when dragged and follows it during playback. **Adapted from the
+SDK's own demo app**, which is shipping code rather than something written against the headers -
+including the two throttling decisions below, which the demo documents as measured rather than
+guessed.
 
 ```xml
 <SeekBar
