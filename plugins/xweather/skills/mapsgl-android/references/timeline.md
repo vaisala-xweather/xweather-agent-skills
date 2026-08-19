@@ -156,6 +156,84 @@ literal.
 `on(event: String, listener: (Any) -> Unit)` comes from `Animation`, so it takes the string, not an
 enum.
 
+## A SeekBar scrubber
+
+A scrubber that drives the timeline when dragged and follows it during playback. This is the pattern
+the SDK's own demo app uses, including the two throttling decisions below, which were measured rather
+than guessed.
+
+```xml
+<SeekBar
+    android:id="@+id/scrubber"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:max="10000" />          <!-- fine-grained: a coarse max makes the thumb step -->
+
+<ImageButton android:id="@+id/playButton" ... />
+<TextView    android:id="@+id/timeLabel" ... />
+```
+
+```kotlin
+private val seekBarRange = 10_000.0
+private var lastLabelUpdateMs = 0L
+private val labelIntervalMs = 100L
+private val timeFormat = SimpleDateFormat("MMM d, h:mm a", Locale.getDefault())
+
+private fun wireScrubber(timeline: Timeline) {
+
+    // 1. Dragging drives the timeline.
+    binding.scrubber.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        override fun onProgressChanged(bar: SeekBar?, progress: Int, fromUser: Boolean) {
+            val position = progress / seekBarRange
+            if (fromUser) timeline.goTo(position)
+
+            // Reformatting the label allocates a Date and a formatted String — throttle it.
+            val now = SystemClock.elapsedRealtime()
+            if (fromUser || now - lastLabelUpdateMs >= labelIntervalMs) {
+                lastLabelUpdateMs = now
+                binding.timeLabel.text = timeFormat.format(timeline.currentDate)
+            }
+        }
+        override fun onStartTrackingTouch(bar: SeekBar?) = Unit
+        override fun onStopTrackingTouch(bar: SeekBar?) = Unit
+    })
+
+    // 2. Playback drives the scrubber. Deliberately NOT throttled — see below.
+    timeline.on(AnimationEvent.advance) {
+        binding.scrubber.progress = (timeline.position * seekBarRange).toInt()
+    }
+
+    // 3. Keep the play button in sync however state changed.
+    binding.playButton.setOnClickListener { timeline.toggle() }
+    timeline.on(AnimationEvent.play) { setPlayIcon(playing = true) }
+    timeline.on(AnimationEvent.PAUSE) { setPlayIcon(playing = false) }
+    timeline.on(AnimationEvent.stop) { setPlayIcon(playing = false) }
+
+    setPlayIcon(playing = timeline.state == AnimationState.playing)
+}
+```
+
+### Why one update is throttled and the other is not
+
+**`AnimationEvent.advance` fires on every Choreographer frame during playback** - at the display's
+refresh rate. `Timeline` takes an `fps` parameter but it does not throttle this event, so any work in
+an `advance` listener runs 60-120 times a second.
+
+- **Moving the thumb is not throttled.** Assigning `SeekBar.progress` is an int write. Throttling it
+  to 100 ms was tried in the demo app and made the thumb visibly step and stutter, so it was reverted.
+  The thumb should track the frame rate even when the layer redraw lags behind it.
+- **Reformatting the time label is throttled** to ~100 ms. Each update allocates a `Date` plus
+  formatted strings and calls `setText`, and on a long range the simulated time genuinely changes
+  every frame, so there is no "skip if unchanged" shortcut. Profiling put this per-frame text path as
+  the largest main-thread allocator during steady-state playback. Nobody perceives a label updating
+  faster than about 10 times a second.
+
+The general rule for `advance` listeners: keep them to cheap primitive assignments, and throttle
+anything that allocates or formats.
+
+Use a large `android:max` (10000, not 100). The position is a normalized `Double`, so a coarse max
+quantizes it and produces visible stepping regardless of frame rate.
+
 ## Loading behaviour
 
 ```kotlin
