@@ -190,8 +190,17 @@ load `plugins/xweather/skills/` instead of maintaining vendor-specific copies.
 claude --plugin-dir ./plugins/xweather   # load in Claude Code without installing
 claude plugin validate .                 # validate the manifests
 python3 scripts/validate_packaging.py    # compare shared marketplace, manifest, and skill metadata
+python3 scripts/build_dist.py            # build OpenAI and Claude ZIPs in dist/
 skills-ref validate ./plugins/xweather/skills/weather-api   # validate against the Agent Skills spec
 ```
+
+The provider-neutral `SKILL.md` files retain `metadata.version` for Agent Skills packaging. The
+OpenAI uploader treats `SKILL.md` metadata as misplaced interface configuration, so the OpenAI build
+removes those metadata blocks from the ZIP only. It keeps each source file unchanged and relies on
+the plugin-level interface in `.codex-plugin/plugin.json` rather than per-skill interface files.
+The Claude build omits the top-level `bin/` wrappers, which claude.ai-hosted plugins do not accept;
+the equivalent Python helpers remain bundled inside their skills. Both generated archives go in
+the gitignored `dist/` directory.
 
 `.github/workflows/validate-packaging.yml` runs the metadata comparison for relevant pushes and pull
 requests. `skills-ref` comes from <https://github.com/agentskills/agentskills>. `/reload-plugins`
