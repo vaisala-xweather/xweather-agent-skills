@@ -4,7 +4,7 @@ description: This skill should be used when working with the Xweather MapsGL Jav
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.13.0"
+  version: "0.14.0"
 ---
 
 # MapsGL JavaScript SDK
@@ -439,7 +439,7 @@ capture what `addWeatherLayer` returns (or call `getWeatherLayer(code)` later) a
 they don't recognize. Composite codes return an **array** of layers to iterate over. Full
 explanation and verified example in `references/weather-layers.md`.
 
-**Never guess a layer code — look it up.** `references/layers.md` lists all 283 layers by category
+**Never guess a layer code — look it up.** `references/layers.md` lists every layer by category
 with their render type, animatability, cost multiplier, coverage, data range, and update interval. It
 is generated from the public catalog and refreshed weekly, so grep it first; no network call needed.
 
@@ -457,6 +457,32 @@ entitlements — ask at runtime:
 ```javascript
 controller.weatherProvider.getLayerMetadata().then((data) => console.log(data));
 ```
+
+### No separate forecast layers — one layer spans past and future
+
+Raster Maps splits time across two layers: `temperatures` is observed, `ftemperatures` is forecast.
+**MapsGL does not.** A single `temperatures` layer covers `-7 to +15 days`, and the timeline decides
+which interval renders.
+
+So don't look for `ftemperatures`, `fradar`, or `fwind-speeds` here — they don't exist. Twelve Raster
+Maps pairs collapse into one MapsGL layer each:
+
+`dew-points` · `feels-like` · `heat-index` · `humidity` · `radar` · `satellite` · `snow-depth` ·
+`temperatures` · `visibility` · `wind-chill` · `wind-gusts` · `wind-speeds`
+
+Reach a forecast interval by moving the timeline, not by adding a different layer —
+`controller.timeline.containsFuture` reports whether the current range includes one. See
+`references/timeline.md`.
+
+**Range is per-layer, so check it rather than assuming.** `layers.md` lists it for every code. Two
+cases don't follow the pattern:
+
+- **`satellite` is past-only** (`-7 days`). Raster Maps has `fsatellite` reaching +15 days; MapsGL has
+  no forecast satellite at all. That's a missing capability, not a renamed one — don't promise a
+  satellite forecast on MapsGL.
+- **Road weather keeps an `f` split, meaning something different.** `road-weather-*` is a +2 hour
+  nowcast refreshed every 15 minutes; `froad-weather-*` is a +24 hour forecast refreshed every 6
+  hours. Both are forecasts, so there the prefix marks *range*, not past-versus-future.
 
 Some codes are **composite** (expand to multiple sub-layers, e.g. `boundaries`, `roads`,
 `stormcells`) — `addWeatherLayer` returns an array for these, and `overrides.childLayers` can
@@ -550,6 +576,22 @@ controller.on('load', () => {
 });
 ```
 
+**To show one specific time, set the range before seeking to it.** `goToDate(date)` moves *within*
+`startDate`…`endDate` — it never widens the window, and a date outside the range simply doesn't
+display, with no error:
+
+```javascript
+const target = new Date('2026-08-09T18:00:00Z');
+
+controller.timeline.startDate = new Date(target.getTime() - 3 * 3600 * 1000);
+controller.timeline.endDate   = new Date(target.getTime() + 3 * 3600 * 1000);
+controller.timeline.goToDate(target);
+```
+
+This is the most common reason a "jump to this timestamp" feature silently does nothing. If the target
+can be arbitrary, test it against the current range and widen when it falls outside — worked example in
+`references/timeline.md`. The window also has to sit inside the layer's own `dataRange`.
+
 ## Legends & data inspection
 
 ```javascript
@@ -607,6 +649,9 @@ const results = await controller.queryPromise({ lat: 40, lon: -74.5 });
   `['match', ['get', 'FIELD'], ...]` for categorical colors/sizes, `['interpolate', ['linear'],
   ['get', 'FIELD'], ...]` for continuous ranges. See `references/expressions.md`.
 - **"Animate over time / add a time slider"** → `controller.timeline`, see `references/timeline.md`.
+- **"Jump to a specific timestamp" / `goToDate` does nothing** → the date is outside
+  `startDate`…`endDate`. `goToDate` seeks within the range and never widens it, so set the range
+  first, then seek. Silent failure, no error thrown.
 - **"Show a legend"** → `addLegendControl`; override `legend.points` (categorical) or `legend.bar`
   (gradient) if paint was customized — see `references/legends.md`.
 - **"Add my own data (not a built-in weather layer)"** → `addSource` + `addLayer` with an explicit
@@ -657,7 +702,7 @@ Full guide: https://www.xweather.com/docs/weather-api/resources/attribution
 ## Reference files
 
 - `references/api-reference.md` — full `Account`, `MapController`, and `DataSource` API (all methods, properties, events, per-provider setup)
-- `references/layers.md` — all 283 weather layers by category: code, description, render type, animatability, cost multiplier, coverage, data range, update interval; composite codes and cost multipliers grouped up front
+- `references/layers.md` — every weather layer by category: code, description, render type, animatability, cost multiplier, coverage, data range, update interval; composite codes and cost multipliers grouped up front
 - `references/weather-layers.md` — how to discover layer codes, the catalog schema, and the code-vs-layer-id gotcha that silently breaks style updates
 - `references/styles.md` — paint property spec for every render type, plus filters and masks
 - `references/color-scales.md` — color scale config format and built-in named palettes

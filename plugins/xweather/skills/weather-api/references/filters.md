@@ -398,6 +398,12 @@ per endpoint — including endpoints with no prose descriptions — see `endpoin
 
 - `#hr` — Returns the conditions in # hour intervals for up to a 24 hour period. # must be an integer from 1 to 24. For example: filter=1hr : 1 hour intervals (Default) filter=3hr : 3 hour intervals filter=6hr : 6 hour intervals.  This filter is often be used in combination with the from and to parameters. If no from and to the endpoint returns data for the next 24 hours.
 
+## `/models/:model`
+
+**Filters**
+
+- `skipnulls` — Removes fields with null values from the response. Because not every model produces every weather attribute, responses can otherwise include null fields for variables the model does not carry. Applying skipnulls returns only the fields the model actually provides.
+
 ## `/normals`
 
 **Filters**

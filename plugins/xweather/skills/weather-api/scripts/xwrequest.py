@@ -97,7 +97,8 @@ def main():
     if not client_id or not client_secret:
         sys.exit(
             "error: set XWEATHER_CLIENT_ID and XWEATHER_CLIENT_SECRET in the environment.\n"
-            "       Keys come from the Apps section of https://data.portal.xweather.com"
+            "       Keys come from the API Keys page at\n"
+            "       https://data.portal.xweather.com/account/keys"
         )
 
     real, display = build(args.path, client_id, client_secret)

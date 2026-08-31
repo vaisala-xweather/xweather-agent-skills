@@ -13,11 +13,11 @@ as installable plugins for Claude Code and OpenAI's ChatGPT and Codex plugin sur
 
 | Skill | Covers |
 |---|---|
-| `weather-api` | `data.api.xweather.com` request URLs — 59 endpoints, 8 actions, per-endpoint filter and query semantics, place and date formats, batch requests, and the access-cost model. Every URL comes with its cost. |
-| `raster-maps` | `maps.api.xweather.com` URLs — static map images and XYZ tile templates across 159 layers, dash-joined data modifiers, opacity/blur/blend/scale-hsla, time offsets, and map-unit cost reporting. |
-| `mapsgl` | The MapsGL JavaScript SDK (`@xweather/mapsgl`) — controllers for Mapbox GL, MapLibre GL, Google Maps and Leaflet, all 283 layers, styling, expressions, legends, timeline animation, and session-based cost. |
-| `mapsgl-apple` | The MapsGL SDK for Apple platforms — Swift Package/CocoaPods/Carthage install, `MapboxMapController` and `MapLibreMapController`, all 182 `WeatherService.LayerCode` layers, SwiftUI and UIKit setup, paint properties, expressions, legends, timeline, and session-based cost. |
-| `mapsgl-android` | The MapsGL Android SDK (`com.xweather.mapsgl`) — AAR/JitPack install over the Mapbox Maps SDK for Android, `MapboxMapController`, all 181 `LayerCode` layers of the 1.6.1 release, `StyleValue`/`Expression` styling, custom sources and layers, legends and the data inspector, timeline animation, and session-based cost. |
+| `weather-api` | `data.api.xweather.com` request URLs — every endpoint, all 8 actions, per-endpoint filter and query semantics, place and date formats, batch requests, and the access-cost model. Every URL comes with its cost. |
+| `raster-maps` | `maps.api.xweather.com` URLs — static map images and XYZ tile templates across the full layer catalog, dash-joined data modifiers, opacity/blur/blend/scale-hsla, time offsets, and map-unit cost reporting. |
+| `mapsgl` | The MapsGL JavaScript SDK (`@xweather/mapsgl`) — controllers for Mapbox GL, MapLibre GL, Google Maps and Leaflet, the full layer catalog, styling, expressions, legends, timeline animation, and session-based cost. |
+| `mapsgl-apple` | The MapsGL SDK for Apple platforms — Swift Package/CocoaPods/Carthage install, `MapboxMapController` and `MapLibreMapController`, the full `WeatherService.LayerCode` catalog, SwiftUI and UIKit setup, paint properties, expressions, legends, timeline, and session-based cost. |
+| `mapsgl-android` | The MapsGL Android SDK (`com.xweather.mapsgl`) — AAR/JitPack install over the Mapbox Maps SDK for Android, `MapboxMapController`, the full `LayerCode` catalog for the 1.6.1 release, `StyleValue`/`Expression` styling, custom sources and layers, legends and the data inspector, timeline animation, and session-based cost. |
 | `webhooks` | Pushed data delivery — receiver design, securing the endpoint, available data sets, retry and idempotency behaviour, and the registration details Xweather needs. |
 
 ## Install
@@ -112,7 +112,7 @@ skills never assume that.
 
 ## Credentials
 
-Keys come from the Apps section of <https://data.portal.xweather.com/account/keys>. Each key pair is
+Keys come from the **API Keys** page at <https://data.portal.xweather.com/account/keys>. Each key pair is
 bound to a **namespace** — a top-level domain for web, or a reverse-DNS bundle id for mobile. A
 request from outside that namespace fails with `unauthorized_namespace` on the Weather API, or a 403
 `authorization_error` on Raster Maps, regardless of whether the URL is otherwise correct.
@@ -194,6 +194,7 @@ claude plugin validate .                 # validate the manifests
 python3 scripts/validate_packaging.py    # compare shared marketplace, manifest, and skill metadata
 python3 scripts/check_skill_links.py --skip-links   # every references/*.md mention resolves
 python3 scripts/check_skill_links.py                # the above, plus probe every URL
+python3 scripts/build_dist.py            # build OpenAI and Claude ZIPs in dist/
 skills-ref validate ./plugins/xweather/skills/weather-api   # validate against the Agent Skills spec
 ```
 
@@ -202,6 +203,14 @@ other check: a `references/foo.md` mention that no longer resolves, and a URL th
 has gone dead. `.github/workflows/check-skills.yml` runs the reference half on every
 skill change and the link half weekly — links stay off pull requests so a
 third-party outage can't block unrelated work.
+
+The provider-neutral `SKILL.md` files retain `metadata.version` for Agent Skills packaging. The
+OpenAI uploader treats `SKILL.md` metadata as misplaced interface configuration, so the OpenAI build
+removes those metadata blocks from the ZIP only. It keeps each source file unchanged and relies on
+the plugin-level interface in `.codex-plugin/plugin.json` rather than per-skill interface files.
+The Claude build omits the top-level `bin/` wrappers, which claude.ai-hosted plugins do not accept;
+the equivalent Python helpers remain bundled inside their skills. Both generated archives go in
+the gitignored `dist/` directory.
 
 `.github/workflows/validate-packaging.yml` runs the metadata comparison for relevant pushes and pull
 requests. `skills-ref` comes from <https://github.com/agentskills/agentskills>. `/reload-plugins`

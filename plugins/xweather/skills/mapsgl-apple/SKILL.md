@@ -4,7 +4,7 @@ description: This skill should be used when working with the Xweather MapsGL SDK
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.13.0"
+  version: "0.14.0"
 ---
 
 # MapsGL for Apple platforms
@@ -399,7 +399,7 @@ if let temps = controller.weatherLayer(for: .temperatures) {
 }
 ```
 
-**Never guess a layer code.** `references/layers.md` lists all 182 `LayerCode` cases with the
+**Never guess a layer code.** `references/layers.md` lists every `LayerCode` case with the
 configuration struct and descriptor type for each — grep it first, no network call needed. The Swift
 case names are *not* transforms of the JS/Raster Maps codes (`air-quality-pm2p5` is
 `.particulateMatter2p5Micron`), and the Apple SDK supports fewer layers than the MapsGL JavaScript
@@ -656,7 +656,7 @@ Full guide: https://www.xweather.com/docs/weather-api/resources/attribution
 
 - `references/setup.md` — install paths per package manager, provider-specific project setup, UIKit examples, credential handling, and the build errors each mistake produces
 - `references/api-reference.md` — `MapController`, `WeatherService`, source and layer descriptors, controls, events, and query API, plus how to reach the hosted DocC for a given version
-- `references/layers.md` — all 182 `WeatherService.LayerCode` cases with configuration struct, descriptor type and paint namespaces; composite layers listed up front
+- `references/layers.md` — every `WeatherService.LayerCode` case with configuration struct, descriptor type and paint namespaces; composite layers listed up front
 - `references/styles.md` — paint property spec for every render type, `DataQuality`, color scales, filters and masks
 - `references/expressions.md` — `Expression` factory reference for data-driven paint and filters
 - `references/legends.md` — `LegendControl`, bar and point legend configuration, SwiftUI and UIKit placement

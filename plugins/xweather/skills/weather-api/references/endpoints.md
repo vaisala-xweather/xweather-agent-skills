@@ -3,8 +3,10 @@
 Every endpoint below is a path under `https://data.api.xweather.com`. Full request shape:
 `https://data.api.xweather.com/{endpoint}/{action}/{:id}?{params}&client_id=…&client_secret=…`
 
-`Cost` is the endpoint access multiplier — the base token cost of one request before spatial and
-temporal multipliers are applied (see `parameters.md` → Cost headers).
+`Cost` is the endpoint access multiplier. Multiply it by the number of time intervals a request
+covers to get the accesses charged — `/conditions/summary` bills one access per day, so 30 days
+is 30. The spatial multiplier in the cost header is always 1 today, so query area never affects
+cost (see `access-cost.md`).
 
 Filter tokens containing `#` are templates, not literals: `#hr` → `1hr`, `3hr`, `6hr`, `24hr`;
 `#min` → `1min`, `5min`, `15min`; `day#` → `day1` … `day8`. A trailing `*` (only `pop*`, on
@@ -504,6 +506,38 @@ Historical maritime data available around the globe.
 | Sort fields | `dt` |
 
 Docs: https://www.xweather.com/docs/weather-api/endpoints/maritime-archive
+
+## `/models/:model`
+
+Returns raw forecast model data for a single forecast model at a requested location. Each response is a time series of forecast periods drawn from one model run. Use the Models Catalog endpoint to discover which models, run times, and datasets are available before making a request.
+
+*Coverage: Global · Range: Varies by model · Updates: Per model run cycle · Cost: x1*
+
+| | |
+|---|---|
+| Actions | `:id` |
+| Params | `fields`, `p` |
+| Filters | `skipnulls` |
+| Query props | — |
+| Sort fields | — |
+
+Docs: https://www.xweather.com/docs/weather-api/endpoints/models
+
+## `/models/catalog`
+
+Returns a catalog of the forecast models available through the API, including each model's accessible run times, forecast coverage, and the datasets (variables) it produces. Use this endpoint to discover what's available before requesting raw forecast data for a specific model from the /models/:model endpoint.
+
+*Coverage: Global · Range: +15 days · Updates: Per model run cycle · Cost: x1*
+
+| | |
+|---|---|
+| Actions | `:all` |
+| Params | `fields` |
+| Filters | — |
+| Query props | — |
+| Sort fields | — |
+
+Docs: https://www.xweather.com/docs/weather-api/endpoints/models-catalog
 
 ## `/normals`
 

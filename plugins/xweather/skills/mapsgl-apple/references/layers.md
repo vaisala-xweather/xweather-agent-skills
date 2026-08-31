@@ -1,13 +1,13 @@
 # MapsGL Apple SDK — weather layer catalog
 
-182 built-in weather layers, generated from the Apple SDK's published DocC symbol index.
+189 built-in weather layers, generated from the Apple SDK's published DocC symbol index.
 
 **In Swift a layer is a `WeatherService.LayerCode` case, not a string.** `.temperatures`, not `"temperatures"`.
 The case names are *not* mechanical transforms of the JS/Raster Maps layer codes — `air-quality-pm2p5`
 is `.particulateMatter2p5Micron` and `air-quality-no2` is `.nitrogenDioxide` — so never convert a code
 from the web docs by hand. Look it up here, or let the compiler complete it.
 
-The Apple SDK also supports **fewer** layers than the MapsGL JavaScript SDK (182 vs. 283).
+The Apple SDK also supports **fewer** layers than the MapsGL JavaScript SDK (189 vs. 285).
 If a layer exists in the MapsGL JavaScript catalog and not here, it is not available on Apple platforms — that is a real gap, not a naming problem.
 
 Each entry reads: **`.case`** → its configuration struct. The struct is what you instantiate to
@@ -32,7 +32,7 @@ authenticated account may actually render, ask at runtime:
 controller.service.loadLayerMetadata { result in ... }   // -> [WeatherLayerMetadata]
 ```
 
-Generated from the DocC index for SDK 1.6.1. Regenerate with `python3 scripts/regenerate_references.py`;
+Generated from the DocC index for SDK 1.7.0. Regenerate with `python3 scripts/regenerate_references.py`;
 the version is resolved from the releases endpoint, so this list tracks the current release.
 
 ---
@@ -49,7 +49,7 @@ than `.stormcells`).
 
 ---
 
-## `SampleLayerDescriptor` — render type `sample` (68)
+## `SampleLayerDescriptor` — render type `sample` (69)
 
 Paint namespaces: `paint.opacity`, `paint.sample`
 
@@ -118,6 +118,7 @@ Paint namespaces: `paint.opacity`, `paint.sample`
 - `.visibility` → `WeatherService.Visibility`
 - `.waveHeights` → `WeatherService.WaveHeights`
 - `.wavePeriods` → `WeatherService.WavePeriods`
+- `.weather` → `WeatherService.Weather`
 - `.windChill` → `WeatherService.WindChill`
 - `.windGusts` → `WeatherService.WindGusts`
 - `.windSpeeds` → `WeatherService.WindSpeeds`
@@ -162,7 +163,7 @@ Paint namespaces: `paint.opacity`, `paint.sample`, `paint.contour`
 - `.temperaturesContour` → `WeatherService.TemperaturesContour`
 - `.windSpeedsContour` → `WeatherService.WindSpeedsContour`
 
-## `FillLayerDescriptor` — render type `fill` (11)
+## `FillLayerDescriptor` — render type `fill` (13)
 
 Paint namespaces: `paint.opacity`, `paint.fill`, `paint.stroke`
 
@@ -174,11 +175,13 @@ Paint namespaces: `paint.opacity`, `paint.fill`, `paint.stroke`
 - `.hailThreatsPolygons` → `WeatherService.HailThreatsPolygons`
 - `.land` → `WeatherService.Land`
 - `.lightningThreatsPolygons` → `WeatherService.LightningThreatsPolygons`
+- `.powerGeneratorBoundaries` → `WeatherService.PowerGeneratorBoundaries`
+- `.powerPlants` → `WeatherService.PowerPlants`
 - `.stormcellsCones` → `WeatherService.StormcellsCones`
 - `.tropicalCyclonesForecastErrorCones` → `WeatherService.TropicalCyclonesForecastErrorCones`
 - `.water` → `WeatherService.Water`
 
-## `LineLayerDescriptor` — render type `line` (23)
+## `LineLayerDescriptor` — render type `line` (25)
 
 Paint namespaces: `paint.opacity`, `paint.stroke`
 
@@ -186,10 +189,12 @@ Paint namespaces: `paint.opacity`, `paint.stroke`
 - `.admin34Boundaries` → `WeatherService.Admin34Boundaries`
 - `.admin56Boundaries` → `WeatherService.Admin56Boundaries`
 - `.alertsOutline` → `WeatherService.AlertsOutline`
+- `.alertsShortFuse` → `WeatherService.AlertsShortFuse`
 - `.convectiveOutline` → `WeatherService.ConvectiveOutline`
 - `.droughtMonitorOutline` → `WeatherService.DroughtMonitorOutline`
 - `.hailThreatsTracks` → `WeatherService.HailThreatsTracks`
 - `.lightningThreatsTracks` → `WeatherService.LightningThreatsTracks`
+- `.powerLines` → `WeatherService.PowerLines`
 - `.roadAll` → `WeatherService.RoadAll`
 - `.roadMotorway` → `WeatherService.RoadMotorway`
 - `.roadPrimary` → `WeatherService.RoadPrimary`
@@ -206,7 +211,7 @@ Paint namespaces: `paint.opacity`, `paint.stroke`
 - `.waterwayLakeRiverBoundaries` → `WeatherService.WaterwayLakeRiverBoundaries`
 - `.waterwayOceanBoundaries` → `WeatherService.WaterwayOceanBoundaries`
 
-## `CircleLayerDescriptor` — render type `circle` (17)
+## `CircleLayerDescriptor` — render type `circle` (19)
 
 Paint namespaces: `paint.opacity`, `paint.fill`, `paint.stroke`, `paint.circle`
 
@@ -217,6 +222,8 @@ Paint namespaces: `paint.opacity`, `paint.fill`, `paint.stroke`, `paint.circle`
 - `.lightningFlash` → `WeatherService.LightningFlash`
 - `.lightningStrikes` → `WeatherService.LightningStrikes`
 - `.lightningThreatsPoints` → `WeatherService.LightningThreatsPoints`
+- `.powerGeneratorCentroids` → `WeatherService.PowerGeneratorCentroids`
+- `.powerGenerators` → `WeatherService.PowerGenerators`
 - `.riverObservations` → `WeatherService.RiverObservations`
 - `.stormcellsPositions` → `WeatherService.StormcellsPositions`
 - `.stormreports` → `WeatherService.Stormreports`

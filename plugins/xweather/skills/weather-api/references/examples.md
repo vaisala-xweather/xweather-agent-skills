@@ -372,6 +372,18 @@ copy its structure rather than inventing parameters.
 - `/maritime/0,0?from=yesterday&filter=3hr`  
   Returns 24 hours of maritime data for the latitude/longitude 0,0 in 3 hour intervals for yesterday.
 
+## `/models/:model`
+
+- `/models/nbm_conus/minneapolis,mn`  
+  Returns NBM data for Minneapolis, MN.
+- `/models/nbm_conus/minneapolis,mn?filter=skipnulls`  
+  Returns NBM data for Minneapolis without any of the null values.
+
+## `/models/catalog`
+
+- `/models/catalog`  
+  The response contains an array of model catalog objects. Each object describes one model instance and the run times and datasets available for it.
+
 ## `/normals`
 
 - `/normals/minneapolis,mn`  

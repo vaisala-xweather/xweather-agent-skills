@@ -1,6 +1,6 @@
 # Discovering Built-in Weather Layer Codes
 
-**Start with `layers.md`** — a full listing of all 283 layers with code, description, render type,
+**Start with `layers.md`** — a full listing of every layer with code, description, render type,
 animatability, cost multiplier, coverage, data range, and update interval, grouped by category. It's
 generated from the catalog below and refreshed weekly in CI, so it's current without a network call.
 

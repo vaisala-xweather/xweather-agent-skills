@@ -126,7 +126,8 @@ def main():
     if not client_id or not client_secret:
         sys.exit(
             "\nerror: set XWEATHER_CLIENT_ID and XWEATHER_CLIENT_SECRET to fetch the image.\n"
-            "       Keys come from the Apps section of https://data.portal.xweather.com\n"
+            "       Keys come from the API Keys page at\n"
+            "       https://data.portal.xweather.com/account/keys\n"
             "       (Use --estimate-only to skip the request.)"
         )
 

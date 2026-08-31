@@ -28,7 +28,8 @@ bearer-token form:
 https://data.api.xweather.com/places/98109?client_id={client_id}&client_secret={client_secret}
 ```
 
-Credentials come from the account portal (Apps section) and are bound to a **namespace** registered
+Credentials come from the account portal's **API Keys** page
+(https://data.portal.xweather.com/account/keys) and are bound to a **namespace** registered
 with the key pair — a top-level domain (`mydomain.com`, `*.mydomain.com`) for web, or a reverse-DNS
 bundle id (`com.mydomain.MyProject`) for mobile. A request originating outside that namespace fails
 with `unauthorized_namespace`.
@@ -276,6 +277,7 @@ wrong.
 The multiplier header is `X-Cost-Multipliers`, **plural** — the Responses doc page lists it singular,
 but the wire format is plural. Match both if you're parsing it.
 
-`X-Cost-Tokens` = endpoint × spatial × temporal. Only **2xx** responses are charged; 4xx and 5xx are
-free. Full cost model, the per-endpoint multiplier table, and route/batch rules are in
-`access-cost.md`.
+`X-Cost-Tokens` = endpoint × spatial × temporal. **The spatial factor is always 1** — no current
+endpoint uses it — so in practice the charge is the endpoint multiplier times the number of time
+intervals requested. Only **2xx** responses are charged; 4xx and 5xx are free. Full cost model, the
+per-endpoint multiplier table, and route/batch rules are in `access-cost.md`.

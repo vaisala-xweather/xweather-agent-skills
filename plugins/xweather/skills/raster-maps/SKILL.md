@@ -5,7 +5,7 @@ compatibility: Skill instructions are provider-neutral. The bundled scripts/xwma
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.13.0"
+  version: "0.14.0"
 ---
 
 # Xweather Raster Maps URL builder
@@ -63,7 +63,7 @@ curl -s https://www.xweather.com/docs/api/maps/layers
 ```
 
 That JSON (`{ layers: [{ id, title, description, multiplier, modifiers, categories, dataRange,
-dataCoverage, updateInterval }] }`) is the authoritative list of all 159 layers and is what
+dataCoverage, updateInterval }] }`) is the authoritative layer list and is what
 `references/layers.md` was generated from.
 
 ## Intent → layer
@@ -72,6 +72,7 @@ dataCoverage, updateInterval }] }`) is the authoritative list of all 159 layers 
 |---|---|
 | Radar | `radar` (regional, higher res) · `radar-global` (satellite-derived fill where radar is absent) |
 | Future radar | `fradar` — add `-hrrr` / `-nam` / `-gfs` to pick the model |
+| *Forecast of any `f`-prefixed layer* | Raster Maps splits observed from forecast — `temperatures` vs `ftemperatures`. **MapsGL doesn't**: one layer spans both there, so don't carry `f`-prefixed codes across. |
 | Satellite | `satellite-geocolor` (the good-looking default) · `satellite-visible` · `satellite-infrared-color` · `satellite-water-vapor` |
 | Watches and warnings | `alerts` — `-severe`, `-fire`, `-flood`, `-winter`, `-heat`, `-wind`, `-surge`, `-frost-freeze`; `-watches` / `-warnings` |
 | Temperature | `temperatures` · forecast `ftemperatures` · labels `temperatures-text` |
@@ -220,7 +221,7 @@ catalog. Full model, the multiplier tables, and reduction tactics: `references/m
 ## Credentials and returning the image
 
 **Without credentials:** hand over the URL with `{client_id}` and `{client_secret}` placeholders and
-say where keys come from (the Apps section of https://data.portal.xweather.com/account/keys). Nothing
+say where keys come from (the API Keys page at https://data.portal.xweather.com/account/keys). Nothing
 else to do.
 
 **With credentials — ask before fetching.** If the user has supplied a client id and secret, ask
@@ -300,7 +301,7 @@ Full guide: https://www.xweather.com/docs/weather-api/resources/attribution
 
 ## Reference files
 
-- `references/layers.md` — all 159 layers by category: code, description, multiplier, coverage, data
+- `references/layers.md` — every layer by category: code, description, multiplier, coverage, data
   range, update interval, and each layer's dash-joined modifier options.
 - `references/url-formats.md` — static centre-point and bounding-box forms, tile form, library
   snippets for Leaflet / Mapbox GL / Google Maps / OpenLayers, time offsets, image-quality

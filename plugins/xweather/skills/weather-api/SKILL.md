@@ -5,7 +5,7 @@ compatibility: Skill instructions are provider-neutral. The bundled scripts/xwre
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.13.0"
+  version: "0.14.0"
 ---
 
 # Xweather Weather API URL builder
@@ -161,24 +161,35 @@ the subscription allowance, unprompted — a `/impacts` request costs 25× a `/f
 accesses = endpoint multiplier × spatial multiplier × temporal multiplier
 ```
 
-The **endpoint multiplier is a fixed constant** you can look up: `Cost: xN` on each entry in
-`references/endpoints.md`, or the grouped table in `references/access-cost.md`. The spatial and
-temporal multipliers are computed server-side from the area and time span covered, and the API does
-not publish the formula.
+**The spatial multiplier is always 1** — no current endpoint uses it, so query area, radius and
+geometry never affect cost. What's left is:
 
-So report a floor, not a fabricated total:
+```
+accesses = endpoint multiplier × intervals requested
+```
+
+The **endpoint multiplier** is a fixed constant: `Cost: xN` on each entry in
+`references/endpoints.md`, or the grouped table in `references/access-cost.md`. The **temporal
+multiplier** is the number of days or hours a single request covers, on endpoints that return a series
+over a range — `/conditions/summary` bills one access per day, so a 30-day request is 30 accesses, not
+one.
+
+Both are knowable up front, so give a real number:
 
 > `https://data.api.xweather.com/airquality/beijing,cn?filter=china&client_id={client_id}&client_secret={client_secret}`
-> **Cost: 5 accesses** — `/airquality` is a ×5 endpoint, single location, current time, so the
-> spatial and temporal multipliers are both 1.
+> **Cost: 5 accesses** — `/airquality` is ×5, one point in time.
 
-> `https://data.api.xweather.com/lightning/within?p=43.23,-96.92,45.62,-91.31&from=-7days&limit=500&client_id={client_id}&client_secret={client_secret}`
-> **Cost: at least 120 accesses** — `/lightning` is ×10, and both the multi-state box and the 7-day
-> range will push the spatial and temporal multipliers well above 1. Run it and read `X-Cost-Tokens`
-> for the real figure.
+> `https://data.api.xweather.com/conditions/summary/minneapolis,mn?from=-30days&to=now&client_id={client_id}&client_secret={client_secret}`
+> **Cost: 30 accesses** — `/conditions/summary` is ×1 and bills one access per day, so 30 days of
+> summaries is 30 accesses. Shortening the range is the only way to reduce it.
 
-Never invent a spatial or temporal multiplier value. "×10 endpoint, more from the large area and long
-range" is honest; "150 accesses" from a guess is not.
+> `https://data.api.xweather.com/lightning/within?p=43.23,-96.92,45.62,-91.31&limit=500&client_id={client_id}&client_secret={client_secret}`
+> **Cost: 10 accesses** — `/lightning` is ×10. The multi-state bounding box costs nothing extra; area
+> is not a cost factor.
+
+Don't tell anyone to shrink a radius or tighten a bounding box to save accesses — it doesn't work.
+Where you're unsure whether an endpoint bills per interval, name the range as the thing that could
+multiply the cost and point at `X-Cost-Tokens`, rather than inventing a number.
 
 When you actually run the request, `X-Cost-Tokens` is the exact charge — quote it instead of the
 estimate.
@@ -203,7 +214,7 @@ Full model, the complete multiplier table, and cost-reduction tactics: `referenc
 ## Executing the request
 
 Default behavior with no credentials: **produce the URL only**, with `{client_id}` and
-`{client_secret}` placeholders, and explain what it returns. Mention that keys from the Apps section
+`{client_secret}` placeholders, and explain what it returns. Mention that keys from the API Keys page
 of https://data.portal.xweather.com/account/keys let you run it and return live data.
 
 When the user supplies a client id and secret — in the prompt, in a `.env`, or already exported —
@@ -364,7 +375,7 @@ Full guide: https://www.xweather.com/docs/weather-api/resources/attribution
 
 ## Reference files
 
-- `references/endpoints.md` — all 59 endpoints: description, coverage, data range, update interval,
+- `references/endpoints.md` — every endpoint: description, coverage, data range, update interval,
   cost multiplier, and the exact supported actions / params / filters / query props / sort fields.
 - `references/access-cost.md` — the access-cost model, every endpoint grouped by multiplier, what
   raises the spatial and temporal factors, the exact `route`/`batch`/error rules, cost-reduction

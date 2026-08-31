@@ -1,6 +1,6 @@
 # MapsGL weather layer catalog
 
-283 built-in weather layers. The **code** is the string passed to
+285 built-in weather layers. The **code** is the string passed to
 `controller.addWeatherLayer(code)` — and to `getWeatherLayer`, `hasWeatherLayer`,
 `removeWeatherLayer`, and `setWeatherLayerVisibility`. It is **not** the resulting `WebGLLayer`'s
 `id`; see `weather-layers.md` for that distinction, which is the most common source of
@@ -17,6 +17,14 @@ Each entry reads: *render type · animatable · cost multiplier · coverage · d
 The **render type** determines which `paint` namespace styles the layer — a `sample` layer
 is styled through `paint.sample`, a `line` layer through `paint.stroke`, and so on. See
 `styles.md` for the property tables per type.
+
+**There are no separate forecast layers.** Raster Maps splits observed from forecast (`temperatures`
+vs. `ftemperatures`); MapsGL does not. One layer spans both, and the **data range** below is what
+tells you how far each reaches — move the timeline to render a forecast interval rather than adding
+a different layer. Two exceptions: the `satellite` layers are past-only (`-7 days`), with no MapsGL
+forecast equivalent at all; and the `road-weather-*` / `froad-weather-*` pair is a genuine split, but
+between a +2 hour nowcast and a +24 hour forecast — both forecasts, so there `f` marks range, not
+past-versus-future.
 
 ---
 
@@ -37,7 +45,7 @@ rendering.
   `lightning-all` · `lightning-all-icons` · `lightning-strikes` · `lightning-strikes-icons` · `lightning-strikes-pulse`
 - **x5** (84):
   `air-quality-co` · `air-quality-health-index-categories` · `air-quality-index-cai-categories` · `air-quality-index-china-categories` · `air-quality-index-eaqi-categories` · `air-quality-index-india-categories` · `air-quality-index-uba-daqi-categories` · `air-quality-index-uk-daqi-categories` · `air-quality-no` · `air-quality-no2` · `air-quality-o3` · `air-quality-pm10` · `air-quality-pm2p5` · `air-quality-so2` · `froad-weather-risk-hydroplane-australia` · `froad-weather-risk-hydroplane-europe` · `froad-weather-risk-hydroplane-japan` · `froad-weather-risk-hydroplane-new-zealand` · `froad-weather-risk-hydroplane-us` · `froad-weather-risk-low-viz-fog-australia` · `froad-weather-risk-low-viz-fog-europe` · `froad-weather-risk-low-viz-fog-japan` · `froad-weather-risk-low-viz-fog-new-zealand` · `froad-weather-risk-low-viz-fog-us` · `froad-weather-risk-low-viz-snow-australia` · `froad-weather-risk-low-viz-snow-europe` · `froad-weather-risk-low-viz-snow-japan` · `froad-weather-risk-low-viz-snow-new-zealand` · `froad-weather-risk-low-viz-snow-us` · `froad-weather-risk-rollover-australia` · `froad-weather-risk-rollover-europe` · `froad-weather-risk-rollover-japan` · `froad-weather-risk-rollover-new-zealand` · `froad-weather-risk-rollover-us` · `froad-weather-surface-australia` · `froad-weather-surface-europe` · `froad-weather-surface-japan` · `froad-weather-surface-new-zealand` · `froad-weather-surface-us` · `froad-weather-temperature-australia` · `froad-weather-temperature-europe` · `froad-weather-temperature-freeze-australia` · `froad-weather-temperature-freeze-europe` · `froad-weather-temperature-freeze-japan` · `froad-weather-temperature-freeze-new-zealand` · `froad-weather-temperature-freeze-us` · `froad-weather-temperature-japan` · `froad-weather-temperature-new-zealand` · `froad-weather-temperature-us` · `road-weather-risk-hydroplane-australia` · `road-weather-risk-hydroplane-europe` · `road-weather-risk-hydroplane-japan` · `road-weather-risk-hydroplane-new-zealand` · `road-weather-risk-hydroplane-us` · `road-weather-risk-low-viz-fog-australia` · `road-weather-risk-low-viz-fog-europe` · `road-weather-risk-low-viz-fog-japan` · `road-weather-risk-low-viz-fog-new-zealand` · `road-weather-risk-low-viz-fog-us` · `road-weather-risk-low-viz-snow-australia` · `road-weather-risk-low-viz-snow-europe` · `road-weather-risk-low-viz-snow-japan` · `road-weather-risk-low-viz-snow-new-zealand` · `road-weather-risk-low-viz-snow-us` · `road-weather-risk-rollover-australia` · `road-weather-risk-rollover-europe` · `road-weather-risk-rollover-japan` · `road-weather-risk-rollover-new-zealand` · `road-weather-risk-rollover-us` · `road-weather-surface-australia` · `road-weather-surface-europe` · `road-weather-surface-japan` · `road-weather-surface-new-zealand` · `road-weather-surface-us` · `road-weather-temperature-australia` · `road-weather-temperature-europe` · `road-weather-temperature-freeze-australia` · `road-weather-temperature-freeze-europe` · `road-weather-temperature-freeze-japan` · `road-weather-temperature-freeze-new-zealand` · `road-weather-temperature-freeze-us` · `road-weather-temperature-japan` · `road-weather-temperature-new-zealand` · `road-weather-temperature-us`
-- **x1** — the remaining 194 layers, i.e. anything not listed above.
+- **x1** — the remaining 196 layers, i.e. anything not listed above.
 
 Cost does not follow the layer name. `air-quality-o3` is x5 while `air-quality-o3-text` —
 its label variant — is x1, and the per-region `road-weather-risk-*` layers are x5 while
@@ -90,6 +98,12 @@ Satellite imagery depicting the amount of water vapor in the atmosphere.
 Cloud cover as a percentage.
 
 *sample · animatable · x1 · Coverage: Global · Range: -7 days to +15 days · Updates: 1 hour · Also: Forecasts*
+
+### `cloud-cover-text` — Cloud Cover (Text)
+
+Cloud cover as a percentage as text values for global locations.
+
+*text · animatable · x1 · Coverage: Global · Range: -7 days to +15 days · Updates: 1 hour · Also: Forecasts*
 
 ### `dew-points` — Dew Points
 
@@ -259,6 +273,12 @@ Snow depth on the ground.
 
 *sample · animatable · x1 · Coverage: Global · Range: -7 to +15 days · Updates: 1 hour · Also: Forecasts*
 
+### `snow-depth-text` — Snow Depth (Text)
+
+Snow depth on the ground as text values for global locations.
+
+*text · animatable · x1 · Coverage: Global · Range: -7 to +15 days · Updates: 1 hour · Also: Forecasts*
+
 ### `snow-text` — 1-Hour Snowfall (Text)
 
 1-hour snowfall amounts per hour as text values for global locations.
@@ -387,7 +407,7 @@ Maximum wind gusts for a selected time range as text values for global locations
 
 ### `wind-gusts-text` — Wind Gusts (Text)
 
-Surface wind gusts as text values for locations globally.
+Surface wind gusts as text values for global locations.
 
 *text · animatable · x1 · Coverage: Global · Range: -7 to +15 days · Updates: 1 hour · Also: Forecasts*
 
@@ -463,25 +483,25 @@ Provides information on potential severe weather, including thunderstorms, torna
 
 Maximum probability for severe hail (1"+ diameter) in hourly intervals.
 
-*sample · animatable · x1 · Coverage: Global · Range: -7 days*
+*sample · animatable · x1 · Coverage: US, Europe, Japan, Australia · Range: -7 days*
 
 ### `hail-severe-probability-max` — Max Severe Hail Probability
 
 Maximum probability for severe hail (1"+ diameter) for a selected time range. This layer uses the "max" data operation to calculate the maximum value across the map timeline's full time range.
 
-*sample · animatable · x1 · Coverage: Global · Range: -7 days*
+*sample · animatable · x1 · Coverage: US, Europe, Japan, Australia · Range: -7 days*
 
 ### `hail-size` — Hail Size
 
 Maximum observed hail size in hourly intervals.
 
-*sample · animatable · x1 · Coverage: Global · Range: -7 days*
+*sample · animatable · x1 · Coverage: US, Europe, Japan, Australia · Range: -7 days*
 
 ### `hail-size-max` — Max Hail Size
 
 Maximum observed hail size for a selected time range. This layer uses the "max" data operation to calculate the maximum value across the map timeline's full time range.
 
-*sample · animatable · x1 · Coverage: Global · Range: -7 days*
+*sample · animatable · x1 · Coverage: US, Europe, Japan, Australia · Range: -7 days*
 
 ### `hail-threats` — Hail Threats
 
@@ -523,37 +543,37 @@ Aggregated cloud-to-ground and intracloud lightning flashes (as icons).
 
 Number of lightning strikes (cloud-to-ground and intracloud) per hour.
 
-*sample · static · x1 · Coverage: Global · Also: Lightning*
+*sample · static · x1 · Coverage: US, Europe, Japan, Australia · Also: Lightning*
 
 ### `lightning-density-accum` — Accumulated Lightning Density 
 
 Accumulated number of lightning strikes (cloud-to-ground and intracloud) for a selected time range. This layer uses the "sum" data operation to calculate the total density across the map timeline's full time range.
 
-*sample · static · x1 · Coverage: Global · Also: Lightning*
+*sample · static · x1 · Coverage: US, Europe, Japan, Australia · Also: Lightning*
 
 ### `lightning-density-cloud-to-ground` — Lightning Density - Cloud-to-Ground
 
 Number of cloud-to-ground lightning strikes per hour.
 
-*sample · static · x1 · Coverage: Global · Also: Lightning*
+*sample · static · x1 · Coverage: US, Europe, Japan, Australia · Also: Lightning*
 
 ### `lightning-density-cloud-to-ground-accum` — Accumulated Lightning Density - Cloud-to-Ground
 
 Accumulated number of cloud-to-ground lightning strikes for a selected time range. This layer uses the "sum" data operation to calculate the total density across the map timeline's full time range.
 
-*sample · static · x1 · Coverage: Global · Also: Lightning*
+*sample · static · x1 · Coverage: US, Europe, Japan, Australia · Also: Lightning*
 
 ### `lightning-density-intracloud` — Lightning Density - Intracloud
 
 Number of intracloud lightning strikes per hour within a given region.
 
-*sample · static · x1 · Coverage: Global · Also: Lightning*
+*sample · static · x1 · Coverage: US, Europe, Japan, Australia · Also: Lightning*
 
 ### `lightning-density-intracloud-accum` — Accumulated Lightning Density - Intracloud
 
 Accumulated number of intracloud lightning strikes for a selected time range. This layer uses the "sum" data operation to calculate the total density across the map timeline's full time range.
 
-*sample · static · x1 · Coverage: Global · Also: Lightning*
+*sample · static · x1 · Coverage: US, Europe, Japan, Australia · Also: Lightning*
 
 ### `lightning-flash` — Lightning (Flash)
 
@@ -1013,7 +1033,7 @@ Measures the concentration of nitrogen dioxide (NO2) in the air. NO2 primarily g
 
 ### `air-quality-no2-text` — Air Quality - NO2 (Text)
 
-Concentration of nitrogen dioxide (NO2) in the air as text values for locations globally.
+Concentration of nitrogen dioxide (NO2) in the air as text values for global locations.
 
 *text · animatable · x1 · Coverage: Global · Range: -15 to +4.5 days · Updates: 3 hour*
 
@@ -1025,7 +1045,7 @@ Measures the concentration of ozone (O3) in the air.
 
 ### `air-quality-o3-text` — Air Quality - O3 (Text)
 
-Concentration of ozone (O3) in the air as text values for locations globally.
+Concentration of ozone (O3) in the air as text values for global locations.
 
 *text · animatable · x1 · Coverage: Global · Range: -15 to +4.5 days · Updates: 3 hour*
 
@@ -1037,7 +1057,7 @@ Measures the concentration of particulate matter in the air whose particles are 
 
 ### `air-quality-pm10-text` — Air Quality - PM10 (Text)
 
-Concentration of particulate matter in the air as text values for locations globally.
+Concentration of particulate matter in the air as text values for global locations.
 
 *text · animatable · x1 · Coverage: Global · Range: -15 to +4.5 days · Updates: 3 hour*
 
@@ -1049,7 +1069,7 @@ Measures the concentration of particulate matter in the air whose particles are 
 
 ### `air-quality-pm2p5-text` — Air Quality - PM2.5 (Text)
 
-Concentration of particulate matter in the air as text values for locations globally.
+Concentration of particulate matter in the air as text values for global locations.
 
 *text · animatable · x1 · Coverage: Global · Range: -15 to +4.5 days · Updates: 3 hour*
 
@@ -1061,7 +1081,7 @@ Measures the concentration of sulfur dioxide (SO2) in the air. SO2 results from 
 
 ### `air-quality-so2-text` — Air Quality - SO2 (Text)
 
-Concentration of sulfur dioxide (SO2) as text values for locations globally.
+Concentration of sulfur dioxide (SO2) as text values for global locations.
 
 *text · animatable · x1 · Coverage: Global · Range: -15 to +4.5 days · Updates: 3 hour*
 
@@ -1271,7 +1291,7 @@ Depicts a summary of road conditions based on severity, where green indicates dr
 
 Depicts a summary of road conditions based on severity, where green indicates dry roads with no issues, yellow indicates the potential for hazardous road conditions (wet, slick), and red indicates a high risk of adverse road conditions.
 
-*line · static · x1 · Coverage: Japan · Range: +24 hours · Updates: 6 hour*
+*line · static · x1 · Coverage: Japan · Range: +24 hours · Updates: 6 hours*
 
 ### `froad-weather-summary-new-zealand` — Road Weather Summary Forecast (New Zealand)
 
@@ -1283,7 +1303,7 @@ Depicts a summary of road conditions based on severity, where green indicates dr
 
 Depicts a summary of road conditions based on severity, where green indicates dry roads with no issues, yellow indicates the potential for hazardous road conditions (wet, slick), and red indicates a high risk of adverse road conditions.
 
-*line · static · x1 · Coverage: US · Range: +24 hours · Updates: 6 hour*
+*line · static · x1 · Coverage: US · Range: +24 hours · Updates: 6 hours*
 
 ### `froad-weather-surface-australia` — Road Weather Surface Forecast (Australia)
 
@@ -1507,7 +1527,7 @@ Depicts a summary of road conditions based on severity, where green indicates dr
 
 *line · static · x1 · Coverage: Europe · Range: +2 hours · Updates: 15 min*
 
-### `road-weather-summary-japan` — Road Weather Summary Short-Term Forecast  (Japan)
+### `road-weather-summary-japan` — Road Weather Summary Short-Term Forecast (Japan)
 
 Depicts a summary of road conditions based on severity, where green indicates dry roads with no issues, yellow indicates the potential for hazardous road conditions (wet, slick), and red indicates a high risk of adverse road conditions.
 

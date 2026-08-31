@@ -1,6 +1,6 @@
 {
   "name": "xweather",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "Xweather Weather API, Raster Maps, MapsGL, and Webhooks — build and run Weather API request URLs, generate static map images and tile URLs, work with the MapsGL JavaScript, Apple-platform, and Android SDKs, and set up push data delivery.",
   "author": {
     "name": "Vaisala Xweather",
@@ -28,7 +28,7 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Xweather API & Maps",
-    "shortDescription": "Build Xweather API, Raster Maps, MapsGL web, iOS and Android, and webhook integrations",
+    "shortDescription": "Xweather API and Maps tools",
     "longDescription": "Reusable Xweather skills for building Weather API requests, Raster Maps imagery and tiles, MapsGL integrations for the web and for Apple and Android platforms, and webhook receivers.",
     "developerName": "Vaisala Xweather",
     "category": "Developer Tools",
@@ -39,10 +39,10 @@
     "websiteURL": "https://www.xweather.com/docs",
     "defaultPrompt": [
       "Build an Xweather Weather API request and report its access cost.",
-      "Create an Xweather weather map integration for my application.",
-      "Add an Xweather MapsGL weather map to my SwiftUI app.",
-      "Add an Xweather MapsGL weather map to my Android app.",
-      "Help me design an Xweather webhook receiver."
-    ]
+      "Add an Xweather map to my web, SwiftUI, or Android application.",
+      "Help me design a secure Xweather webhook receiver."
+    ],
+    "composerIcon": "./assets/xweather-icon.png",
+    "logo": "./assets/xweather-icon.png"
   }
 }
