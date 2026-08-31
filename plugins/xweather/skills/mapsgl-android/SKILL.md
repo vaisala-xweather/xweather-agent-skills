@@ -11,8 +11,8 @@ description: >-
   WeatherService, XweatherAccount, or weather overlays on Mapbox Maps SDK for
   Android. Also covers MapsGL session-based usage/cost (shared with the JS SDK)
   and common Android gotchas (Mercator, OpenGL ES 3.0, minSdk 28, Mapbox peer
-  dependency). Tracks the SDK's feature/maptime-filter branch, ahead of the
-  current release, so some documented APIs are unreleased and flagged. When docs
+  dependency). Documents the MapsGL Android 1.6.1 release - every API here is in
+  that published build, with no unreleased or development-branch surface. When docs
   and SDK disagree, prefer the SDK (source / KDoc / demos) over xweather.com
   documentation.
 license: MIT
@@ -51,13 +51,14 @@ https://www.xweather.com/docs/mapsgl-android-sdk/
 
 **API scope:** public MapsGL Android APIs only - no internals.
 
-**This skill tracks the `feature/maptime-filter` branch**, which is ahead of the
-released SDK. Anything documented here that is not in the current release is
-marked *(unreleased)* where it appears - `references/layers.md` flags 28 layer
-codes that way. Unmarked APIs are in the released build. When writing code for a
-project that depends on a published JitPack artifact rather than the branch, stay
-on the unmarked surface, and say so if the user asks for something that is only
-on the branch.
+**This skill documents the 1.6.1 release.** Every API described here exists in the
+published 1.6.1 artifact - there is no unreleased or development-branch surface to
+filter out, and nothing is marked *(unreleased)*.
+
+That also bounds what the skill can offer. Features added after 1.6.1 - the
+`["map-time"]` filter expression, MapsGL's own GLES vector rendering pipeline, and
+the `*-text` data-query layers - are deliberately absent. If a task needs one of
+those, say it is not available in 1.6.1 rather than writing code against it.
 
 **Never hardcode a version number.** Resolve the current release when you need
 one:
@@ -113,13 +114,25 @@ consuming app's merged manifest picks up `largeHeap="true"` and the GLES 3.0
 `uses-feature` from the SDK.
 
 **Generated from the SDK.** `references/layers.md` is produced mechanically from
-the `LayerCode` enum and the `WeatherService` factories, and re-checked against the
-released KDoc.
+the `LayerCode` enum and the `WeatherService` factories at the `release/1.6.1` tag,
+and re-checked against the released 1.6.1 KDoc.
 
-**Read from the SDK source, not compiled.** Everything else - the rest of
-`references/api-reference.md`, the styling, expression, legend, source and custom
-layer material. The signatures were read out of the SDK rather than written from
-memory, but no build has exercised them.
+**Compiled against the published artifact.** The Kotlin snippets across the
+reference files were extracted and compiled against `mapsgl-android-sdk:v1.6.1`
+resolved from JitPack - 40 of the 68 self-contained ones compile clean. That pass
+is what caught the `interpolateExponential` / `interpolateCubicBezier` argument
+orders and the fact that `StyleColor` is minified out of the published artifact,
+none of which reading the source could show.
+
+**Read from the SDK source, not compiled.** The remainder - the rest of
+`references/api-reference.md`, and the snippets that need an Activity or
+surrounding declarations to compile on their own. The signatures were read out of
+the SDK at `release/1.6.1` rather than written from memory, but no build has
+exercised them.
+
+Note the gap those two tiers expose: **the published AAR is minified, so its public
+surface is narrower than the source tree.** When a symbol is visible in the SDK
+source but a consumer cannot resolve it, the artifact wins.
 
 If a snippet from the third group does not compile, trust the SDK and say so.
 
@@ -526,8 +539,8 @@ More: `references/android-gotchas.md`.
   dependencies; resolve the version from the releases endpoint, never a literal.
   `references/setup.md`.
 - **"Add layer X"** -> find the `LayerCode` in `references/layers.md` first; the
-  enum name is not a transform of the wire code. Check it isn't marked
-  *(unreleased)* if the project depends on a published artifact.
+  enum name is not a transform of the wire code. Every code in that catalog ships
+  in 1.6.1; if a code isn't listed, it isn't available in this release.
 - **"Nothing renders"** -> check Mapbox tokens *and* Xweather credentials, then
   that layers were added after `subscribeMapLoaded`, then Mercator.
 - **"Restyle a layer"** -> cast `config.layer.paint` to the paint type for its

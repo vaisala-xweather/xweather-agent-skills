@@ -1,6 +1,6 @@
 # MapsGL Android SDK - API reference
 
-Every signature below was read from the SDK source on the `feature/maptime-filter` branch. Where the
+Every signature below was read from the SDK source at the `release/1.6.1` tag. Where the
 website documentation disagrees, follow this file.
 
 The authoritative published reference is the SDK's KDoc, per version:
@@ -195,8 +195,7 @@ fun Boundaries(service: WeatherService): CompositeWeatherLayerConfiguration
 
 A parallel `WeatherConfigurations` class holds the same factories and is what
 `LayerCode.getConfigurationForLayerCode` calls. Prefer `WeatherService` - it is the public surface the
-demos use. The one thing only `WeatherConfigurations` has is `DataQueryText(service, code)`, shared by
-the `*-text` data-query layers.
+demos use.
 
 `WeatherService.PrecipitationRate` exists but is reachable from no `LayerCode`.
 
@@ -234,8 +233,7 @@ See `references/sources.md`.
 
 `com.xweather.mapsgl.layers.spec` - `SampleLayerDescriptor`, `RasterLayerDescriptor`,
 `ParticleLayerDescriptor`, `GridLayerDescriptor`, `ContourLayerDescriptor`, `FillLayerDescriptor`,
-`LineLayerDescriptor`, `CircleLayerDescriptor`, `SymbolLayerDescriptor`, `HeatmapLayerDescriptor`,
-`DataQueryLayerDescriptor`.
+`LineLayerDescriptor`, `CircleLayerDescriptor`, `SymbolLayerDescriptor`, `HeatmapLayerDescriptor`.
 
 Each carries `var quality: DataQuality` (`exact`, `high`, `medium`, `normal`, `low`) and a paint
 object. Paint types live in `com.xweather.mapsgl.layers.style`, all implementing `PaintStyle` with

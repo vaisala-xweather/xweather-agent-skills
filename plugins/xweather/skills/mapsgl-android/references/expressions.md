@@ -1,7 +1,7 @@
 # Expressions & StyleValue - MapsGL Android
 
-Verified against `com.xweather.mapsgl.style.Expression`, `StyleValue`, and the vector style
-evaluators on the `feature/maptime-filter` branch.
+Verified against `com.xweather.mapsgl.style.Expression` and `StyleValue` at the SDK's
+`release/1.6.1` tag.
 
 A paint property is either a constant or an expression evaluated per feature. `Expression` builds
 Mapbox-style trees; `StyleValue` is the wrapper a paint property actually holds.
@@ -42,11 +42,11 @@ properties.
 ```kotlin
 Expression.zoom            // ["zoom"]
 Expression.geometryType    // ["geometry-type"]
-Expression.mapTime         // ["map-time"] - timeline playhead, Unix seconds
-Expression.time            // ["time"] - alias for mapTime
 ```
 
-`mapTime` is the **animation playhead**, not wall clock. See "Animating a filter over time" below.
+These are the only two map-state values on the companion in 1.6.1. There is no expression for the
+timeline playhead - a filter cannot follow the animation clock in this release. Drive time-varying
+content through `controller.timeline` instead (`references/timeline.md`).
 
 ## Branching
 
@@ -92,12 +92,14 @@ Expression.interpolate(
 
 // with an explicit interpolation type
 Expression.interpolate(listOf("linear"), Expression.get("value"), stops)
-Expression.interpolateExponential(base, input, stops)
-Expression.interpolateCubicBezier(x1, y1, x2, y2, input, stops)
+Expression.interpolateExponential(input, base, stops)
+Expression.interpolateCubicBezier(input, listOf(x1, y1, x2, y2), stops)
 ```
 
 There are two `interpolate` overloads - a two-argument one that assumes linear, and a
-three-argument one taking the interpolation type first.
+three-argument one taking the interpolation type first. The exponential and cubic-bezier
+siblings both take **`input` first**, then their curve parameters - and `interpolateCubicBezier`
+takes the four control points as a single `List<Double>`, not four arguments.
 
 ### `switchCase` - arbitrary conditions
 
@@ -127,7 +129,7 @@ rest are factory functions returning an `Expression`.
 | Group | Operators |
 |---|---|
 | Data | `get` `getPath` `has` `hasPath` `literal` `at` `length` `slice` `indexOf` `contains` |
-| Map state | `zoom` `geometryType` `mapTime` `time` |
+| Map state | `zoom` `geometryType` |
 | Branching | `match` `step` `switchCase` `coalesce` |
 | Interpolation | `interpolate` `interpolateExponential` `interpolateCubicBezier` |
 | Comparison | `equals` `notEquals` `lessThan` `lessThanOrEqual` `greaterThan` `greaterThanOrEqual` |
@@ -156,46 +158,20 @@ descriptor.filter = Expression.and(listOf(
 ))
 ```
 
-The vector style evaluators handle a broad operator set - `==` `!=` `<` `<=` `>` `>=` `!` `all` `any`
-`case` `match` `step` `coalesce` `concat` `get` `has` `literal` `downcase` `upcase` `to-string`
-`to-number` `zoom`, plus arithmetic in the circle evaluator. That is a large subset but **not** all
-of Mapbox's expression language, so a filter leaning on an operator outside this list may silently
-fail to match rather than erroring - keep filters to the list above and test on device.
-
-## Animating a filter over time
-
-`["map-time"]` resolves to the **timeline playhead** in Unix seconds, so a filter referencing it
-re-evaluates as the animation runs. This is how time-windowed features (lightning strikes fading,
-storm-cell tracks revealing) work without rebuilding geometry every frame.
-
-```kotlin
-// Show only features whose timestamp is at or before the playhead
-descriptor.filter = Expression.lessThanOrEqual(
-    Expression.get("timestamp"),
-    Expression.mapTime,
-)
-```
-
-The SDK splits such a filter internally: the clauses that don't reference map-time are applied once
-when geometry is prepared, and the map-time clauses are re-applied at draw time - on the CPU for
-symbols, and as a GPU reveal for fill and line using a baked feature time. A top-level `["all", …]`
-is partitioned clause by clause; any other shape goes wholly to one side.
-
-That splitting is internal - you write one filter and the SDK does the rest. The legacy spellings
-`"mapTime"` and `"timeline"` are also accepted.
-
-Playback itself is driven by `controller.timeline`, not by the filter. See `references/timeline.md`.
+In 1.6.1 vector weather layers are drawn as **Mapbox style layers**, and the descriptor's
+`filter` is handed straight to Mapbox (`paintStyle.filter` in `MapboxMapController`). Mapbox
+evaluates it, so the full Mapbox filter expression language is available - not a MapsGL subset.
+The constraint is the other direction: an operator that `Expression` has no factory for has to be
+built by hand as a raw list via the `Expression(raw)` constructor.
 
 ## Colors
 
 Paint colors are `androidx.compose.ui.graphics.Color` (Compose), **not** `android.graphics.Color`
-ints. `StyleColor` additionally accepts hex and rgba strings:
+ints.
 
-```kotlin
-StyleColor.Color(Color.Red)
-StyleColor.Hex("#ff0000")
-StyleColor.RGBA("rgba(255,0,0,1)")
-```
+The SDK source has a `StyleColor` sealed class with `Color` / `Hex` / `RGBA` cases, but it is
+**not in the published artifact** - it is minified away, so a consumer cannot reference it. Build
+colors as Compose `Color`, or as strings inside an expression via `Expression.rgb` / `rgba`.
 
 `Expression.rgb(r, g, b)` and `rgba(r, g, b, a)` build colors inside an expression tree, where each
 component may itself be an expression.
@@ -204,8 +180,9 @@ component may itself be an expression.
 
 - **`opacity` is a plain `Float`.** Only data-driven paint properties take a `StyleValue`.
 - **The first `step` stop has no threshold** - passing one silently shifts the ramp.
-- **Filters are not full Mapbox.** Stay on the operator list above.
-- **`mapTime` is the playhead, not the clock.** It moves only while the timeline moves.
+- **Filters run in Mapbox, not MapsGL.** Anything Mapbox's filter grammar accepts will work;
+  operators without an `Expression` factory must be built as raw lists.
+- **No playhead expression.** A filter cannot reference the timeline position in 1.6.1.
 
 Cookbooks for alerts, earthquakes and other real layers: `references/data-driven.md`.
 Paint properties by render type: `references/weather-styling.md`.

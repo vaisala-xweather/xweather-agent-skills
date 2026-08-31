@@ -3,8 +3,12 @@
 
 **This script needs a local checkout of the MapsGL Android SDK** and therefore
 cannot run in CI, unlike `regenerate_references.py` which fetches public
-endpoints. That is deliberate: the mapsgl-android skill documents the SDK's
-development branch, whose source is not published anywhere CI could reach.
+endpoints. That is deliberate: the SDK source is not published anywhere CI
+could reach.
+
+The catalog is generated from a **release ref**, not from whatever the checkout
+happens to have on HEAD - `--ref` defaults to `release/1.6.1`, so the skill
+documents exactly one published version.
 
     python3 scripts/regenerate_mapsgl_android_layers.py --sdk ../mapsgl-android-sdk
     python3 scripts/regenerate_mapsgl_android_layers.py --sdk ../mapsgl-android-sdk --check
@@ -12,10 +16,10 @@ development branch, whose source is not published anywhere CI could reach.
 `--check` writes nothing and exits non-zero if the committed catalog has drifted
 from a fresh generation.
 
-The list of codes comes from the SDK checkout; each is then compared against the
-released KDoc so anything present only on the branch is marked *(unreleased)*.
+The list of codes is read from that ref with `git show`, so the working tree is
+never touched and nothing from a later branch can leak in.
 """
-import argparse, io, os, re, sys, json, collections, subprocess, urllib.request
+import argparse, io, os, re, sys, collections, subprocess
 
 _ap = argparse.ArgumentParser(description=__doc__,
                               formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -26,6 +30,8 @@ _ap.add_argument('--root',
                  help='repository root')
 _ap.add_argument('--check', action='store_true',
                  help='verify only; write nothing and exit 1 on drift')
+_ap.add_argument('--ref', default='release/1.6.1',
+                 help='SDK git ref to generate from (default: release/1.6.1)')
 ARGS = _ap.parse_args()
 
 SDK_REPO = os.path.abspath(ARGS.sdk)
@@ -34,27 +40,23 @@ if not os.path.isdir(os.path.join(SDK_REPO, '.git')):
     raise SystemExit(2)
 
 
-def fetch(url):
-    with urllib.request.urlopen(url, timeout=60) as r:
-        return r.read().decode('utf-8', 'replace')
-
-
 def git(*a):
     return subprocess.check_output(['git', '-C', SDK_REPO] + list(a)).decode().strip()
 
 
-SDK_BRANCH = git('rev-parse', '--abbrev-ref', 'HEAD')
-SDK_COMMIT = git('rev-parse', '--short', 'HEAD')
-SDK_DATE = git('log', '-1', '--format=%cs')
+SDK_REF = ARGS.ref
+try:
+    SDK_COMMIT = git('rev-parse', '--short', SDK_REF)
+except subprocess.CalledProcessError:
+    print('no such ref in the SDK checkout: %s' % SDK_REF, file=sys.stderr)
+    raise SystemExit(2)
+SDK_DATE = git('log', '-1', '--format=%cs', SDK_REF)
 
-REL = json.loads(fetch('https://www.xweather.com/docs/api/releases/versions'))
-SDK_VERSION = REL['products']['mapsgl-android-sdk']['version']
-KDOC = ('https://cdn.aerisapi.com/sdk/android/mapsgl/docs/v%s/mapsglmaps/'
-        'com.xweather.mapsgl.weather/-layer-code/index.html' % SDK_VERSION)
-PUBLISHED = set(re.findall(r'>([A-Z][A-Z0-9_]{2,})<', fetch(KDOC)))
-print('  SDK branch          :', SDK_BRANCH, SDK_COMMIT, SDK_DATE)
-print('  latest release      :', SDK_VERSION)
-print('  published LayerCodes:', len(PUBLISHED))
+# The documented version is the ref itself, not whatever is newest upstream.
+SDK_VERSION = SDK_REF.split('/')[-1]
+
+print('  SDK ref             :', SDK_REF, SDK_COMMIT, SDK_DATE)
+print('  documenting version :', SDK_VERSION)
 
 SDK = os.path.join(SDK_REPO, 'mapsglmaps', 'src', 'main', 'java',
                    'com', 'xweather', 'mapsgl')
@@ -63,7 +65,10 @@ SERVICE = os.path.join(SDK, 'weather', 'WeatherService.kt')
 CONFIG  = os.path.join(SDK, 'weather', 'WeatherLayerConfiguration.kt')
 
 def read(p):
-    return io.open(p, encoding='utf-8', newline='').read()
+    # Read from the pinned ref so the working tree's branch is irrelevant.
+    rel = os.path.relpath(p, SDK_REPO).replace(os.sep, '/')
+    return subprocess.check_output(
+        ['git', '-C', SDK_REPO, 'show', '%s:%s' % (SDK_REF, rel)]).decode('utf-8')
 
 def strip_block_comments(s):
     return re.sub(r'/\*.*?\*/', ' ', s, flags=re.S)
@@ -131,10 +136,8 @@ public_factories   = parse_factories(svc_raw)     # WeatherService.X
 internal_factories = parse_factories(codes_raw)   # WeatherConfigurations.X
 
 # ---- 4. join ------------------------------------------------------------------
-rows, problems, unreleased = [], [], []
+rows, problems = [], []
 for enum_name, code, doc in entries:
-    if enum_name not in PUBLISHED:
-        unreleased.append(enum_name)
     fac = code_to_factory.get(enum_name)
     if not fac:
         problems.append(('no when-branch', enum_name)); continue
@@ -143,17 +146,13 @@ for enum_name, code, doc in entries:
         problems.append(('unresolved signature', enum_name + '/' + fac)); continue
     rows.append(dict(enum=enum_name, code=code, factory=fac,
                      source=sig[0], layer=sig[1], doc=doc,
-                     public=fac in public_factories,
-                     branch_only=enum_name not in PUBLISHED))
+                     public=fac in public_factories))
 
 print('  enum entries        :', len(entries))
 print('  when-block mappings :', len(code_to_factory))
 print('  public factories    :', len(public_factories))
 print('  rows joined         :', len(rows))
 print('  problems            :', len(problems), problems[:8])
-print('  MARKED *(unreleased)* (on branch, not in v%s):' % SDK_VERSION, len(unreleased))
-if unreleased:
-    print('    ', ', '.join(sorted(unreleased)[:6]), '...')
 unused = sorted(set(public_factories) - set(code_to_factory.values()))
 print('  public factories not reachable from any LayerCode:', unused)
 
@@ -184,12 +183,12 @@ out = []
 W = out.append
 W('# MapsGL Android SDK - weather layer catalog')
 W('')
-W('%d built-in weather layers, generated from the MapsGL Android SDK source on the' % len(rows))
-W('`%s` branch.' % SDK_BRANCH)
+W('%d built-in weather layers, generated from the MapsGL Android SDK source at the' % len(rows))
+W('`%s` tag.' % SDK_REF)
 W('')
-W('**%d of these are not in the latest release (%s) yet** and are marked *(unreleased)* below. They' % (len(unreleased), SDK_VERSION))
-W('compile only against the development branch - on a released artifact from JitPack they do not')
-W('exist. Everything unmarked is in %s.' % SDK_VERSION)
+W('**Every code listed here ships in %s.** The catalog is generated against that release, so' % SDK_VERSION)
+W('anything below exists in the JitPack artifact you depend on - there are no development-branch')
+W('entries to filter out.')
 W('')
 W('**In Kotlin a layer is a `LayerCode` enum constant, not a string.** `LayerCode.TEMPERATURES`, not')
 W('`"temperatures"`. The enum names are *not* mechanical transforms of the wire codes -')
@@ -243,35 +242,18 @@ for lyr in order:
     if rt in PAINT:
         W('Paint namespaces: %s' % PAINT[rt])
         W('')
-    if lyr == 'DataQueryLayerDescriptor':
-        W('**These have no `WeatherService` factory.** They all share one configuration built by')
-        W('`WeatherConfigurations.DataQueryText(service, code)`, which takes the code as a second')
-        W('argument - so there is no `WeatherService.TemperaturesText(...)` and writing one will not')
-        W('compile. Add them by `LayerCode`, or call `DataQueryText` directly if you need to override')
-        W('paint:')
-        W('')
-        W('```kotlin')
-        W('controller.addWeatherLayer(LayerCode.TEMPERATURES_TEXT)')
-        W('')
-        W('val config = WeatherConfigurations.DataQueryText(controller.service, LayerCode.TEMPERATURES_TEXT)')
-        W('```')
-        W('')
-        W('They render city labels sampled from their parent data layer, and are the `query` layer type.')
-        W('')
     for r in rs:
-        W('- `LayerCode.%s` (`%s`) -> `%s.%s`%s' % (
+        W('- `LayerCode.%s` (`%s`) -> `%s.%s`' % (
             r['enum'], r['code'],
-            'WeatherService' if r['public'] else 'WeatherConfigurations', r['factory'],
-            ' *(unreleased)*' if r['branch_only'] else ''))
+            'WeatherService' if r['public'] else 'WeatherConfigurations', r['factory']))
         if r['doc']:
             W('  - %s' % re.sub(r'\[([A-Z_0-9]+)\]', r'`LayerCode.\1`', r['doc']))
 
 W('')
 W('---')
 W('')
-W('Generated from the MapsGL Android SDK source, branch `%s` at `%s` (%s).' % (SDK_BRANCH, SDK_COMMIT, SDK_DATE))
-W('*(unreleased)* markers come from diffing against the published KDoc for %s at' % SDK_VERSION)
-W('`cdn.aerisapi.com/sdk/android/mapsgl/docs/v%s/`.' % SDK_VERSION)
+W('Generated from the MapsGL Android SDK source at `%s` (`%s`), cross-checked against' % (SDK_REF, SDK_COMMIT))
+W('the published KDoc for %s at `cdn.aerisapi.com/sdk/android/mapsgl/docs/v%s/`.' % (SDK_VERSION, SDK_VERSION))
 W('')
 W('If a layer appears in the MapsGL JavaScript catalog but not here, it is not available on Android -')
 W('a real gap, not a naming problem. Check `LayerCode` in the IDE against the build you actually')

@@ -1,7 +1,7 @@
 # Timeline & animation - MapsGL Android
 
 Verified against `Timeline`, `TimeAnimation`, `Animation`, `AnimationOptions`, `AnimationEvent` and
-`TimeStringConverter` on the `feature/maptime-filter` branch. Docs pages are secondary when they
+`TimeStringConverter` at the SDK's `release/1.6.1` tag. Docs pages are secondary when they
 disagree: https://www.xweather.com/docs/mapsgl-android-sdk/getting-started/animating-data ·
 https://www.xweather.com/docs/mapsgl-android-sdk/reference/timeline
 
@@ -252,19 +252,6 @@ controller.onLoadStart.observe(owner) { /* show spinner */ }
 controller.onLoadComplete.observe(owner) { /* hide spinner */ }
 controller.onLoadProgress.observe(owner) { progress -> /* MapLoadProgress */ }
 ```
-
-## Animating a filter with the playhead
-
-A layer filter referencing `["map-time"]` re-evaluates as the playhead moves, which is how
-time-windowed features reveal during playback without rebuilding geometry:
-
-```kotlin
-descriptor.filter = Expression.lessThanOrEqual(Expression.get("timestamp"), Expression.mapTime)
-```
-
-`Expression.mapTime` is the timeline position in Unix seconds, not wall clock. The SDK splits such a
-filter into a static part applied at geometry prep and a dynamic part applied at draw time. Full
-detail: `references/expressions.md`.
 
 ## Animatable layers
 

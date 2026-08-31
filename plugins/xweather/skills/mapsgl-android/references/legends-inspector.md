@@ -1,7 +1,7 @@
 # Legends & data inspector - MapsGL Android
 
 Verified against `LegendControl`, `Legend`, `BarLegend`, `PointLegend`, `LegendCode`,
-`DataInspectorControl`, `Presentation` and `MeasurementUnits` on the `feature/maptime-filter` branch.
+`DataInspectorControl`, `Presentation` and `MeasurementUnits` at the SDK's `release/1.6.1` tag.
 Docs are secondary when they disagree:
 https://www.xweather.com/docs/mapsgl-android-sdk/getting-started/legends ·
 https://www.xweather.com/docs/mapsgl-android-sdk/controls/data-inspector

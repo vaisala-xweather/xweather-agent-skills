@@ -40,6 +40,21 @@ EXPECT_UNPROBEABLE = {
     'https://api.mapbox.com/downloads/v2/releases/maven': 'auth-gated Maven repo',
 }
 
+# Roots that cannot be fetched directly, but whose health a concrete file
+# underneath does prove. S3-backed Maven repositories are the recurring case:
+# the bucket has no directory index, so the repository root answers NoSuchKey
+# while every real artifact under it serves normally.
+#
+# Preferred over EXPECT_UNPROBEABLE wherever a canary exists, because it still
+# checks something - the canary is a file the build actually resolves, so this
+# catches the repository going away for real.
+PROBE_INSTEAD = {
+    'https://maven.ecc.no/releases': (
+        'https://maven.ecc.no/releases/no/ecc/vectortile/java-vector-tile/'
+        '1.4.1/java-vector-tile-1.4.1.pom',
+        'S3 Maven repo, no directory index'),
+}
+
 TRAILING = '.,;:)]}>"\'`*'
 URL_RE = re.compile(r'https?://[^\s<>()\[\]"`]+')
 
@@ -139,6 +154,10 @@ def probe(url, timeout=25):
     """
     if url in EXPECT_UNPROBEABLE:
         return True, 'skipped (%s)' % EXPECT_UNPROBEABLE[url]
+    if url in PROBE_INSTEAD:
+        target, why = PROBE_INSTEAD[url]
+        ok, detail = probe(target, timeout)
+        return ok, '%s for %s (%s)' % (detail, target.rsplit('/', 1)[-1], why)
     try:
         r = subprocess.run(
             ['curl', '-sS', '-L', '-o', os.devnull, '-w', '%{http_code}',

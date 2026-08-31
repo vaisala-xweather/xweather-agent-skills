@@ -17,7 +17,7 @@ as installable plugins for Claude Code and OpenAI's ChatGPT and Codex plugin sur
 | `raster-maps` | `maps.api.xweather.com` URLs — static map images and XYZ tile templates across 159 layers, dash-joined data modifiers, opacity/blur/blend/scale-hsla, time offsets, and map-unit cost reporting. |
 | `mapsgl` | The MapsGL JavaScript SDK (`@xweather/mapsgl`) — controllers for Mapbox GL, MapLibre GL, Google Maps and Leaflet, all 283 layers, styling, expressions, legends, timeline animation, and session-based cost. |
 | `mapsgl-apple` | The MapsGL SDK for Apple platforms — Swift Package/CocoaPods/Carthage install, `MapboxMapController` and `MapLibreMapController`, all 182 `WeatherService.LayerCode` layers, SwiftUI and UIKit setup, paint properties, expressions, legends, timeline, and session-based cost. |
-| `mapsgl-android` | The MapsGL Android SDK (`com.xweather.mapsgl`) — AAR/JitPack install over the Mapbox Maps SDK for Android, `MapboxMapController`, all 209 `LayerCode` layers, `StyleValue`/`Expression` styling, custom sources and layers, legends and the data inspector, timeline animation, and session-based cost. |
+| `mapsgl-android` | The MapsGL Android SDK (`com.xweather.mapsgl`) — AAR/JitPack install over the Mapbox Maps SDK for Android, `MapboxMapController`, all 181 `LayerCode` layers of the 1.6.1 release, `StyleValue`/`Expression` styling, custom sources and layers, legends and the data inspector, timeline animation, and session-based cost. |
 | `webhooks` | Pushed data delivery — receiver design, securing the endpoint, available data sets, retry and idempotency behaviour, and the registration details Xweather needs. |
 
 ## Install

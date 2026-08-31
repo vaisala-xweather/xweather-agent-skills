@@ -87,5 +87,5 @@ controller.addLayer(
 - Use `androidx.compose.ui.graphics.Color` with `StyleValue.Constant` for solid colors.
 - Not every paint property is re-evaluated every frame after buffers are built -
   check the SDK paint/renderer behavior for limits.
-- Filter expressions on descriptors are a **smaller** supported subset for GLES
-  stencil paths - see `expressions.md`.
+- Descriptor filters are evaluated by Mapbox, since vector layers are Mapbox style
+  layers in 1.6.1 - see `expressions.md`.
