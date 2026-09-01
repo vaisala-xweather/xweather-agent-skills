@@ -32,7 +32,7 @@ authenticated account may actually render, ask at runtime:
 controller.service.loadLayerMetadata { result in ... }   // -> [WeatherLayerMetadata]
 ```
 
-Generated from the DocC index for SDK 1.7.0. Regenerate with `python3 scripts/regenerate_references.py`;
+Generated from the DocC index for SDK 1.7.1. Regenerate with `python3 scripts/regenerate_references.py`;
 the version is resolved from the releases endpoint, so this list tracks the current release.
 
 ---
