@@ -153,8 +153,26 @@ Bumping `version` in one manifest and forgetting the other is the failure that a
 
 ## Bumping the version
 
-Both `plugins/xweather/.claude-plugin/plugin.json` and
-`plugins/xweather/.codex-plugin/plugin.json` set an explicit `version`; bump both on every release.
-Keep `metadata.version` in each `SKILL.md` in step. Never change the plugin's `name` (`xweather`) —
-it keys installs and namespaces the skills. Run `python3 scripts/validate_packaging.py` after any
-marketplace, manifest, or skill-version change; CI runs the same comparison.
+The version lives in eight files that must agree: both
+`plugins/xweather/.claude-plugin/plugin.json` and `plugins/xweather/.codex-plugin/plugin.json`, plus
+`metadata.version` in each `SKILL.md`. Don't edit them by hand — that's the drift
+`validate_packaging.py` exists to catch:
+
+```
+python3 scripts/bump_version.py --level patch     # or minor, major
+python3 scripts/bump_version.py --set 1.0.0       # exact version
+python3 scripts/bump_version.py --check           # print the current version, write nothing
+```
+
+The script refuses to run if the eight files already disagree, so fix existing drift before bumping.
+It prints the new version on stdout, which is how the refresh workflow captures it.
+
+Never change the plugin's `name` (`xweather`) — it keys installs and namespaces the skills. Run
+`python3 scripts/validate_packaging.py` after any marketplace, manifest, or skill-version change; CI
+runs the same comparison.
+
+**The weekly reference refresh bumps the version itself.**
+`.github/workflows/refresh-references.yml` runs `bump_version.py --level patch` whenever
+`regenerate_references.py` finds catalog drift, so the PR it opens is already a complete release. To
+release those changes as a minor or major instead, re-run the workflow from the Actions tab and pick
+a different bump level.
