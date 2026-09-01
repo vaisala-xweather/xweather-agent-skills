@@ -1,8 +1,8 @@
 # Xweather API & Maps — Agent Skills
 
-Five [Agent Skills](https://agentskills.io) for the Xweather developer platform: build Weather API
+Six [Agent Skills](https://agentskills.io) for the Xweather developer platform: build Weather API
 request URLs, generate Raster Maps imagery and tile URLs, work with the MapsGL SDKs for the web and for
-Apple platforms, and set up pushed data delivery.
+Apple and Android platforms, and set up pushed data delivery.
 
 Agent Skills is an open standard originally published by Anthropic, so these work in any
 skills-compatible agent — **OpenAI Codex, Cursor, GitHub Copilot, VS Code, Gemini CLI, Goose,
@@ -17,6 +17,7 @@ as installable plugins for Claude Code and OpenAI's ChatGPT and Codex plugin sur
 | `raster-maps` | `maps.api.xweather.com` URLs — static map images and XYZ tile templates across the full layer catalog, dash-joined data modifiers, opacity/blur/blend/scale-hsla, time offsets, and map-unit cost reporting. |
 | `mapsgl` | The MapsGL JavaScript SDK (`@xweather/mapsgl`) — controllers for Mapbox GL, MapLibre GL, Google Maps and Leaflet, the full layer catalog, styling, expressions, legends, timeline animation, and session-based cost. |
 | `mapsgl-apple` | The MapsGL SDK for Apple platforms — Swift Package/CocoaPods/Carthage install, `MapboxMapController` and `MapLibreMapController`, the full `WeatherService.LayerCode` catalog, SwiftUI and UIKit setup, paint properties, expressions, legends, timeline, and session-based cost. |
+| `mapsgl-android` | The MapsGL Android SDK (`com.xweather.mapsgl`) — AAR/JitPack install over the Mapbox Maps SDK for Android, `MapboxMapController`, the full `LayerCode` catalog for the 1.6.1 release, `StyleValue`/`Expression` styling, custom sources and layers, legends and the data inspector, timeline animation, and session-based cost. |
 | `webhooks` | Pushed data delivery — receiver design, securing the endpoint, available data sets, retry and idempotency behaviour, and the registration details Xweather needs. |
 
 ## Install
@@ -168,11 +169,12 @@ plugins/xweather/                     the plugin
 ├── .claude-plugin/plugin.json        Claude Code plugin manifest
 ├── .codex-plugin/plugin.json         ChatGPT and Codex plugin manifest
 ├── bin/                              xwrequest, xwmap — Claude Code puts these on PATH
-└── skills/                           the five skills — the portable payload
+└── skills/                           the six skills — the portable payload
     ├── weather-api/
     ├── raster-maps/
     ├── mapsgl/
     ├── mapsgl-apple/
+    ├── mapsgl-android/
     └── webhooks/
 ```
 
@@ -190,9 +192,17 @@ load `plugins/xweather/skills/` instead of maintaining vendor-specific copies.
 claude --plugin-dir ./plugins/xweather   # load in Claude Code without installing
 claude plugin validate .                 # validate the manifests
 python3 scripts/validate_packaging.py    # compare shared marketplace, manifest, and skill metadata
+python3 scripts/check_skill_links.py --skip-links   # every references/*.md mention resolves
+python3 scripts/check_skill_links.py                # the above, plus probe every URL
 python3 scripts/build_dist.py            # build OpenAI and Claude ZIPs in dist/
 skills-ref validate ./plugins/xweather/skills/weather-api   # validate against the Agent Skills spec
 ```
+
+`check_skill_links.py` catches the two ways skill content rots without failing any
+other check: a `references/foo.md` mention that no longer resolves, and a URL that
+has gone dead. `.github/workflows/check-skills.yml` runs the reference half on every
+skill change and the link half weekly — links stay off pull requests so a
+third-party outage can't block unrelated work.
 
 The provider-neutral `SKILL.md` files retain `metadata.version` for Agent Skills packaging. The
 OpenAI uploader treats `SKILL.md` metadata as misplaced interface configuration, so the OpenAI build

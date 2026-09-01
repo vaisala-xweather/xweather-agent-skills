@@ -1,7 +1,7 @@
 {
   "name": "xweather",
   "displayName": "Xweather API & Maps",
-  "description": "Xweather Weather API, Raster Maps, MapsGL, and Webhooks — build and run Weather API request URLs, generate static map images and tile URLs, work with the MapsGL JavaScript and Apple-platform SDKs, and set up push data delivery.",
+  "description": "Xweather Weather API, Raster Maps, MapsGL, and Webhooks — build and run Weather API request URLs, generate static map images and tile URLs, work with the MapsGL JavaScript, Apple-platform, and Android SDKs, and set up push data delivery.",
   "version": "0.14.0",
   "author": {
     "name": "Vaisala Xweather",
@@ -18,6 +18,9 @@
     "mapsgl-apple",
     "ios",
     "swift",
+    "mapsgl-android",
+    "android",
+    "kotlin",
     "webhooks",
     "radar",
     "geospatial"

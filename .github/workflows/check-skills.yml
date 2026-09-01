@@ -1,0 +1,50 @@
+name: Check skill structure
+
+# Two jobs with deliberately different triggers.
+#
+# `structure` is offline and deterministic, so it runs on every change to skill
+# content. `links` reaches external hosts, which makes it useful but flaky — a
+# third-party outage would otherwise block unrelated pull requests, so it runs on
+# a schedule and on demand instead.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 9 * * 1" # Mondays 09:23 UTC, shortly after the reference refresh
+  pull_request:
+    paths:
+      - "plugins/xweather/skills/**"
+      - "scripts/check_skill_links.py"
+      - ".github/workflows/check-skills.yml"
+  push:
+    paths:
+      - "plugins/xweather/skills/**"
+      - "scripts/check_skill_links.py"
+      - ".github/workflows/check-skills.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  structure:
+    name: References resolve
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check cross-references
+        run: python3 scripts/check_skill_links.py --skip-links
+
+  links:
+    name: Links resolve
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check every URL
+        run: python3 scripts/check_skill_links.py
