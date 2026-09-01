@@ -507,25 +507,25 @@ Maximum observed hail size for a selected time range. This layer uses the "max" 
 
 Hail nowcast providing current and forecast hail threat areas.
 
-*none · animatable · x1 · Coverage: US, Canada, Japan, Europe, Australia · Range: +1 hour · Updates: 2 minutes*
+*none · animatable · x1 · Coverage: US, Canada, Japan, Europe, Australia · Range: -7 days to +1 hour · Updates: 2 minutes*
 
 ### `hail-threats-points` — Hail Threats - Points
 
 Hail nowcast points providing current and forecast hail threat areas.
 
-*circle · animatable · x1 · Coverage: US, Europe, Japan, Australia, Canada · Range: +1 hour · Updates: 2 minutes*
+*circle · animatable · x1 · Coverage: US, Europe, Japan, Australia, Canada · Range: -7 days to +1 hour · Updates: 2 minutes*
 
 ### `hail-threats-polygons` — Hail Threats - Polygons
 
 Hail nowcast polygons providing current and forecast hail threat areas.
 
-*fill · animatable · x1 · Coverage: Europe, Japan, Australia, Canada, US · Range: +1 hour · Updates: 2 minutes*
+*fill · animatable · x1 · Coverage: Europe, Japan, Australia, Canada, US · Range: -7 days to +1 hour · Updates: 2 minutes*
 
 ### `hail-threats-tracks` — Hail Threats - Tracks
 
 Hail nowcast tracks providing current and forecast hail threat areas.
 
-*line · animatable · x1 · Coverage: US, Europe, Japan, Australia, Canada · Range: +1 hour · Updates: 2 minutes*
+*line · animatable · x1 · Coverage: US, Europe, Japan, Australia, Canada · Range: -7 days to +1 hour · Updates: 2 minutes*
 
 ### `lightning-all` — Lightning Strikes (All)
 

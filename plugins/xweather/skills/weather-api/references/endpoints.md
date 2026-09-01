@@ -26,7 +26,7 @@ Air Quality Index (AQI), Health Index (AQHI) and pollutant information globally.
 | | |
 |---|---|
 | Actions | `:id`, `route` |
-| Params | `p`, `filter`, `fields`, `format`, `plimit`, `pskip`, `psort` |
+| Params | `p`, `filter`, `fields`, `format`, `plimit`, `pskip`, `psort`, `lang` |
 | Filters | `airnow`, `cai`, `caqi`, `china`, `eaqi`, `germany`, `india`, `uk` |
 | Query props | — |
 | Sort fields | — |
@@ -42,7 +42,7 @@ A historical dataset providing comprehensive air quality data around the globe.
 | | |
 |---|---|
 | Actions | `:id`, `route` |
-| Params | `fields`, `filter`, `from`, `to`, `plimit`, `pskip` |
+| Params | `fields`, `filter`, `from`, `to`, `plimit`, `pskip`, `lang` |
 | Filters | `#hr`, `airnow`, `cai`, `caqi`, `china`, `eaqi`, `germany`, `india`, `uk` |
 | Query props | — |
 | Sort fields | — |
@@ -58,7 +58,7 @@ Future air quality around the globe including each individual pollutant.
 | | |
 |---|---|
 | Actions | `:id`, `route` |
-| Params | `filter`, `fields`, `plimit`, `pskip`, `from`, `to` |
+| Params | `filter`, `fields`, `plimit`, `pskip`, `from`, `to`, `lang` |
 | Filters | `day`, `daynight`, `#hr`, `airnow`, `cai`, `caqi`, `china`, `eaqi`, `germany`, `india`, `uk` |
 | Query props | — |
 | Sort fields | — |
@@ -122,7 +122,7 @@ Global current, forecast, and past conditions for a specific date/time or in hou
 | | |
 |---|---|
 | Actions | `:id`, `route` |
-| Params | `p`, `for`, `plimit`, `psort`, `pskip`, `filter`, `from`, `to`, `fields` |
+| Params | `p`, `for`, `plimit`, `psort`, `pskip`, `filter`, `from`, `to`, `fields`, `lang` |
 | Filters | `minutelyprecip`, `#min`, `#hr` |
 | Query props | — |
 | Sort fields | `dt` |
@@ -138,7 +138,7 @@ Global current and past conditions as a daily summary or a summary in specified 
 | | |
 |---|---|
 | Actions | `:id`, `route` |
-| Params | `p`, `for`, `from`, `to`, `plimit`, `psort`, `pskip`, `filter` |
+| Params | `p`, `for`, `from`, `to`, `plimit`, `psort`, `pskip`, `filter`, `lang` |
 | Filters | `day`, `#hr` |
 | Query props | — |
 | Sort fields | `dt` |
@@ -266,7 +266,7 @@ Future weather conditions around the globe. We support daily, hourly, and many o
 | | |
 |---|---|
 | Actions | `:id`, `route` |
-| Params | `p`, `limit`, `filter`, `from`, `to`, `skip`, `plimit`, `pskip`, `fields` |
+| Params | `p`, `limit`, `filter`, `from`, `to`, `skip`, `plimit`, `pskip`, `fields`, `lang` |
 | Filters | `day`, `daynight`, `mdnt2mdnt`, `#hr`, `#min`, `precise`, `centroid` |
 | Query props | — |
 | Sort fields | — |
@@ -580,7 +580,7 @@ The observations data set provides access to current weather observations from a
 | | |
 |---|---|
 | Actions | `:id`, `closest`, `within`, `search`, `route` |
-| Params | `p`, `limit`, `radius`, `minradius`, `mindist`, `fields`, `filter`, `query`, `sort`, `skip`, `from`, `to`, `format` |
+| Params | `p`, `limit`, `radius`, `minradius`, `mindist`, `fields`, `filter`, `query`, `sort`, `skip`, `from`, `to`, `format`, `lang` |
 | Filters | `metar`, `allstations`, `pws`, `madis`, `hfmetar`, `ausbom`, `envca`, `allownosky`, `wxrain`, `wxsnow`, `wxice`, `wxfog`, `qcok`, `strict`, `centroid`, `precise` |
 | Query props | `temp`, `wind`, `dewpt`, `rh`, `pressure`, `winddir`, `gust`, `name`, `state`, `country`, `id`, `datasource`, `elev`, `qccode`, `trustfactor`, `dt`, `adt` |
 | Sort fields | `temp`, `dewpt`, `rh`, `pressure`, `wind`, `winddir`, `gust`, `name`, `state`, `country`, `id`, `datasource`, `trustfactor`, `dt`, `adt` |
@@ -596,7 +596,7 @@ Historical observations by day are available through 2011.
 | | |
 |---|---|
 | Actions | `:id`, `closest`, `within` |
-| Params | `p`, `limit`, `radius`, `filter`, `query`, `sort`, `skip`, `for`, `plimit`, `psort`, `pskip`, `fields` |
+| Params | `p`, `limit`, `radius`, `filter`, `query`, `sort`, `skip`, `for`, `plimit`, `psort`, `pskip`, `fields`, `lang` |
 | Filters | `allstations`, `official`, `pws`, `mesonet`, `hasprecip`, `hassky`, `centroid`, `precise` |
 | Query props | `temp`, `dewpt`, `rh`, `pressure`, `wind`, `winddir`, `gust`, `name`, `hasprecip` |
 | Sort fields | `dt` |
@@ -612,7 +612,7 @@ Daily summaries based on previously recorded observations. Daily summaries are a
 | | |
 |---|---|
 | Actions | `:id`, `closest`, `within` |
-| Params | `p`, `limit`, `radius`, `filter`, `query`, `sort`, `skip`, `from`, `to`, `for`, `plimit`, `pskip`, `fields`, `psort` |
+| Params | `p`, `limit`, `radius`, `filter`, `query`, `sort`, `skip`, `from`, `to`, `for`, `plimit`, `pskip`, `fields`, `psort`, `lang` |
 | Filters | `allstations`, `official`, `metar`, `pws`, `mesonet or madis`, `hfmetar`, `hasprecip`, `hassky`, `qcok`, `strict`, `centroid`, `precise` |
 | Query props | `id`, `datasource`, `count`, `maxt`, `mint`, `avgt`, `maxdewpt`, `mindewpt`, `avgdewpt`, `maxrh`, `minrh`, `avgrh`, `maxv`, `minv`, `avgv`, `wind`, `gust`, `maxp`, `minp`, `avgp`, `precip`, `precipc`, `elev`, `name`, `state`, `country`, `dt`, `hasprecip`, `qc`, `minqc`, `maxqc`, `mintrustfactor`, `maxtrustfactor` |
 | Sort fields | `maxt`, `mint`, `avgt`, `maxdewpt`, `mindewpt`, `avgdewpt`, `maxrh`, `minrh`, `avgrh`, `maxv`, `minv`, `avgv`, `wind`, `gust`, `maxp`, `minp`, `avgp`, `precip`, `mintrustfactor`, `maxtrustfactor` |
