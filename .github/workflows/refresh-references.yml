@@ -53,7 +53,7 @@ jobs:
       - name: Regenerate references
         id: regen
         run: |
-          python3 scripts/regenerate_references.py | tee regen.log
+          python3 scripts/regenerate_references.py | tee "$RUNNER_TEMP/regen.log"
           if git diff --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
@@ -91,7 +91,7 @@ jobs:
             echo '<details><summary>Script output</summary>'
             echo
             echo '```'
-            cat regen.log
+            cat "$RUNNER_TEMP/regen.log"
             echo '```'
             echo
             echo '</details>'
