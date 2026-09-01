@@ -30,6 +30,7 @@ SKIP_HOSTS = (
     'schemas.android.com',   # XML namespace URIs
     'example.com',           # placeholder in sample code
     'example.org',
+    'your-server.com',
     'localhost',
     '127.0.0.1',
 )
