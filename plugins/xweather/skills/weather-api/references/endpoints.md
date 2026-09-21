@@ -373,7 +373,7 @@ An extension of the global lightning endpoint which includes damage potential an
 |---|---|
 | Actions | `:id`, `closest`, `route`, `within` |
 | Params | `p`, `limit`, `radius`, `minradius`, `fields`, `filter`, `sort`, `skip`, `from`, `to`, `format` |
-| Filters | `cg`, `all`, `ellipse50`, `ellipse80`, `ellipse90`, `ellipse99` |
+| Filters | `cg`, `all`, `ellipse50`, `ellipse80`, `ellipse90`, `ellipse99`, `research` |
 | Query props | — |
 | Sort fields | `dt`, `type`, `peakamp`, `numsensors` |
 
@@ -399,7 +399,7 @@ Docs: https://www.xweather.com/docs/weather-api/endpoints/lightning-archive
 
 Provides long-term lightning climatology by returning the 10-year average annual lightning strike density for a specific location, measured as strikes per square kilometer per year.
 
-*Coverage: global · Cost: x1*
+*Coverage: global · Cost: x7500*
 
 | | |
 |---|---|
@@ -463,7 +463,7 @@ Docs: https://www.xweather.com/docs/weather-api/endpoints/lightning-threats
 
 Estimates the expected annual lightning strike frequency for a wind turbine at a specific location using long-term lightning climatology and turbine height.
 
-*Coverage: global · Cost: x1*
+*Coverage: global · Cost: x10000*
 
 | | |
 |---|---|
