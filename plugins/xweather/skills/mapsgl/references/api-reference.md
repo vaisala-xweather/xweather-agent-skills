@@ -40,8 +40,19 @@ interface MapAdapterOptions {
     resumeOnMoveEnd: boolean;
     preloadData: boolean;
   }>;
+  slots?: true | SlotRegistryOptions;   // 1.10.0+, opt-in layer ordering — off by default
+}
+
+interface SlotRegistryOptions {
+  slots?: Record<string, { beforeId?: string; mapboxSlot?: 'bottom' | 'middle' | 'top' }>;
+  typeMapping?: Record<string, string>;     // layer type -> slot id; unmapped types fall back to 'inlay'
+  stackRanks?: Record<string, number>;      // default within-slot ranks by weather code / stack key
+  resolveStackRank?: (ctx: { layerId: string; stackKey?: string; type?: string }) => number | undefined;
 }
 ```
+
+`slots` enables the slot/stack-rank ordering model — see `references/layer-ordering.md`. Omitted, the
+pre-1.10.0 stacking behaviour applies and the slot methods below have no model to act on.
 
 The controller isn't ready to accept layers until the underlying map has loaded — always gate
 layer/source calls behind the `load` event (`controller.isReady` reflects the same state and is
@@ -62,6 +73,10 @@ setWeatherLayerVisibility(id: string, visible: boolean): void
 addWeatherLayer(id: string, overrides?: Partial<WeatherLayerOptions>, beforeId?: string): WebGLLayer | WebGLLayer[]
 removeWeatherLayer(id: string): void
 ```
+
+`overrides` also accepts `slot` and `stackRank` (1.10.0+); the third `beforeId` argument takes either
+a MapsGL layer id (keeps the new layer in that sibling's slot) or a host style layer id (an absolute
+pin that unassigns the layer from slots). See `references/layer-ordering.md`.
 
 `addWeatherLayer` resolves deprecated/aliased codes automatically. Composite codes (see
 `references/weather-layers.md`) return an array of `WebGLLayer`; `overrides.childLayers` can
@@ -88,7 +103,7 @@ removeSource(id: string, dispose?: boolean): void   // dispose defaults true
 
 addLayer(id: string, config: Partial<LayerSpecification> | WebGLLayer, beforeId?: string): WebGLLayer
 removeLayer(id: string, dispose?: boolean): void    // dispose defaults true; real layer id required
-moveLayer(id: string, beforeId?: string): void      // omit beforeId to move to top of stack; real layer id required
+moveLayer(id: string, beforeId?: string): void      // real layer id required; with slots on, omitting beforeId keeps the current slot (or assigns 'overlay' if unslotted)
 
 setPaintProperty(layerId: string, property: string, value: any): void   // real layer id required — NOT a weather layer code
 ```
@@ -101,6 +116,33 @@ real layer id (which for weather layers, it usually isn't). Full explanation in
 
 `config` for `addLayer`/`addSource` may be a plain spec object (auto-instantiated by `type`) or an
 already-constructed layer/source instance.
+
+### Layer ordering (1.10.0+, requires `slots`)
+
+```typescript
+defineSlot(id: string, definition?: { beforeId?: string; mapboxSlot?: 'bottom' | 'middle' | 'top' }): SlotDefinition
+setSlotOrder(ids: string[]): void            // bottom -> top
+listSlots(): SlotDefinition[]                // bottom -> top, with configured beforeId / mapboxSlot
+
+setSlotBeforeId(slotId: string, beforeId?: string | null): void   // classic Mapbox/MapLibre; null restores the default
+getSlotHostBeforeId(slotId: string): string | undefined
+
+moveLayerToSlot(layerId: string, slotId: string): void   // preserves the layer's rank
+getSlot(layerId: string): string | undefined             // undefined when the layer is unslotted
+setStackRank(layerId: string, rank: number): void        // higher paints above siblings
+getStackRank(layerId: string): number | undefined
+setCodeStackRank(code: string, rank: number): void       // default for FUTURE inserts only
+
+// MapboxMapController only (MapLibre no-ops; Google/Leaflet don't expose these bands)
+usesMapboxStandardSlots(): boolean
+setSlotMapboxSlot(slotId: string, mapboxSlot?: 'bottom' | 'middle' | 'top' | null): void
+getSlotMapboxSlot(slotId: string): 'bottom' | 'middle' | 'top' | undefined
+listMapboxStandardSlots(): Array<'bottom' | 'middle' | 'top'>
+```
+
+Every `layerId` is a **real MapsGL layer id, not a weather layer code** — passing a code no-ops
+silently. Built-in slots bottom → top: `underlay`, `inlay`, `text`, `overlay`. Full model, built-in
+ranks, and the slotted/unslotted rules: `references/layer-ordering.md`.
 
 ### Querying data
 

@@ -4,7 +4,7 @@ description: This skill should be used when working with the Xweather MapsGL Jav
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.14.2"
+  version: "0.15.0"
 ---
 
 # MapsGL JavaScript SDK
@@ -96,6 +96,7 @@ objects, expressions — is identical, so the rest of this skill applies unchang
 | `paint` | Per-layer style config (colors, radii, colorscales, etc.), keyed by render type — see `references/styles.md` |
 | Expressions | `['operator', ...args]` arrays for data-driven paint values and `filter`s — see `references/expressions.md` |
 | `ColorScale` | Maps a continuous data range to a color gradient/steps, used by `paint.sample`/`paint.heatmap` and gradient legends — see `references/color-scales.md` |
+| Slots & `stackRank` | Layer ordering model added in 1.10.0 — named bands (`underlay`/`inlay`/`text`/`overlay`) plus a within-band rank. Opt-in via `slots` on the controller — see `references/layer-ordering.md` |
 | Legend (`LegendControl`) | An on-map UI element showing what a layer's colors/symbols mean; categorical (`points`) or gradient (`bar`) — see `references/legends.md` |
 | `DataInspectorControl` | An on-map UI element that shows raw layer values at the clicked/hovered point |
 | `timeline` (`Timeline`) | Drives time-based animation (play/pause/scrub) across every animated layer on a controller at once — see `references/timeline.md` |
@@ -301,8 +302,9 @@ controller.on('load', () => {
 | Google Maps | `GoogleMapController` | `new google.maps.Map(el, { mapId: '...', ... })` |
 | Leaflet | `LeafletMapController` | `L.map('map').setView([lat, lon], zoom)` |
 
-All four take `(map, { account, units?, animation? })`. Google's variant also accepts
-`interleaved?: boolean`. **Always gate MapsGL calls behind `controller.on('load', ...)`** —
+All four take `(map, { account, units?, animation?, slots? })`. Google's variant also accepts
+`interleaved?: boolean`. `slots` opts into the 1.10.0 layer-ordering model — see "Controlling layer
+order" below. **Always gate MapsGL calls behind `controller.on('load', ...)`** —
 calling layer/source methods before load throws.
 
 The four controller constructors and the complete controller API (properties, events, all methods)
@@ -493,6 +495,56 @@ A layer's **render type also tells you how to style it** — a `sample` layer ta
 `paint.sample.colorscale`, a `line` layer takes `paint.stroke`. Reading the type out of
 `layers.md` before writing a `paint` override saves a round of guessing.
 
+## Controlling layer order
+
+**MapsGL 1.10.0+ stacks layers with slots and stack ranks, and it is opt-in.** Slots are named bands
+in a fixed top-to-bottom order — `overlay`, `text`, `inlay`, `underlay` — and `stackRank` orders
+siblings inside a band (higher paints above). Turning them on is a constructor option; without it,
+stacking behaves as it did before 1.10.0 and none of the slot APIs have a model to act on:
+
+```javascript
+const controller = new aerisweather.mapsgl.MapboxMapController(map, {
+  account,
+  slots: true
+});
+```
+
+**Whenever a request touches layer order** — "keep radar under the road labels", "put the wind
+particles on top", "temperatures below satellite", "my alerts layer is hiding the basemap" — enable
+`slots` at construction and express the order with `slot` / `stackRank` rather than hunting for a
+Mapbox/MapLibre style layer id.
+
+The built-in defaults already produce a sensible stack, so **usually nothing else is needed**: raster,
+sample, heatmap and fill layers land in `underlay` (pinned below admin boundaries on classic styles,
+the `middle` band on Mapbox Standard), vector marks land in `inlay` above them, labels in `text`, and
+the day/night overlay in `overlay`. Within `underlay`, radar (rank 300) sits above satellite (200)
+above fills (100) above temperatures and other generic samples (0).
+
+Override per layer when the default is wrong:
+
+```javascript
+controller.addWeatherLayer('radar', { stackRank: 150 });   // below satellite, still in underlay
+controller.addWeatherLayer('alerts', { slot: 'overlay' }); // lift out of inlay, above everything
+```
+
+Or move a layer that's already on the map — **using its real layer id, not the weather code**, the
+same trap as `setPaintProperty`:
+
+```javascript
+const radar = controller.addWeatherLayer('radar');
+controller.moveLayerToSlot(radar.id, 'inlay');
+controller.setStackRank(radar.id, 20);
+```
+
+To move a whole band relative to the basemap, pin the slot rather than the layer:
+`controller.setSlotBeforeId('underlay', 'waterway-label')` on classic Mapbox/MapLibre styles, or
+`controller.setSlotMapboxSlot('underlay', 'top')` on Mapbox Standard (guard with
+`controller.usesMapboxStandardSlots()`). Google Maps and Leaflet honour slot order and ranks among
+MapsGL layers but have no host style stack to pin to.
+
+Full model — every built-in rank, custom slots, the slotted/unslotted rules for `moveLayer`, Mapbox
+Standard band mapping, and the constructor `slots` config object: `references/layer-ordering.md`.
+
 ## Styling layers
 
 Pass a `paint` object namespaced by render type. Full property tables for every render type
@@ -643,6 +695,15 @@ const results = await controller.queryPromise({ lat: 40, lon: -74.5 });
   call `.setPaintProperty(...)` on it directly; handle the array case for composite codes. This is
   the single most common silent-failure bug with built-in weather layers — see
   `references/weather-layers.md`.
+- **"Put radar under the labels" / "wind on top" / any layer stacking request** → construct the
+  controller with `slots: true` (1.10.0+, opt-in), then use the `slot` / `stackRank` overrides on
+  `addWeatherLayer`, or `moveLayerToSlot` / `setStackRank` afterwards. Don't reach for a host style
+  layer id — `setSlotBeforeId` (classic styles) or `setSlotMapboxSlot` (Mapbox Standard) moves a whole
+  band instead. See `references/layer-ordering.md`.
+- **"I set `slot`/`stackRank` and nothing moved"** → either `slots` was never enabled on the
+  controller, or a slot/rank method was passed a weather layer code instead of the real layer id (a
+  silent no-op, same as `setPaintProperty`). Capture `addWeatherLayer`'s return value and use
+  `layer.id`; composite codes return an array.
 - **"Only show values above/below X"** → `paint.sample.drawRange` for continuous data, or a
   `filter` expression for vector/geojson layers.
 - **"Style based on a feature property"** → an expression: `['get', 'FIELD']` for a direct value,
@@ -704,6 +765,7 @@ Full guide: https://www.xweather.com/docs/weather-api/resources/attribution
 - `references/api-reference.md` — full `Account`, `MapController`, and `DataSource` API (all methods, properties, events, per-provider setup)
 - `references/layers.md` — every weather layer by category: code, description, render type, animatability, cost multiplier, coverage, data range, update interval; composite codes and cost multipliers grouped up front
 - `references/weather-layers.md` — how to discover layer codes, the catalog schema, and the code-vs-layer-id gotcha that silently breaks style updates
+- `references/layer-ordering.md` — the 1.10.0 slot/stack-rank ordering model: built-in slots and ranks, per-layer and per-band overrides, Mapbox Standard bands, custom slots, unslotted layers
 - `references/styles.md` — paint property spec for every render type, plus filters and masks
 - `references/color-scales.md` — color scale config format and built-in named palettes
 - `references/expressions.md` — style/filter expression operator reference

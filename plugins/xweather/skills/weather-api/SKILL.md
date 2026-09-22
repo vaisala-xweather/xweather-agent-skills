@@ -5,7 +5,7 @@ compatibility: Skill instructions are provider-neutral. The bundled scripts/xwre
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.14.2"
+  version: "0.15.0"
 ---
 
 # Xweather Weather API URL builder

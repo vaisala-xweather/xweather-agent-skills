@@ -95,6 +95,10 @@ This matters because **not every controller method resolves the code for you**:
 | `setPaintProperty(id, prop, value)` | ❌ no — needs the real layer id |
 | `moveLayer(id, beforeId)` | ❌ no — needs the real layer id |
 | `removeLayer(id)` | ❌ no — needs the real layer id (use `removeWeatherLayer(code)` instead for weather layers) |
+| `moveLayerToSlot(id, slot)` | ❌ no — needs the real layer id |
+| `setStackRank(id, rank)` / `getStackRank(id)` | ❌ no — needs the real layer id |
+| `getSlot(id)` | ❌ no — needs the real layer id |
+| `setCodeStackRank(code, rank)` | ✅ yes — but only affects *future* inserts, see `references/layer-ordering.md` |
 
 **`controller.setPaintProperty('temperatures', 'opacity', 0.5)` will silently do nothing** —
 `setPaintProperty` calls `getLayer('temperatures')` internally, that lookup fails since
