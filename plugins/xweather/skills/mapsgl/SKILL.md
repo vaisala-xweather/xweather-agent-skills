@@ -4,7 +4,7 @@ description: This skill should be used when working with the Xweather MapsGL Jav
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.14.1"
+  version: "0.14.2"
 ---
 
 # MapsGL JavaScript SDK
@@ -53,11 +53,11 @@ That endpoint is the release source of truth for every Xweather product, keyed b
 substituted:
 
 ```html
-<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.4/aerisweather.mapsgl.css" rel="stylesheet" />
-<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.4/aerisweather.mapsgl.js"></script>
+<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.10.1/aerisweather.mapsgl.css" rel="stylesheet" />
+<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.10.1/aerisweather.mapsgl.js"></script>
 ```
 
-`1.9.4` above is the version at the time this file was last regenerated — use it only as a fallback
+`1.10.1` above is the version at the time this file was last regenerated — use it only as a fallback
 if the endpoint can't be reached, and say so when you do.
 
 Note that **npm may be ahead of the released version.** `@xweather/mapsgl` on npm has carried a
@@ -184,8 +184,8 @@ instead of them. MapsGL's CDN build exposes everything under `window.aerisweathe
 Copy these two lines verbatim, changing only the version number:
 
 ```html
-<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.4/aerisweather.mapsgl.css" rel="stylesheet" />
-<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.4/aerisweather.mapsgl.js"></script>
+<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.10.1/aerisweather.mapsgl.css" rel="stylesheet" />
+<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.10.1/aerisweather.mapsgl.js"></script>
 ```
 
 ```
@@ -231,8 +231,8 @@ A complete pair of includes, MapsGL plus its map library:
 <script defer src="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js"></script>
 
 <!-- 2. MapsGL itself — always cdn.aerisapi.com -->
-<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.4/aerisweather.mapsgl.css" rel="stylesheet" />
-<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.4/aerisweather.mapsgl.js"></script>
+<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.10.1/aerisweather.mapsgl.css" rel="stylesheet" />
+<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.10.1/aerisweather.mapsgl.js"></script>
 ```
 
 Pin an explicit version for every `<script>`/`<link>` tag (MapsGL's and the map library's) rather
@@ -325,8 +325,8 @@ rather than starting from scratch: swap the map provider's CDN tags and construc
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.css" rel="stylesheet" />
     <script defer src="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js"></script>
 
-    <link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.4/aerisweather.mapsgl.css" rel="stylesheet" />
-    <script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.9.4/aerisweather.mapsgl.js"></script>
+    <link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.10.1/aerisweather.mapsgl.css" rel="stylesheet" />
+    <script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.10.1/aerisweather.mapsgl.js"></script>
 
     <style>
     body, html { margin: 0; padding: 0; }

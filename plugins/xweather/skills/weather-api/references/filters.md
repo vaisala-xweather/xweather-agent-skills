@@ -350,6 +350,7 @@ per endpoint — including endpoints with no prose descriptions — see `endpoin
 - `ellipse80` — Return the ellipse based on 80% location confidence.
 - `ellipse90` — Return the ellipse based on 90% location confidence.
 - `ellipse99` — Return the ellipse based on 99% location confidence.
+- `research` — Return a bundle of scientific calculations.
 
 ## `/lightning/archive`
 
