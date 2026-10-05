@@ -379,27 +379,11 @@ An extension of the global lightning endpoint which includes damage potential an
 
 Docs: https://www.xweather.com/docs/weather-api/endpoints/lightning-analytics
 
-## `/lightning/archive`
-
-Global lightning data based on location queries. Endpoint provides data such as location, amperage, and type of strike. Archive data is available from Jan 2016 through the current date/time.
-
-*Coverage: global · Range: 2016 to now · Updates: Real-time · Cost: x10*
-
-| | |
-|---|---|
-| Actions | `:id`, `closest`, `route` |
-| Params | `p`, `limit`, `radius`, `minradius`, `fields`, `filter`, `sort`, `skip`, `from`, `to`, `format` |
-| Filters | `cg`, `ic`, `all` |
-| Query props | — |
-| Sort fields | `dt`, `type`, `peakamp`, `numsensors` |
-
-Docs: https://www.xweather.com/docs/weather-api/endpoints/lightning-archive
-
 ## `/lightning/density`
 
 Provides long-term lightning climatology by returning the 10-year average annual lightning strike density for a specific location, measured as strikes per square kilometer per year.
 
-*Coverage: global · Cost: x7500*
+*Coverage: global · Cost: x1*
 
 | | |
 |---|---|
@@ -463,7 +447,7 @@ Docs: https://www.xweather.com/docs/weather-api/endpoints/lightning-threats
 
 Estimates the expected annual lightning strike frequency for a wind turbine at a specific location using long-term lightning climatology and turbine height.
 
-*Coverage: global · Cost: x10000*
+*Coverage: global · Cost: x1*
 
 | | |
 |---|---|
@@ -698,6 +682,22 @@ Retrieve historical solar irradiance data for any location and date range, inclu
 | Sort fields | — |
 
 Docs: https://www.xweather.com/docs/weather-api/endpoints/renewables-irradiance-archive
+
+## `/renewables/irradiance/monitoring`
+
+Retrieve recent solar irradiance data for a specific location, time range, and resolution. This endpoint provides detailed information on how much solar energy reached a given point on Earth's surface and can be used as a proxy of observed irradiance or to validate solar energy generation.
+
+*Coverage: europe, africa · Range: -1 month to -1 day · Updates: Hourly · Cost: x1*
+
+| | |
+|---|---|
+| Actions | `:id` |
+| Params | `fields`, `filter`, `from`, `to`, `tilt`, `azimuth`, `panel_mode`, `preset`, `elevation` |
+| Filters | `#hr` |
+| Query props | — |
+| Sort fields | — |
+
+Docs: https://www.xweather.com/docs/weather-api/endpoints/renewables-irradiance-monitoring
 
 ## `/renewables/irradiance/summary`
 

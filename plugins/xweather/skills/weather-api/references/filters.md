@@ -352,14 +352,6 @@ per endpoint — including endpoints with no prose descriptions — see `endpoin
 - `ellipse99` — Return the ellipse based on 99% location confidence.
 - `research` — Return a bundle of scientific calculations.
 
-## `/lightning/archive`
-
-**Filters**
-
-- `cg` — Limit to cloud-to-ground strikes (default)
-- `ic` — Intracloud/cloud-to-cloud lightning
-- `all` — Both cloud-to-ground and intracloud lightning
-
 ## `/lightning/summary`
 
 **Filters**
@@ -662,6 +654,12 @@ per endpoint — including endpoints with no prose descriptions — see `endpoin
 - `type` — Query by the postal code type.
 
 ## `/renewables/irradiance/archive`
+
+**Filters**
+
+- `#hr` — Returns solar data for the specified interval starting at the locale's current time. Default option is 1hr
+
+## `/renewables/irradiance/monitoring`
 
 **Filters**
 
