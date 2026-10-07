@@ -1,6 +1,6 @@
 # MapsGL weather layer catalog
 
-285 built-in weather layers. The **code** is the string passed to
+303 built-in weather layers. The **code** is the string passed to
 `controller.addWeatherLayer(code)` — and to `getWeatherLayer`, `hasWeatherLayer`,
 `removeWeatherLayer`, and `setWeatherLayerVisibility`. It is **not** the resulting `WebGLLayer`'s
 `id`; see `weather-layers.md` for that distinction, which is the most common source of
@@ -30,11 +30,11 @@ past-versus-future.
 
 ## Composite layers
 
-These 14 codes have render type `none`, meaning they expand into **several** sub-layers.
+These 20 codes have render type `none`, meaning they expand into **several** sub-layers.
 `addWeatherLayer` and `getWeatherLayer` return an **array** of `WebGLLayer` for them, so
 iterate before setting paint properties:
 
-`boundaries` · `fires` · `fires-icons` · `hail-threats` · `lightning-all` · `lightning-all-icons` · `lightning-threats` · `places` · `roads` · `stormcells` · `tropical-cyclones` · `tropical-cyclones-archive` · `tropical-cyclones-archive-icons` · `tropical-cyclones-icons`
+`boundaries` · `fires` · `fires-icons` · `hail-threats` · `lightning-all` · `lightning-all-icons` · `lightning-threats` · `places` · `roads` · `stormcells` · `tropical-cyclones` · `tropical-cyclones-archive` · `tropical-cyclones-archive-icons` · `tropical-cyclones-archive-icons-interpolated` · `tropical-cyclones-archive-interpolated` · `tropical-cyclones-icons` · `tropical-cyclones-icons-interpolated` · `tropical-cyclones-interpolated` · `tropical-cyclones-invests-icons-interpolated` · `tropical-cyclones-invests-interpolated`
 
 ## Cost multipliers
 
@@ -45,7 +45,7 @@ rendering.
   `lightning-all` · `lightning-all-icons` · `lightning-strikes` · `lightning-strikes-icons` · `lightning-strikes-pulse`
 - **x5** (84):
   `air-quality-co` · `air-quality-health-index-categories` · `air-quality-index-cai-categories` · `air-quality-index-china-categories` · `air-quality-index-eaqi-categories` · `air-quality-index-india-categories` · `air-quality-index-uba-daqi-categories` · `air-quality-index-uk-daqi-categories` · `air-quality-no` · `air-quality-no2` · `air-quality-o3` · `air-quality-pm10` · `air-quality-pm2p5` · `air-quality-so2` · `froad-weather-risk-hydroplane-australia` · `froad-weather-risk-hydroplane-europe` · `froad-weather-risk-hydroplane-japan` · `froad-weather-risk-hydroplane-new-zealand` · `froad-weather-risk-hydroplane-us` · `froad-weather-risk-low-viz-fog-australia` · `froad-weather-risk-low-viz-fog-europe` · `froad-weather-risk-low-viz-fog-japan` · `froad-weather-risk-low-viz-fog-new-zealand` · `froad-weather-risk-low-viz-fog-us` · `froad-weather-risk-low-viz-snow-australia` · `froad-weather-risk-low-viz-snow-europe` · `froad-weather-risk-low-viz-snow-japan` · `froad-weather-risk-low-viz-snow-new-zealand` · `froad-weather-risk-low-viz-snow-us` · `froad-weather-risk-rollover-australia` · `froad-weather-risk-rollover-europe` · `froad-weather-risk-rollover-japan` · `froad-weather-risk-rollover-new-zealand` · `froad-weather-risk-rollover-us` · `froad-weather-surface-australia` · `froad-weather-surface-europe` · `froad-weather-surface-japan` · `froad-weather-surface-new-zealand` · `froad-weather-surface-us` · `froad-weather-temperature-australia` · `froad-weather-temperature-europe` · `froad-weather-temperature-freeze-australia` · `froad-weather-temperature-freeze-europe` · `froad-weather-temperature-freeze-japan` · `froad-weather-temperature-freeze-new-zealand` · `froad-weather-temperature-freeze-us` · `froad-weather-temperature-japan` · `froad-weather-temperature-new-zealand` · `froad-weather-temperature-us` · `road-weather-risk-hydroplane-australia` · `road-weather-risk-hydroplane-europe` · `road-weather-risk-hydroplane-japan` · `road-weather-risk-hydroplane-new-zealand` · `road-weather-risk-hydroplane-us` · `road-weather-risk-low-viz-fog-australia` · `road-weather-risk-low-viz-fog-europe` · `road-weather-risk-low-viz-fog-japan` · `road-weather-risk-low-viz-fog-new-zealand` · `road-weather-risk-low-viz-fog-us` · `road-weather-risk-low-viz-snow-australia` · `road-weather-risk-low-viz-snow-europe` · `road-weather-risk-low-viz-snow-japan` · `road-weather-risk-low-viz-snow-new-zealand` · `road-weather-risk-low-viz-snow-us` · `road-weather-risk-rollover-australia` · `road-weather-risk-rollover-europe` · `road-weather-risk-rollover-japan` · `road-weather-risk-rollover-new-zealand` · `road-weather-risk-rollover-us` · `road-weather-surface-australia` · `road-weather-surface-europe` · `road-weather-surface-japan` · `road-weather-surface-new-zealand` · `road-weather-surface-us` · `road-weather-temperature-australia` · `road-weather-temperature-europe` · `road-weather-temperature-freeze-australia` · `road-weather-temperature-freeze-europe` · `road-weather-temperature-freeze-japan` · `road-weather-temperature-freeze-new-zealand` · `road-weather-temperature-freeze-us` · `road-weather-temperature-japan` · `road-weather-temperature-new-zealand` · `road-weather-temperature-us`
-- **x1** — the remaining 196 layers, i.e. anything not listed above.
+- **x1** — the remaining 214 layers, i.e. anything not listed above.
 
 Cost does not follow the layer name. `air-quality-o3` is x5 while `air-quality-o3-text` —
 its label variant — is x1, and the per-region `road-weather-risk-*` layers are x5 while
@@ -685,6 +685,18 @@ Combined layer consisting of tropical cyclone tracks (as icons) and lines for al
 
 *none · static · x1 · Coverage: Global · Updates: 1-6 hour*
 
+### `tropical-cyclones-archive-icons-interpolated` — Tropical Cyclones Archive (Icons, Interpolated)
+
+Combined interpolated tropical cyclone layer (as icons) for archived storms. Interpolated variant that moves the storm marker smoothly along its past track, current position, and forecast path as the timeline plays, instead of jumping from one advisory point to the next.
+
+*none · animatable · x1 · Coverage: Global · Updates: 1-6 hour*
+
+### `tropical-cyclones-archive-interpolated` — Tropical Cyclones Archive (Interpolated)
+
+Combined interpolated tropical cyclone layer for archived storms. Interpolated variant that moves the storm marker smoothly along its past track, current position, and forecast path as the timeline plays, instead of jumping from one advisory point to the next.
+
+*none · animatable · x1 · Coverage: Global · Updates: 1-6 hours*
+
 ### `tropical-cyclones-forecast-error-cones` — Tropical Cyclones Forecast Error Cones
 
 Tropical cyclone forecast error cones for active storms only.
@@ -715,11 +727,35 @@ Combined layer consisting of tropical cyclone tracks (as icons), lines, position
 
 *none · static · x1 · Coverage: Global · Updates: 1-6 hour*
 
+### `tropical-cyclones-icons-interpolated` — Tropical Cyclones (Icons, Interpolated)
+
+Combined interpolated tropical cyclone layer (as icons) for active storms. Interpolated variant that moves the storm marker smoothly along its past track, current position, and forecast path as the timeline plays, instead of jumping from one advisory point to the next.
+
+*none · animatable · x1 · Coverage: Global · Updates: 1-6 hour*
+
+### `tropical-cyclones-interpolated` — Tropical Cyclones (Interpolated)
+
+Combined interpolated tropical cyclone layer for active storms. Interpolated variant that moves the storm marker smoothly along its past track, current position, and forecast path as the timeline plays, instead of jumping from one advisory point to the next.
+
+*none · animatable · x1 · Coverage: Global · Updates: 1-6 hour*
+
 ### `tropical-cyclones-invests` — Tropical Cyclones Invests
 
 Current tropical invests, which are areas of low pressure with the potential of further tropical development.
 
 *circle · static · x1 · Coverage: Global · Updates: 1-6 hour*
+
+### `tropical-cyclones-invests-icons-interpolated` — Tropical Cyclones Invests (Icons, Interpolated)
+
+Combined interpolated tropical cyclone layer (as icons) for invests. Interpolated variant that moves the storm marker smoothly along its past track, current position, and forecast path as the timeline plays, instead of jumping from one advisory point to the next.
+
+*none · animatable · x1 · Coverage: Global · Updates: 1-6 hour*
+
+### `tropical-cyclones-invests-interpolated` — Tropical Cyclones Invests (Interpolated)
+
+Combined interpolated tropical cyclone layer for invests. Interpolated variant that moves the storm marker smoothly along its past track, current position, and forecast path as the timeline plays, instead of jumping from one advisory point to the next.
+
+*none · animatable · x1 · Coverage: Global · Updates: 1-6 hour*
 
 ### `tropical-cyclones-names` — Tropical Cyclones Names
 
@@ -727,17 +763,71 @@ Current names of active tropical cyclones.
 
 *text · static · x1 · Coverage: Global · Updates: 1-6 hour*
 
+### `tropical-cyclones-names-archive-interpolated` — Tropical Cyclones Names Archive (Interpolated)
+
+Interpolated names of archived tropical cyclones that follow the moving marker. Interpolated variant that moves the storm marker smoothly along its past track, current position, and forecast path as the timeline plays, instead of jumping from one advisory point to the next.
+
+*text · animatable · x1 · Coverage: Global · Updates: 1-6 hour*
+
+### `tropical-cyclones-names-interpolated` — Tropical Cyclones Names (Interpolated)
+
+Interpolated names of active tropical cyclones that follow the moving marker. Interpolated variant that moves the storm marker smoothly along its past track, current position, and forecast path as the timeline plays, instead of jumping from one advisory point to the next.
+
+*text · animatable · x1 · Coverage: Global · Updates: 1-6 hour*
+
+### `tropical-cyclones-names-invests-interpolated` — Tropical Cyclones Names Invests (Interpolated)
+
+Interpolated names of tropical invests that follow the moving marker. Interpolated variant that moves the storm marker smoothly along its past track, current position, and forecast path as the timeline plays, instead of jumping from one advisory point to the next.
+
+*text · animatable · x1 · Coverage: Global · Updates: 1-6 hour*
+
 ### `tropical-cyclones-position-icons` — Tropical Cyclones Positions (Icons)
 
 Current positions (as icons) of active tropical cyclones.
 
 *symbol · static · x1 · Coverage: Global · Updates: 1-6 hour*
 
+### `tropical-cyclones-position-icons-archive-interpolated` — Tropical Cyclones Positions Archive (Icons, Interpolated)
+
+Interpolated positions (as icons) of archived tropical cyclones. Interpolated variant that moves the storm marker smoothly along its past track, current position, and forecast path as the timeline plays, instead of jumping from one advisory point to the next.
+
+*symbol · animatable · x1 · Coverage: Global · Updates: 1-6 hour*
+
+### `tropical-cyclones-position-icons-interpolated` — Tropical Cyclones Positions (Icons, Interpolated)
+
+Interpolated positions (as icons) of active tropical cyclones. Interpolated variant that moves the storm marker smoothly along its past track, current position, and forecast path as the timeline plays, instead of jumping from one advisory point to the next.
+
+*symbol · animatable · x1 · Coverage: Global · Updates: 1-6 hour*
+
+### `tropical-cyclones-position-icons-invests-interpolated` — Tropical Cyclones Positions Invests (Icons, Interpolated)
+
+Interpolated positions (as icons) of tropical invests. Interpolated variant that moves the storm marker smoothly along its past track, current position, and forecast path as the timeline plays, instead of jumping from one advisory point to the next.
+
+*symbol · animatable · x1 · Coverage: Global · Updates: 1-6 hour*
+
 ### `tropical-cyclones-positions` — Tropical Cyclones Positions
 
 Current positions of active tropical cyclones.
 
 *circle · static · x1 · Coverage: Global · Updates: 1-6 hour*
+
+### `tropical-cyclones-positions-archive-interpolated` — Tropical Cyclones Positions Archive (Interpolated)
+
+Interpolated positions of archived tropical cyclones. Interpolated variant that moves the storm marker smoothly along its past track, current position, and forecast path as the timeline plays, instead of jumping from one advisory point to the next.
+
+*circle · animatable · x1 · Coverage: Global · Updates: 1-6 hour*
+
+### `tropical-cyclones-positions-interpolated` — Tropical Cyclones Positions (Interpolated)
+
+Interpolated positions of active tropical cyclones. Interpolated variant that moves the storm marker smoothly along its past track, current position, and forecast path as the timeline plays, instead of jumping from one advisory point to the next.
+
+*circle · animatable · x1 · Coverage: Global · Updates: 1-6 hour*
+
+### `tropical-cyclones-positions-invests-interpolated` — Tropical Cyclones Positions Invests (Interpolated)
+
+Interpolated positions of tropical invests. Interpolated variant that moves the storm marker smoothly along its past track, current position, and forecast path as the timeline plays, instead of jumping from one advisory point to the next.
+
+*circle · animatable · x1 · Coverage: Global · Updates: 1-6 hour*
 
 ### `tropical-cyclones-track-lines` — Tropical Cyclones Track Lines
 
@@ -750,6 +840,24 @@ Tropical cyclone track lines for active storms only.
 Tropical cyclone track lines for all active and past storms.
 
 *line · static · x1 · Coverage: Global · Updates: 1-6 hours*
+
+### `tropical-cyclones-track-lines-archive-interpolated` — Tropical Cyclones Track Lines Archive (Interpolated)
+
+Interpolated tropical cyclone track lines for archived storms that grow with the moving marker. Interpolated variant that moves the storm marker smoothly along its past track, current position, and forecast path as the timeline plays, instead of jumping from one advisory point to the next.
+
+*line · animatable · x1 · Coverage: Global · Updates: 1-6 hours*
+
+### `tropical-cyclones-track-lines-interpolated` — Tropical Cyclones Track Lines (Interpolated)
+
+Interpolated tropical cyclone track lines for active storms that grow with the moving marker. Interpolated variant that moves the storm marker smoothly along its past track, current position, and forecast path as the timeline plays, instead of jumping from one advisory point to the next.
+
+*line · animatable · x1 · Coverage: Global · Updates: 1-6 hours*
+
+### `tropical-cyclones-track-lines-invests-interpolated` — Tropical Cyclones Track Lines Invests (Interpolated)
+
+Interpolated tropical cyclone track lines for invests that grow with the moving marker. Interpolated variant that moves the storm marker smoothly along its past track, current position, and forecast path as the timeline plays, instead of jumping from one advisory point to the next.
+
+*line · animatable · x1 · Coverage: Global · Updates: 1-6 hours*
 
 ### `tropical-cyclones-track-point-icons` — Tropical Cyclones Track Points (Icons)
 

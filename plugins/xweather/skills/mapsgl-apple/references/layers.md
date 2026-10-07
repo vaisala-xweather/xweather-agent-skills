@@ -1,13 +1,13 @@
 # MapsGL Apple SDK — weather layer catalog
 
-189 built-in weather layers, generated from the Apple SDK's published DocC symbol index.
+223 built-in weather layers, generated from the Apple SDK's published DocC symbol index.
 
 **In Swift a layer is a `WeatherService.LayerCode` case, not a string.** `.temperatures`, not `"temperatures"`.
 The case names are *not* mechanical transforms of the JS/Raster Maps layer codes — `air-quality-pm2p5`
 is `.particulateMatter2p5Micron` and `air-quality-no2` is `.nitrogenDioxide` — so never convert a code
 from the web docs by hand. Look it up here, or let the compiler complete it.
 
-The Apple SDK also supports **fewer** layers than the MapsGL JavaScript SDK (189 vs. 285).
+The Apple SDK also supports **fewer** layers than the MapsGL JavaScript SDK (223 vs. 303).
 If a layer exists in the MapsGL JavaScript catalog and not here, it is not available on Apple platforms — that is a real gap, not a naming problem.
 
 Each entry reads: **`.case`** → its configuration struct. The struct is what you instantiate to
@@ -32,7 +32,7 @@ authenticated account may actually render, ask at runtime:
 controller.service.loadLayerMetadata { result in ... }   // -> [WeatherLayerMetadata]
 ```
 
-Generated from the DocC index for SDK 1.7.1. Regenerate with `python3 scripts/regenerate_references.py`;
+Generated from the DocC index for SDK 1.8.0. Regenerate with `python3 scripts/regenerate_references.py`;
 the version is resolved from the releases endpoint, so this list tracks the current release.
 
 ---
@@ -266,3 +266,42 @@ Paint namespaces: `paint.opacity`, `paint.heatmap`
 - `.lightningStrikesHeat` → `WeatherService.LightningStrikesHeat`
 - `.stormcellsHeat` → `WeatherService.StormcellsHeat`
 - `.stormreportsHeat` → `WeatherService.StormreportsHeat`
+
+## `DataQueryLayerDescriptor` — render type `?` (34)
+
+Paint namespaces: _(unrecognized descriptor — check the DocC reference)_
+
+- `.airQualityIndexCaiText` → `WeatherService.AirQualityIndexCaiText`
+- `.airQualityIndexCaqiText` → `WeatherService.AirQualityIndexCaqiText`
+- `.airQualityIndexChinaText` → `WeatherService.AirQualityIndexChinaText`
+- `.airQualityIndexEaqiText` → `WeatherService.AirQualityIndexEaqiText`
+- `.airQualityIndexIndiaText` → `WeatherService.AirQualityIndexIndiaText`
+- `.airQualityIndexText` → `WeatherService.AirQualityIndexText`
+- `.airQualityIndexUbaDaqiText` → `WeatherService.AirQualityIndexUbaDaqiText`
+- `.airQualityIndexUkDaqiText` → `WeatherService.AirQualityIndexUkDaqiText`
+- `.carbonMonoxideText` → `WeatherService.CarbonMonoxideText`
+- `.cloudCoverText` → `WeatherService.CloudCoverText`
+- `.dewPointsText` → `WeatherService.DewPointsText`
+- `.feelsLikeText` → `WeatherService.FeelsLikeText`
+- `.heatIndexText` → `WeatherService.HeatIndexText`
+- `.humidityText` → `WeatherService.HumidityText`
+- `.nitricOxideText` → `WeatherService.NitricOxideText`
+- `.nitrogenDioxideText` → `WeatherService.NitrogenDioxideText`
+- `.ozoneText` → `WeatherService.OzoneText`
+- `.particulateMatter10MicronText` → `WeatherService.ParticulateMatter10MicronText`
+- `.particulateMatter2p5MicronText` → `WeatherService.ParticulateMatter2p5MicronText`
+- `.precipitationRateText` → `WeatherService.PrecipitationRateText`
+- `.precipitationText` → `WeatherService.PrecipitationText`
+- `.pressureMeanSeaLevelText` → `WeatherService.PressureMeanSeaLevelText`
+- `.snowDepthText` → `WeatherService.SnowDepthText`
+- `.snowText` → `WeatherService.SnowText`
+- `.sulfurDioxideText` → `WeatherService.SulfurDioxideText`
+- `.temperatures1HourChangeText` → `WeatherService.Temperatures1HourChangeText`
+- `.temperatures24HourChangeText` → `WeatherService.Temperatures24HourChangeText`
+- `.temperaturesText` → `WeatherService.TemperaturesText`
+- `.ultravioletIndexText` → `WeatherService.UltravioletIndexText`
+- `.visibilityText` → `WeatherService.VisibilityText`
+- `.weatherText` → `WeatherService.WeatherText`
+- `.windChillText` → `WeatherService.WindChillText`
+- `.windGustsText` → `WeatherService.WindGustsText`
+- `.windSpeedsText` → `WeatherService.WindSpeedsText`

@@ -311,15 +311,6 @@ copy its structure rather than inventing parameters.
 - `/lightning/analytics/within?p=45.25,-95.25,35.25,-85.25&limit=5000`  
   Returns an lightning within the rectangle specified by the coords specified in `p` parameter. The points should be top latitude, left longitude, bottom latitude, right longitude. This feature requires the Lightning Enteprise Add-on since it uses the `within` action.
 
-## `/lightning/archive`
-
-- `/lightning/archive/minneapolis,mn?radius=25miles&limit=100`  
-  Return up to 100 recent cloud-to-ground lightning strikes within 25 miles of Minneapolis.
-- `/lightning/archive/minneapolis,mn?radius=25miles&limit=100&sort=dt:-1`  
-  Return up to 100 recent cloud-to-ground lightning strikes within 25 miles of Minneapolis, sorting the results so newer strikes are first.
-- `/lightning/archive/minneapolis,mn?radius=25miles&limit=100&from=2021-07-01&to=+24hours`  
-  Return up to 100 lightning strikes within 25 miles of Minneapolis, that occurred on July 1st, 2021.
-
 ## `/lightning/density`
 
 - `/lightning/density/norman,ok`  
