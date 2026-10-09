@@ -73,9 +73,40 @@ path = "/Users/you/.agents/skills/mapsgl/SKILL.md"
 enabled = false
 ```
 
+### Gemini CLI and Antigravity CLI
+
+There's no plugin package for Google's agents, but both of them load `SKILL.md` files directly from a
+skills directory. Google replaced Gemini CLI with Antigravity CLI (`agy`) for individual users in June
+2026. Gemini CLI still works for Gemini Code Assist Standard and Enterprise accounts and with paid
+API keys. The two CLIs read skills from different places:
+
+| Scope | Gemini CLI | Antigravity CLI |
+|---|---|---|
+| Workspace | `.gemini/skills/` or `.agents/skills/` | `.agents/skills/` |
+| Personal | `~/.gemini/skills/` or `~/.agents/skills/` | `~/.gemini/antigravity-cli/skills/` |
+
+`.agents/skills` is the same location Codex reads. If you already symlinked the skills there for
+Codex, Gemini CLI finds them with no further setup. For a personal installation:
+
+```bash
+git clone https://github.com/vaisala-xweather/xweather-agent-skills.git
+
+# Gemini CLI
+mkdir -p ~/.gemini/skills
+ln -s "$PWD"/xweather-agent-skills/plugins/xweather/skills/* ~/.gemini/skills/
+
+# Antigravity CLI
+mkdir -p ~/.gemini/antigravity-cli/skills
+ln -s "$PWD"/xweather-agent-skills/plugins/xweather/skills/* ~/.gemini/antigravity-cli/skills/
+```
+
+Inside a running Gemini CLI session, `/skills reload` picks up new skills without restarting.
+`/skills list` confirms they loaded, and `/skills disable mapsgl` turns off any skill you don't need.
+As with Codex, symlinks mean a `git pull` updates the installed skills in place.
+
 ### Other skills-compatible agents
 
-Cursor, GitHub Copilot, VS Code, Gemini CLI, Goose, OpenHands, JetBrains Junie and others all read
+Cursor, GitHub Copilot, VS Code, Goose, OpenHands, JetBrains Junie and others all read
 the same `SKILL.md` files but look in different directories. Clone the repo and symlink
 `plugins/xweather/skills/*` into whichever location your client documents — <https://agentskills.io/clients> links the
 per-tool instructions.
