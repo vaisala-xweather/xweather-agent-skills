@@ -4,7 +4,7 @@ description: This skill should be used when working with the Xweather MapsGL SDK
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.15.1"
+  version: "0.15.2"
 ---
 
 # MapsGL for Apple platforms

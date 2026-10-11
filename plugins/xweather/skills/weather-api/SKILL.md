@@ -5,7 +5,7 @@ compatibility: Skill instructions are provider-neutral. The bundled scripts/xwre
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.15.1"
+  version: "0.15.2"
 ---
 
 # Xweather Weather API URL builder
@@ -140,8 +140,13 @@ On polygon endpoints, `/{endpoint}/{place}` (the `:id` form) is a documented sho
 | `fields` | Comma list of dot-notated properties to return. |
 | `format` | `json` (default), `geojson`, `csv`, `tsv`. |
 
-Two things that bite:
+Three things that bite:
 
+- **On `/lightning`, `from` without `to` is a short slice, not "since then".** `from=-30minutes`
+  alone returns only a few minutes of strikes starting 30 minutes ago and silently skips everything
+  more recent. Any lookback window needs `to=now`: `from=-30minutes&to=now`. For "most recent strike
+  in range" (the 30/30 lightning safety rule), add `sort=dt:-1&limit=1`, since `limit=1` on its own
+  returns the closest strike, not the newest.
 - **`query=` values are metric**, regardless of which units you read back out. `temp`/`dewpt` in
   Celsius, `wind`/`gust` in knots, `pressure` in millibars. `query=temp:30` is ≥ 30 °C.
 - **A bare number in `query=` means "greater than or equal"**, not "equals". Use `min:max` for a
@@ -278,6 +283,7 @@ If the reply contains several URLs, give each its own cost line and a total.
 | `warn_location` on a 200 | No state given for a US/CA city; the API guessed by population. Add the state. |
 | `warn_no_data`, empty array | `closest`/`within` radius too small, or the time window has no records. Widen it. |
 | One result when several were expected | `limit` defaults to 1. |
+| Lightning check misses recent strikes, or reports none when a storm is overhead | `from=` without `to=now`, so only a few minutes starting at `from` were searched. Add `to=now`. |
 | `not_implemented` | That action isn't supported on that endpoint — check `endpoints.md`. |
 | `warn_invalid_param`, parameter silently dropped | Parameter not supported on that endpoint, or not included in the account's plan. |
 | `insufficient_scope` | Dataset isn't on the subscription (historical add-on, premium polygons, etc.). |
