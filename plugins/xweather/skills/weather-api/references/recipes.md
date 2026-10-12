@@ -51,7 +51,7 @@ Data".
 | Incoming hail and tornadic threats | `https://data.api.xweather.com/threats/birmingham,al?fields=periods[#].storms.hail,periods[#].storms.tornadic` |
 | Storm cell point data as GeoJSON | `https://data.api.xweather.com/stormcells/wauconda,il?format=geojson` |
 | All active storm cells with polygons, for emergency ops | `https://data.api.xweather.com/stormcells/summary?filter=geo&format=geojson` |
-| Hail damage verification for an insurance claim | `https://data.api.xweather.com/stormreports/search?query=state:pa,detail:1:2&filter=hail&from={start_date}&limit=100` |
+| Hail damage verification for an insurance claim | `https://data.api.xweather.com/stormreports/search?query=state:pa,detail:1:2&filter=hail&from={start_date}&to=now&limit=100` |
 
 ## Agriculture
 
