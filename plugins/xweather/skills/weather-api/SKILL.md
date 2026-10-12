@@ -140,8 +140,14 @@ On polygon endpoints, `/{endpoint}/{place}` (the `:id` form) is a documented sho
 | `fields` | Comma list of dot-notated properties to return. |
 | `format` | `json` (default), `geojson`, `csv`, `tsv`. |
 
-Two things that bite:
+Three things that bite:
 
+- **A `from` lookback always needs `to=now`, on every endpoint.** `from` alone is not "since
+  then". It can return a short slice starting at `from` and silently skip recent records. On
+  `/lightning`, for example, `from=-30minutes` alone returned only strikes from about 26 minutes
+  ago. Write `from=-30minutes&to=now`. To get the newest record from a `closest` query (the 30/30
+  lightning safety rule, for example), add `sort=dt:-1&limit=1`, since `limit=1` on its own
+  returns the closest record, not the newest.
 - **`query=` values are metric**, regardless of which units you read back out. `temp`/`dewpt` in
   Celsius, `wind`/`gust` in knots, `pressure` in millibars. `query=temp:30` is ≥ 30 °C.
 - **A bare number in `query=` means "greater than or equal"**, not "equals". Use `min:max` for a
@@ -278,6 +284,7 @@ If the reply contains several URLs, give each its own cost line and a total.
 | `warn_location` on a 200 | No state given for a US/CA city; the API guessed by population. Add the state. |
 | `warn_no_data`, empty array | `closest`/`within` radius too small, or the time window has no records. Widen it. |
 | One result when several were expected | `limit` defaults to 1. |
+| Lookback misses recent records (e.g. a lightning check reports none with a storm overhead) | `from=` without `to=now`, so only a short window starting at `from` was searched. Add `to=now`. |
 | `not_implemented` | That action isn't supported on that endpoint — check `endpoints.md`. |
 | `warn_invalid_param`, parameter silently dropped | Parameter not supported on that endpoint, or not included in the account's plan. |
 | `insufficient_scope` | Dataset isn't on the subscription (historical add-on, premium polygons, etc.). |

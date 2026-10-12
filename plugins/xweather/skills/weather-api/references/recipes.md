@@ -47,10 +47,11 @@ Data".
 | Earthquakes inside a bounding box | `https://data.api.xweather.com/earthquakes/within?p=25.425587018544316,-163.64201510020976,15.561843881489148,-151.16154749252362&limit=10` |
 | Nearest active wildfire | `https://data.api.xweather.com/fires/closest?p=darwin,au` |
 | Lightning strikes within 25 miles | `https://data.api.xweather.com/lightning/closest?p=hyderabad,in&format=json&radius=25miles&filter=all&limit=10` |
+| Most recent strike within 10 miles in the last 30 minutes (30/30 lightning safety rule) | `https://data.api.xweather.com/lightning/closest?p=44.9778,-93.2650&radius=10miles&from=-30minutes&to=now&sort=dt:-1&limit=1` |
 | Incoming hail and tornadic threats | `https://data.api.xweather.com/threats/birmingham,al?fields=periods[#].storms.hail,periods[#].storms.tornadic` |
 | Storm cell point data as GeoJSON | `https://data.api.xweather.com/stormcells/wauconda,il?format=geojson` |
 | All active storm cells with polygons, for emergency ops | `https://data.api.xweather.com/stormcells/summary?filter=geo&format=geojson` |
-| Hail damage verification for an insurance claim | `https://data.api.xweather.com/stormreports/search?query=state:pa,detail:1:2&filter=hail&from={start_date}&limit=100` |
+| Hail damage verification for an insurance claim | `https://data.api.xweather.com/stormreports/search?query=state:pa,detail:1:2&filter=hail&from={start_date}&to=now&limit=100` |
 
 ## Agriculture
 
