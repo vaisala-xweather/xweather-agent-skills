@@ -816,31 +816,32 @@ def verify_mapsgl_cdn(version):
 
 
 def apply_mapsgl_version(version):
-    """Point every MapsGL CDN URL in the skill at the released version.
+    """Keep the skill's offline fallback MapsGL version at the released version.
 
-    Only the version segment of cdn.aerisapi.com/sdk/js/mapsgl/<version>/ URLs is touched, plus the
-    one sentence that names the pinned fallback. Returns (path, old, new) if anything changed.
+    Examples in the skill use a `{version}` placeholder so agents always look up the current release
+    at generation time, whatever version of the skill they have installed. The one literal version
+    left is the fallback named for when the releases endpoint can't be reached; this rewrites that
+    sentence, plus any cdn.aerisapi.com/sdk/js/mapsgl/<version>/ URL that has crept back in.
+    Returns (path, old, new, text) if anything changed.
     """
     path = MGL_REF.parent / "SKILL.md"
     text = path.read_text()
 
-    found = set(re.findall(r"sdk/js/mapsgl/(\d+(?:\.\d+)*)/", text))
-    if not found:
+    fallback = re.compile(r"(fall back to `)(\d+(?:\.\d+)*)(`)")
+    named = fallback.findall(text)
+    if len(named) != 1:
         raise SystemExit(
-            "error: no cdn.aerisapi.com/sdk/js/mapsgl/<version>/ URLs found in %s — the skill's CDN "
-            "guidance may have been restructured; update apply_mapsgl_version()." % path.name
+            "error: expected one \"fall back to `<version>`\" sentence in %s, found %d — the skill's "
+            "version guidance may have been restructured; update apply_mapsgl_version()."
+            % (path.name, len(named))
         )
+
+    found = {named[0][1]} | set(re.findall(r"sdk/js/mapsgl/(\d+(?:\.\d+)*)/", text))
     if found == {version}:
         return None
 
-    updated = re.sub(r"(sdk/js/mapsgl/)\d+(?:\.\d+)*(/)", r"\g<1>%s\g<2>" % version, text)
-    # The prose names the pinned version as the offline fallback; keep it in step.
-    updated = re.sub(
-        r"^`\d+(?:\.\d+)*` above is the version",
-        "`%s` above is the version" % version,
-        updated,
-        flags=re.M,
-    )
+    updated = fallback.sub(r"\g<1>%s\g<3>" % version, text)
+    updated = re.sub(r"(sdk/js/mapsgl/)\d+(?:\.\d+)*(/)", r"\g<1>%s\g<2>" % version, updated)
     return (path, sorted(found), version, updated)
 
 
@@ -979,7 +980,7 @@ def main():
         vpath, old, new, updated = version_change
         changed.append(vpath)
         print(
-            "  mapsgl CDN version pin: %s -> %s" % ("/".join(old), new),
+            "  mapsgl fallback version: %s -> %s" % ("/".join(old), new),
             file=sys.stderr,
         )
         if not args.check:

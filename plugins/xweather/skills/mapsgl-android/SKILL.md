@@ -55,13 +55,18 @@ https://www.xweather.com/docs/mapsgl-android-sdk/
 published 1.6.1 artifact - there is no unreleased or development-branch surface to
 filter out, and nothing is marked *(unreleased)*.
 
-That also bounds what the skill can offer. Features added after 1.6.1 - the
+That bounds what the skill *documents*, not what gets installed. Installs always
+take the current release (below), which may be newer than 1.6.1. Features added
+after 1.6.1 are deliberately absent from this skill. Those include the
 `["map-time"]` filter expression, MapsGL's own GLES vector rendering pipeline, and
-the `*-text` data-query layers - are deliberately absent. If a task needs one of
-those, say it is not available in 1.6.1 rather than writing code against it.
+the `*-text` data-query layers. If a task needs one, check the KDoc for the
+release being installed before writing code against it, and say this skill
+doesn't cover it. Don't guess its API.
 
-**Never hardcode a version number.** Resolve the current release when you need
-one:
+**Always use the latest released SDK, and never hardcode a version number.**
+Resolve the current release before writing any Gradle dependency, and don't reuse
+a version from memory, an earlier turn, or this file. The version of this skill
+an agent has installed says nothing about what has shipped since:
 
 ```bash
 curl -s https://www.xweather.com/docs/api/releases/versions \
@@ -73,7 +78,13 @@ product id - `mapsgl-android-sdk` here, alongside `mapsgl`, `mapsgl-apple-sdk`,
 `weather-api`, `maps`, and others. It's a small public JSON document, no auth
 needed.
 
-A version is only needed for a deliberate Gradle pin or an API-reference URL.
+Substitute it for `{version}` in the Gradle dependency
+(`mapsgl-android-sdk:v{version}`, keeping JitPack's `v` tag prefix) and in the
+API-reference URL. Never emit a literal `{version}`. When the project already
+depends on MapsGL at an older version, don't silently rewrite the pin. Say which
+release is current and offer the upgrade. New installs always get the current
+release.
+
 Where this skill's `references/` note behaviour "on 1.6.x", that records what the
 guidance was checked against - verify against the release you're actually on
 before relying on it.
@@ -195,7 +206,7 @@ resolution with `Could not find no.ecc.vectortile:java-vector-tile`, which reads
 like a broken SDK release rather than a missing repository.
 
 ```gradle
-// app/build.gradle - resolve vX.Y.Z from the releases endpoint, don't copy a literal
+// app/build.gradle - {version} is the current release from the releases endpoint
 android {
     compileSdk 36
     defaultConfig { minSdk 28 }
@@ -208,7 +219,7 @@ android {
 }
 
 dependencies {
-    implementation "com.github.vaisala-xweather:mapsgl-android-sdk:vX.Y.Z"
+    implementation "com.github.vaisala-xweather:mapsgl-android-sdk:v{version}"
     implementation "com.mapbox.maps:android-ndk27:11.15.3"
 }
 ```
@@ -540,7 +551,8 @@ More: `references/android-gotchas.md`.
   `references/setup.md`.
 - **"Add layer X"** -> find the `LayerCode` in `references/layers.md` first; the
   enum name is not a transform of the wire code. Every code in that catalog ships
-  in 1.6.1; if a code isn't listed, it isn't available in this release.
+  in 1.6.1; if a code isn't listed, check the KDoc for the installed release rather
+  than assuming it exists.
 - **"Nothing renders"** -> check Mapbox tokens *and* Xweather credentials, then
   that layers were added after `subscribeMapLoaded`, then Mercator.
 - **"Restyle a layer"** -> cast `config.layer.paint` to the paint type for its

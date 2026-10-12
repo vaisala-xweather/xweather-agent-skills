@@ -41,7 +41,7 @@ you, and ask when it doesn't (see the SKILL.md rule).
 | Controller | `MapboxMapController` | `MapLibreMapController` |
 | Adapter module | `MapsGLMapbox` | `MapsGLMapLibre` |
 | Map view type | `MapboxMaps.MapView` / `MapboxMaps.MapboxMap` | `MLNMapView` |
-| SPM branch | `master` (or `release/x.y.z`) | `maplibre` (or `release/maplibre/x.y.z`) |
+| SPM branch | `master` (or `release/{version}`) | `maplibre` (or `release/maplibre/{version}`) |
 | Transitive SDK | `mapbox-maps-ios` `11.0.0..<12.0.0` | `maplibre-gl-native-distribution` 6.18.0+ |
 | Runtime credential | `MapboxOptions.accessToken` (public token) | none |
 | Build credential | Mapbox **secret** download token in `~/.netrc` | none |
@@ -57,8 +57,8 @@ add the `MapsGL` library product to your app target.
 ```
 master                    → latest Mapbox channel
 maplibre                  → latest MapLibre channel
-release/x.y.z             → pinned Mapbox release line
-release/maplibre/x.y.z    → pinned MapLibre release line
+release/{version}         → pinned Mapbox release line
+release/maplibre/{version} → pinned MapLibre release line
 ```
 
 The product name is `MapsGL` on every branch. What differs is which adapter target that product
@@ -66,8 +66,9 @@ includes — which is why a MapLibre branch genuinely has no `MapsGLMapbox` modu
 versa.
 
 **Prefer a branch channel over a pin** unless the user asked for reproducible resolution. Branch
-channels track the current release without hardcoding a version anywhere. When pinning is wanted,
-resolve the version rather than guessing it:
+channels track the current release without hardcoding a version anywhere. Every other channel
+below takes `{version}`. Always substitute the current release, resolved fresh rather than guessed
+or copied from this file:
 
 ```bash
 curl -s https://www.xweather.com/docs/api/releases/versions \
@@ -92,11 +93,12 @@ targets: [
 ```ruby
 target 'MyApp' do
   use_frameworks!
-  pod 'MapsGL'
+  pod 'MapsGL', '~> {version}'
 end
 ```
 
-Then `pod install`, and open the generated `.xcworkspace` (not the `.xcodeproj`).
+`{version}` is the current release from the releases endpoint. Name it: with an existing
+`Podfile.lock`, an unversioned `pod 'MapsGL'` keeps whatever was installed last. Then `pod install`, and open the generated `.xcworkspace` (not the `.xcodeproj`).
 
 **CocoaPods builds a single module named `MapsGL`.** So in every source file:
 
@@ -111,7 +113,7 @@ Mixing the two conventions is the most common CocoaPods failure here — `No suc
 ## Carthage
 
 ```
-github "vaisala-xweather/mapsgl-apple-sdk" ~> x.y.z
+github "vaisala-xweather/mapsgl-apple-sdk" ~> {version}
 ```
 
 ```bash
@@ -124,7 +126,7 @@ Then:
    Native for iOS).
 2. Add every xcframework from `Carthage/Build` under **General ▸ Frameworks, Libraries, and Embedded
    Content**.
-3. Download `MapsGL.zip` from the releases page, extract it, and add the **adapter source directory**
+3. Download `MapsGL.zip` from the `v{version}` release (same version as the Cartfile), extract it, and add the **adapter source directory**
    for your provider (`MapsGLMapbox/` or `MapsGLMapLibre/`) to the app target.
 
 Because the adapter is compiled into your own module, **remove `import MapsGLMapbox` /
@@ -134,8 +136,8 @@ resolve.
 ## Manual xcframework embedding
 
 1. Add the provider SDK to the project yourself.
-2. Download and extract `MapsGL.zip` from
-   https://github.com/vaisala-xweather/mapsgl-apple-sdk/releases, giving
+2. Download and extract `MapsGL.zip` for the current release from
+   `https://github.com/vaisala-xweather/mapsgl-apple-sdk/releases/download/v{version}/MapsGL.zip`, giving
    `MapsGLCore.xcframework`, `MapsGLRenderer.xcframework`, `MapsGLMaps.xcframework`, and the two
    adapter source directories.
 3. Add the three xcframeworks under **General ▸ Frameworks, Libraries, and Embedded Content**, setting

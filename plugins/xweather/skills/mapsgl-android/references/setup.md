@@ -93,12 +93,13 @@ for SDK symbols. Preferring the POM and artifact avoids that.
 
 ### App dependency
 
-Resolve the version rather than copying a literal - `products["mapsgl-android-sdk"].version` from
-https://www.xweather.com/docs/api/releases/versions:
+Always install the current release. Resolve it rather than copying a literal -
+`products["mapsgl-android-sdk"].version` from https://www.xweather.com/docs/api/releases/versions -
+and substitute it for `{version}`, keeping JitPack's `v` tag prefix:
 
 ```gradle
 dependencies {
-    implementation "com.github.vaisala-xweather:mapsgl-android-sdk:vX.Y.Z"
+    implementation "com.github.vaisala-xweather:mapsgl-android-sdk:v{version}"
     implementation "com.mapbox.maps:android-ndk27:11.15.3"
 }
 ```

@@ -36,9 +36,11 @@ const account = new aerisweather.mapsgl.Account('CLIENT_ID', 'CLIENT_SECRET');
 const controller = new aerisweather.mapsgl.MapboxMapController(map, { account });
 ```
 
-**Look up the current released version before writing any example.** Don't reuse a version from
-memory or from an earlier turn — MapsGL ships often, and a stale pin is the most common thing to go
-wrong in otherwise-correct example code:
+**Always use the latest released MapsGL — look it up first, every time.** Before writing any
+`<script>`/`<link>` tag or `npm install` line, fetch the current release. Don't reuse a version from
+memory, from an earlier turn, or from this file. The version of this skill an agent has installed
+says nothing about what MapsGL has shipped since. A stale pin is the most common thing to go wrong
+in otherwise-correct example code:
 
 ```bash
 curl -s https://www.xweather.com/docs/api/releases/versions \
@@ -49,23 +51,33 @@ That endpoint is the release source of truth for every Xweather product, keyed b
 `mapsgl` here, alongside `weather-api`, `maps`, `maps-ui-sdk`, `mapsgl-apple-sdk`,
 `mapsgl-android-sdk`, `mcp-server`, `phrases-api`. It's a small public JSON document, no auth needed.
 
-**MapsGL's own script and stylesheet always come from `cdn.aerisapi.com`**, with that version
-substituted:
+Substitute that value for `{version}` everywhere this skill shows one. That covers the CDN URLs and
+the npm install alike, so both channels get the same release:
 
 ```html
-<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.10.2/aerisweather.mapsgl.css" rel="stylesheet" />
-<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.10.2/aerisweather.mapsgl.js"></script>
+<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/{version}/aerisweather.mapsgl.css" rel="stylesheet" />
+<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/{version}/aerisweather.mapsgl.js"></script>
 ```
 
-`1.10.2` above is the version at the time this file was last regenerated — use it only as a fallback
-if the endpoint can't be reached, and say so when you do.
+```bash
+npm install --save @xweather/mapsgl@{version}
+```
+
+Never emit a literal `{version}`. If the endpoint can't be reached, fall back to `1.10.2`, the
+released version when this file was last regenerated, and tell the user you couldn't confirm it's
+the latest.
+
+When the project already depends on MapsGL at an older version, don't silently rewrite the pin.
+Say which release is current and offer the upgrade, because a bump in someone else's lockfile
+should be their call. New tags, new installs and new projects always get the current release.
 
 Note that **npm may be ahead of the released version.** `@xweather/mapsgl` on npm has carried a
 higher version than the releases endpoint reports, and `cdn.aerisapi.com` serves those newer paths
-too — so a version that resolves is not evidence it's the current release. Trust the releases
-endpoint, not npm and not a 200 from the CDN.
+too. A version that resolves is not evidence it's the current release. Trust the releases
+endpoint, not npm's `latest` tag and not a 200 from the CDN. That is why the install names the
+version: a bare `npm install @xweather/mapsgl` takes whatever npm tags `latest`.
 
-Never substitute `unpkg.com`, `cdn.jsdelivr.net`, or another npm mirror for those two tags — the npm
+**MapsGL's own script and stylesheet always come from `cdn.aerisapi.com`.** Never substitute `unpkg.com`, `cdn.jsdelivr.net`, or another npm mirror for those two tags — the npm
 build exposes a different global and the page breaks at runtime even though the files load. See
 "MapsGL's own assets come from `cdn.aerisapi.com`" under Setup for why.
 
@@ -182,16 +194,12 @@ instead of them. MapsGL's CDN build exposes everything under `window.aerisweathe
 
 ### MapsGL's own assets come from `cdn.aerisapi.com` — nowhere else
 
-Copy these two lines verbatim, changing only the version number:
+Copy these two lines verbatim, substituting the released version from the releases endpoint for
+`{version}`:
 
 ```html
-<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.10.2/aerisweather.mapsgl.css" rel="stylesheet" />
-<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.10.2/aerisweather.mapsgl.js"></script>
-```
-
-```
-https://cdn.aerisapi.com/sdk/js/mapsgl/{version}/aerisweather.mapsgl.js
-https://cdn.aerisapi.com/sdk/js/mapsgl/{version}/aerisweather.mapsgl.css
+<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/{version}/aerisweather.mapsgl.css" rel="stylesheet" />
+<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/{version}/aerisweather.mapsgl.js"></script>
 ```
 
 **Never serve MapsGL from `unpkg.com`, `cdn.jsdelivr.net`, `esm.sh`, or any other npm mirror**, and
@@ -232,13 +240,14 @@ A complete pair of includes, MapsGL plus its map library:
 <script defer src="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js"></script>
 
 <!-- 2. MapsGL itself — always cdn.aerisapi.com -->
-<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.10.2/aerisweather.mapsgl.css" rel="stylesheet" />
-<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.10.2/aerisweather.mapsgl.js"></script>
+<link href="https://cdn.aerisapi.com/sdk/js/mapsgl/{version}/aerisweather.mapsgl.css" rel="stylesheet" />
+<script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/{version}/aerisweather.mapsgl.js"></script>
 ```
 
-Pin an explicit version for every `<script>`/`<link>` tag (MapsGL's and the map library's) rather
-than `latest`, for anything beyond a quick prototype. `cdn.aerisapi.com/sdk/js/mapsgl/latest/…` does
-resolve if you need it.
+Pin an explicit version for every `<script>`/`<link>` tag (MapsGL's and the map library's). For
+MapsGL, that is the current release, looked up fresh. Prefer it over the
+`cdn.aerisapi.com/sdk/js/mapsgl/latest/…` alias: the alias floats with every publish, can run ahead
+of the releases endpoint, and makes a page change behaviour without anyone editing it.
 
 For MapsGL's version, use the releases endpoint — **not** npm, which can be ahead of the current
 release:
@@ -249,12 +258,14 @@ curl -s https://www.xweather.com/docs/api/releases/versions \
 ```
 
 **npm** — *only when the user is already in a bundled project or asks for it.* Install
-`@xweather/mapsgl` plus whichever provider package applies:
+`@xweather/mapsgl` at the released version from the endpoint above, plus whichever provider package
+applies. Name the version explicitly. Without one, npm installs its own `latest` tag, which can be
+ahead of the release:
 ```bash
-npm install --save @xweather/mapsgl mapbox-gl        # Mapbox GL
-npm install --save @xweather/mapsgl maplibre-gl       # MapLibre GL
-npm install --save @xweather/mapsgl leaflet           # Leaflet
-npm install --save @xweather/mapsgl                   # Google Maps — loaded via <script> from Google, no npm package needed
+npm install --save @xweather/mapsgl@{version} mapbox-gl        # Mapbox GL
+npm install --save @xweather/mapsgl@{version} maplibre-gl       # MapLibre GL
+npm install --save @xweather/mapsgl@{version} leaflet           # Leaflet
+npm install --save @xweather/mapsgl@{version}                   # Google Maps — loaded via <script> from Google, no npm package needed
 ```
 ```javascript
 import * as mapsgl from '@xweather/mapsgl';
@@ -313,8 +324,9 @@ are in `references/api-reference.md`.
 ## Complete example
 
 **This is the shape to produce by default** — one file, saveable and openable in a browser. Adapt it
-rather than starting from scratch: swap the map provider's CDN tags and constructor, change the
-`addWeatherLayer` codes, and adjust `center`/`zoom`.
+rather than starting from scratch: substitute the current MapsGL release for `{version}`, swap the
+map provider's CDN tags and constructor, change the `addWeatherLayer` codes, and adjust
+`center`/`zoom`.
 
 ```html
 <!DOCTYPE html>
@@ -327,8 +339,8 @@ rather than starting from scratch: swap the map provider's CDN tags and construc
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.css" rel="stylesheet" />
     <script defer src="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js"></script>
 
-    <link href="https://cdn.aerisapi.com/sdk/js/mapsgl/1.10.2/aerisweather.mapsgl.css" rel="stylesheet" />
-    <script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/1.10.2/aerisweather.mapsgl.js"></script>
+    <link href="https://cdn.aerisapi.com/sdk/js/mapsgl/{version}/aerisweather.mapsgl.css" rel="stylesheet" />
+    <script defer src="https://cdn.aerisapi.com/sdk/js/mapsgl/{version}/aerisweather.mapsgl.js"></script>
 
     <style>
     body, html { margin: 0; padding: 0; }

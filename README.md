@@ -278,7 +278,7 @@ stale as the products change:
 | `plugins/xweather/skills/weather-api/references/filters.md` | each endpoint doc page's filter and query tables |
 | `plugins/xweather/skills/raster-maps/references/layers.md` | `docs/api/maps/layers` |
 | `plugins/xweather/skills/mapsgl/references/layers.md` | `docs/api/mapsgl/layers` |
-| the MapsGL CDN version pinned in `plugins/xweather/skills/mapsgl/SKILL.md` | `docs/api/releases/versions`, `mapsgl` key |
+| the offline-fallback MapsGL version in `plugins/xweather/skills/mapsgl/SKILL.md` | `docs/api/releases/versions`, `mapsgl` key |
 
 ```bash
 python3 scripts/regenerate_references.py           # rewrite in place

@@ -48,11 +48,15 @@ python3 scripts/regenerate_references.py --check   # exit 1 on drift, writes not
 
 CI runs `--check` on any pull request touching a generated file, so a hand-edit fails the build.
 
-The script also pins the **MapsGL CDN version** in `plugins/xweather/skills/mapsgl/SKILL.md` to whatever
-`docs/api/releases/versions` reports for the `mapsgl` product key, rewriting every
-`cdn.aerisapi.com/sdk/js/mapsgl/<version>/` URL and the sentence naming the fallback. That in-file
-version is only a fallback — the skill instructs agents to fetch the current release at generation
-time. Don't hand-edit it.
+**MapsGL versions are resolved at generation time, never baked into examples.** All three MapsGL
+skills tell agents to look up the current release from `docs/api/releases/versions` before writing
+any CDN tag, npm install, SPM/CocoaPods/Carthage requirement or Gradle dependency. Examples carry a
+`{version}` placeholder, so a user on an old copy of the plugin still gets the latest SDK. Don't put
+a literal SDK version back into an install snippet.
+
+The one literal left is the offline fallback in `plugins/xweather/skills/mapsgl/SKILL.md` (the
+"fall back to `<version>`" sentence). The script keeps it at whatever the endpoint reports for the
+`mapsgl` key and fails if that sentence goes missing. Don't hand-edit it.
 
 **The releases endpoint outranks npm.** `@xweather/mapsgl` on npm has carried a higher version than
 the releases endpoint reports, and `cdn.aerisapi.com` serves those newer paths too, so a URL

@@ -60,7 +60,10 @@ storyboards/XIBs, an `AppDelegate`/`SceneDelegate` pair with no SwiftUI `App`) o
 it. Match the surrounding project over the default whenever the two disagree — including Swift
 concurrency style, view-model conventions, and how the app already stores secrets.
 
-**Never hardcode a version number.** Resolve the current release when you need one:
+**Always use the latest released SDK, and never hardcode a version number.** Resolve the current
+release from the endpoint below before writing any install step, and don't reuse a version from
+memory, an earlier turn, or this file. The version of this skill an agent has installed says
+nothing about what has shipped since:
 
 ```bash
 curl -s https://www.xweather.com/docs/api/releases/versions \
@@ -72,8 +75,14 @@ That endpoint is the release source of truth for every Xweather product, keyed b
 JSON document, no auth needed.
 
 Most of the time you don't need a version at all: **prefer the Swift Package branch channels**
-(below), which track the latest release without a pin. A version is only needed for a deliberate
-pin, a CocoaPods/Carthage requirement, or an API-reference URL.
+(below), which track the latest release without a pin. Every other channel takes the resolved
+version as `{version}`. That covers a pinned `release/{version}` branch, the CocoaPods and
+Carthage requirements, the xcframework download and the API-reference URL. Never emit a literal
+`{version}`.
+
+When the project already depends on MapsGL at an older version, don't silently rewrite the pin.
+Say which release is current and offer the upgrade. New installs and new projects always get the
+current release.
 
 **Credentials never go in source.** Put the Xweather client id/secret and any Mapbox token in a
 gitignored plist, xcconfig, or the keychain — whatever the project already uses — and read them at
@@ -155,8 +164,8 @@ provider-specific per branch, so the branch *is* the provider choice:
 |---|---|---|---|
 | Latest Mapbox | `master` | `mapbox-maps-ios` 11.x | `MapsGL` |
 | Latest MapLibre | `maplibre` | `maplibre-gl-native-distribution` 6.18+ | `MapsGL` |
-| Pinned Mapbox | `release/x.y.z` | as above, frozen | `MapsGL` |
-| Pinned MapLibre | `release/maplibre/x.y.z` | as above, frozen | `MapsGL` |
+| Pinned Mapbox | `release/{version}` | as above, frozen | `MapsGL` |
+| Pinned MapLibre | `release/maplibre/{version}` | as above, frozen | `MapsGL` |
 
 The product name is `MapsGL` on every branch; what differs is which adapter target it includes. Add
 the `MapsGL` library product to the app target. Xcode resolves the three binary xcframeworks
@@ -165,14 +174,15 @@ the `MapsGL` library product to the app target. Xcode resolves the three binary 
 Use a branch channel unless the user asked to pin. Pinning to `release/…` is the right call for
 release-managed apps; note that it also freezes the provider SDK range.
 
-**CocoaPods** — `pod 'MapsGL'`, then `pod install` and open the generated `.xcworkspace`. CocoaPods
-builds a single `MapsGL` module, so **`import MapsGL` replaces the adapter import**
+**CocoaPods** — `pod 'MapsGL', '~> {version}'` with the resolved release, then `pod install` and
+open the generated `.xcworkspace`. Name the version: an existing `Podfile.lock` otherwise keeps
+whatever was installed last. CocoaPods builds a single `MapsGL` module, so **`import MapsGL` replaces the adapter import**
 (`import MapsGLMapbox` / `import MapsGLMapLibre`) in every source file. This is the most common
 CocoaPods build error.
 
-**Carthage** (`github "vaisala-xweather/mapsgl-apple-sdk" ~> x.y.z`, then
+**Carthage** (`github "vaisala-xweather/mapsgl-apple-sdk" ~> {version}`, then
 `carthage update --use-xcframeworks`) and **manual xcframework embedding** (download `MapsGL.zip`
-from the releases page, embed the three xcframeworks as "Embed & Sign") both require adding the
+from the `v{version}` GitHub release, embed the three xcframeworks as "Embed & Sign") both require adding the
 provider SDK yourself and dropping the matching adapter *source directory*
 (`MapsGLMapbox/` or `MapsGLMapLibre/`) straight into the project. When the adapter is compiled into
 your target that way, **remove the `import MapsGLMapbox` / `import MapsGLMapLibre` lines** — the
