@@ -143,9 +143,10 @@ when you know it.
 
 - `for=` pins a single valid time: `/conditions/minneapolis,mn?for=-4hours`.
 - `from=` + `to=` produce a series: `/conditions/paris,france?from=-12hours&to=now&plimit=12`.
-- On `/lightning`, `from=` without `to=` does not mean "from then until now". It returns only a
-  few minutes of strikes starting at `from`, so `from=-30minutes` alone misses the most recent 25
-  minutes. Always pair a lookback with `to=now`:
+- `from=` on its own does not mean "from then until now", on any endpoint. Whenever you use
+  `from=` for a lookback, also pass `to=now` so the result reaches the present and doesn't miss
+  recent records. For example, `/lightning/closest?…&from=-30minutes` without `to` returns only a
+  few minutes of strikes starting 30 minutes ago:
   `/lightning/closest?p=…&radius=10miles&from=-30minutes&to=now&sort=dt:-1&limit=1`.
 - Relative values are also valid inside `query=`: `query=issued:-10minutes`,
   `query=begins:-6hours:6hours`.
