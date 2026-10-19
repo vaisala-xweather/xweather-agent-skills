@@ -24,31 +24,31 @@ Regenerate from the live catalog: `curl -s https://www.xweather.com/docs/api/map
 
 Blue marble base layer.
 
-*x1 · Coverage: global*
+*x1 · Coverage: Global*
 
 ### `flat` — Flat
 
 Flat base layer.
 
-*x1 · Coverage: global*
+*x1 · Coverage: Global*
 
 ### `flat-dk` — Flat Dark
 
 Dark version of flat base layer.
 
-*x1 · Coverage: global*
+*x1 · Coverage: Global*
 
 ### `terrain` — Terrain
 
 Terrain base layer.
 
-*x1 · Coverage: global*
+*x1 · Coverage: Global*
 
 ### `terrain-dk` — Terrain - Dark
 
 Dark terrain base layer.
 
-*x1 · Coverage: global*
+*x1 · Coverage: Global*
 
 ## Radar + Satellite
 
@@ -56,7 +56,7 @@ Dark terrain base layer.
 
 Forecast Radar based on models, either the GFS, NAM, or HRRR
 
-*x1 · Coverage: global · Range: HRRR (+18 hours), NAM(+72 hours), GFS (+15 days) · Updates: HRRR: 1 hr, NAM/GFS: 6 hrs*
+*x1 · Coverage: Global · Range: HRRR (+18 hours), NAM(+72 hours), GFS (+15 days) · Updates: HRRR: 1 hr, NAM/GFS: 6 hrs*
 
 - Modifier **Model**: `-hrrr` High-Resolution Rapid Refresh (HRRR), `-nam` North American Mesoscale Forecast System (NAM), `-gfs` Global Forecast System (GFS)
 
@@ -64,7 +64,7 @@ Forecast Radar based on models, either the GFS, NAM, or HRRR
 
 Forecast satellite based on models, either the GFS, NAM, or HRRR
 
-*x1 · Coverage: global · Range: +15 days · Updates: 6 hours*
+*x1 · Coverage: Global · Range: +15 days · Updates: 6 hours*
 
 - Modifier **Model**: `-hrrr` High-Resolution Rapid Refresh (HRRR), `-nam` North American Mesoscale Forecast System (NAM), `-gfs` Global Forecast System (GFS)
 
@@ -72,7 +72,7 @@ Forecast satellite based on models, either the GFS, NAM, or HRRR
 
 Radar information for regions globally
 
-*x1 · Coverage: US, Puerto Rico, Guam, Canada, Australia, Japa, South Korea, Germany, Ireland, United Kingdom, Switzerland, Northern France, Belgium, Netherlands, japan, uk · Range: -30 days · Updates: US: 2 min, Global: 6-10 min*
+*x1 · Coverage: US, Puerto Rico, Guam, Canada, Australia, Japan, South Korea, Germany, Ireland, United Kingdom, Switzerland, Northern France, Belgium, Netherlands · Range: -30 days · Updates: US: 2 min, Global: 6-10 min*
 
 - Modifier **Region**: _(options not enumerated in the catalog — see the layer docs)_
 
@@ -80,25 +80,25 @@ Radar information for regions globally
 
 Global radar combining actual radar with satellite derived radar where actual radar information is unavailable
 
-*x1 · Coverage: global · Range: -30 days · Updates: 2 min*
+*x1 · Coverage: Global · Range: -30 days · Updates: 2 min*
 
 ### `satellite` — Satellite - Infrared (B/W)
 
 Black and white infrared satellite imagery.
 
-*x1 · Coverage: global · Range: -7 days · Updates: US: 15 min, Global: 3hrs*
+*x1 · Coverage: Global · Range: -7 days · Updates: US: 15 min, Global: 3hrs*
 
 ### `satellite-geocolor` — Satellite - GeoColor
 
 Geocolor Global Satellite
 
-*x1 · Coverage: global · Range: -7 days · Updates: US/Japan/AUS: 10 min, EU: 15 min*
+*x1 · Coverage: Global · Range: -7 days · Updates: US/Japan/AUS: 10 min, EU: 15 min*
 
 ### `satellite-infrared-color` — Satellite - Infrared (Color)
 
 Color infrared satellite imagery based on cloud top temperature.
 
-*x1 · Coverage: global · Range: -7 days · Updates: Global: 2 hrs, US: 15 min*
+*x1 · Coverage: Global · Range: -7 days · Updates: Global: 2 hrs, US: 15 min*
 
 - Modifier **Region**: `-US` US/North America Only
 
@@ -106,13 +106,13 @@ Color infrared satellite imagery based on cloud top temperature.
 
 Visible satellite imagery.
 
-*x1 · Coverage: north-america, central-america, east-pacific, west-atlantic · Range: -7 days · Updates: 15 minutes*
+*x1 · Coverage: North America, Central America, East Pacific, West Atlantic · Range: -7 days · Updates: 15 minutes*
 
 ### `satellite-water-vapor` — Satellite - Water Vapor
 
 Satellite imagery depicting the amount of water vapor in the atmosphere.
 
-*x1 · Coverage: north-america, central-america, east-pacific, west-atlantic · Range: -7 days · Updates: 15 minutes*
+*x1 · Coverage: North America, Central America, East Pacific, West Atlantic · Range: -7 days · Updates: 15 minutes*
 
 ## Observations
 
@@ -120,7 +120,7 @@ Satellite imagery depicting the amount of water vapor in the atmosphere.
 
 Numeric values of dew point temperature.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 30 minutes*
+*x1 · Coverage: Global · Range: -7 days · Updates: 30 minutes*
 
 - Modifier **Units**: `-metric` Metric
 
@@ -132,7 +132,7 @@ Numeric values of dew point temperature.
 
 Feels-like, or apparent, temperature.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 1hr*
+*x1 · Coverage: Global · Range: -7 days · Updates: 1hr*
 
 - Modifier **Source**: `-rtma` Real-Time Mesoscale Analysis (RTMA)
 
@@ -140,7 +140,7 @@ Feels-like, or apparent, temperature.
 
 Numeric values of feels-like temperature.
 
-*x1 · Coverage: conus · Range: -7 days · Updates: 30 minutes*
+*x1 · Coverage: Continental US · Range: -7 days · Updates: 30 minutes*
 
 - Modifier **Units**: `-metric` Metric
 
@@ -152,7 +152,7 @@ Numeric values of feels-like temperature.
 
 Heat index, where temperatures are at or above 80F (26.67C).
 
-*x1 · Coverage: global · Range: -7 days · Updates: 1hr*
+*x1 · Coverage: Global · Range: -7 days · Updates: 1hr*
 
 - Modifier **Source**: `-rtma` Real-Time Mesoscale Analysis (RTMA)
 
@@ -160,7 +160,7 @@ Heat index, where temperatures are at or above 80F (26.67C).
 
 Numeric values of heat index temperature.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 30 minutes*
+*x1 · Coverage: Global · Range: -7 days · Updates: 30 minutes*
 
 - Modifier **Units**: `-metric` Metric
 
@@ -172,7 +172,7 @@ Numeric values of heat index temperature.
 
 Relative humidity percentage.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 1hr*
+*x1 · Coverage: Global · Range: -7 days · Updates: 1hr*
 
 - Modifier **Source**: `-rtma` Real-Time Mesoscale Analysis (RTMA)
 
@@ -180,7 +180,7 @@ Relative humidity percentage.
 
 Numeric value of relative humidity percentage.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 30 minutes*
+*x1 · Coverage: Global · Range: -7 days · Updates: 30 minutes*
 
 - Modifier **Map Theme**: `-dk` Dark
 
@@ -190,7 +190,7 @@ Numeric value of relative humidity percentage.
 
 Accumulated precipitation amounts per interval.
 
-*x1 · Coverage: conus, alaska, puerto-rico · Range: -7 days · Updates: Hourly, Daily (AHPS)*
+*x1 · Coverage: Continental US, Alaska, Puerto Rico · Range: -7 days · Updates: Hourly, Daily (AHPS)*
 
 - Modifier **Time Range**: `-1h` 1 Hour, `-1d` 1 Day, `-7d` 7 Day, `-14d` 14 Day, `-30d` 30 Day, `-60d` 60 Day, `-90d` 90 Day, `-180d` 180 Day, `-mtd` Month to Date, `-ytd` Year to Date, `-wytd` Water Yr to Date (Oct 1)
 
@@ -198,7 +198,7 @@ Accumulated precipitation amounts per interval.
 
 Departure from precipitation normals.
 
-*x1 · Coverage: conus, alaska, puerto-rico · Range: -7 days · Updates: Daily*
+*x1 · Coverage: Continental US, Alaska, Puerto Rico · Range: -7 days · Updates: Daily*
 
 - Modifier **Time Range**: `-1d` 1 Day, `-7d` 7 Day, `-14d` 14 Day, `-30d` 30 Day, `-60d` 60 Day, `-90d` 90 Day, `-180d` 180 Day, `-mtd` Month to Date, `-ytd` Year to Date, `-wytd` Water Yr to Date (Oct 1)
 
@@ -206,7 +206,7 @@ Departure from precipitation normals.
 
 Departure from precipitation normals as a percentage. 
 
-*x1 · Coverage: conus, puerto-rico, alaska · Range: 7 days · Updates: Daily*
+*x1 · Coverage: Continental US, Puerto Rico, Alaska · Range: 7 days · Updates: Daily*
 
 - Modifier **Time Range**: `-1d` 1 Day, `-7d` 7 Day, `-14d` 14 Day, `-30d` 30 Day, `-60d` 60 Day, `-90d` 90 Day, `-180d` 180 Day, `-mtd` Month to Date, `-ytd` Year to Date, `-wytd` Water Yr to Date (Oct 1)
 
@@ -214,7 +214,7 @@ Departure from precipitation normals as a percentage.
 
 Precipitation normals for a given time range.
 
-*x1 · Coverage: conus, alaska, puerto-rico · Range: -7 days · Updates: Daily*
+*x1 · Coverage: Continental US, Alaska, Puerto Rico · Range: -7 days · Updates: Daily*
 
 - Modifier **Time Range**: `-1d` 1 Day, `-7d` 7 Day, `-14d` 14 Day, `-30d` 30 Day, `-60d` 60 Day, `-90d` 90 Day, `-180d` 180 Day, `-mtd` Month to Date, `-ytd` Year to Date, `-wytd` Water Yr to Date (Oct 1)
 
@@ -222,7 +222,7 @@ Precipitation normals for a given time range.
 
 River and Lake Gauge observations from the NOAA Advanced Hydrologic Prediction Service (AHPS)
 
-*x1 · Coverage: us · Range: -7 days · Updates: Hourly*
+*x1 · Coverage: US · Range: -7 days · Updates: Hourly*
 
 - Modifier **Category**: `-flooding` Gauges Reporting Flooding, `-low-threshold` Gauges Reporting Low Water
 
@@ -230,7 +230,7 @@ River and Lake Gauge observations from the NOAA Advanced Hydrologic Prediction S
 
 .
 
-*x1 · Coverage: global, north-america · Range: -7 days · Updates: day*
+*x1 · Coverage: Global, North America · Range: -7 days · Updates: day*
 
 - Modifier **Coverage**: `-global` Global
 
@@ -238,31 +238,31 @@ River and Lake Gauge observations from the NOAA Advanced Hydrologic Prediction S
 
 Sea surface temperatures across the globe.
 
-*x1 · Coverage: global · Range: -7 days · Updates: Daily*
+*x1 · Coverage: Global · Range: -7 days · Updates: Daily*
 
 ### `surface-analysis` — Surface Analysis
 
 Frontal and pressure analysis. 
 
-*x1 · Coverage: north-america · Range: -7 days · Updates: 12 hours*
+*x1 · Coverage: North America · Range: -7 days · Updates: 12 hours*
 
 ### `surface-analysis-fronts` — Surface Fronts
 
 Surface analysis of fronts only.
 
-*x1 · Coverage: north-america · Range: -7 days · Updates: 12 hours*
+*x1 · Coverage: North America · Range: -7 days · Updates: 12 hours*
 
 ### `surface-analysis-pressure` — Surface Pressure
 
 Surface analysis of pressure only.
 
-*x1 · Coverage: north-america · Range: -7 days · Updates: 12 hours*
+*x1 · Coverage: North America · Range: -7 days · Updates: 12 hours*
 
 ### `surface-analysis-pressure-text` — Surface Pressure - Text
 
 Surface analysis of pressure with numeric pressure values.
 
-*x1 · Coverage: north-america · Range: -7 days · Updates: 12 hours*
+*x1 · Coverage: North America · Range: -7 days · Updates: 12 hours*
 
 - Modifier **Map Theme**: `-dk` Dark
 
@@ -270,7 +270,7 @@ Surface analysis of pressure with numeric pressure values.
 
 Surface temperatures.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 1hr*
+*x1 · Coverage: Global · Range: -7 days · Updates: 1hr*
 
 - Modifier **Source**: `-rtma` Real-Time Mesoscale Analysis (RTMA)
 
@@ -278,7 +278,7 @@ Surface temperatures.
 
 Numeric values of surface temperatures.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 30 minutes*
+*x1 · Coverage: Global · Range: -7 days · Updates: 30 minutes*
 
 - Modifier **Unites**: `-metric` Metric
 
@@ -290,19 +290,19 @@ Numeric values of surface temperatures.
 
 Visibility as a distance.
 
-*x1 · Coverage: conus · Range: -7 days · Updates: 15 minutes*
+*x1 · Coverage: Continental US · Range: -7 days · Updates: 15 minutes*
 
 ### `wave-heights` — Wave Heights
 
 Global wave heights.
 
-*x1 · Coverage: global · Range: -7 days · Updates: hourly*
+*x1 · Coverage: Global · Range: -7 days · Updates: hourly*
 
 ### `wind-chill` — Wind Chill
 
 Wind chill, where temperatures are at or below 40F (4.44C).
 
-*x1 · Coverage: global · Range: -7 days · Updates: 1hr*
+*x1 · Coverage: Global · Range: -7 days · Updates: 1hr*
 
 - Modifier **Source**: `-rtma` Real-Time Mesoscale Analysis (RTMA)
 
@@ -310,7 +310,7 @@ Wind chill, where temperatures are at or below 40F (4.44C).
 
 Numeric values of wind chill temperatures.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 30 minutes*
+*x1 · Coverage: Global · Range: -7 days · Updates: 30 minutes*
 
 - Modifier **Units**: `-metric` Metric
 
@@ -322,7 +322,7 @@ Numeric values of wind chill temperatures.
 
 Surface wind direction depicted by arrows.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 30 minutes*
+*x1 · Coverage: Global · Range: -7 days · Updates: 30 minutes*
 
 - Modifier **Map Theme**: `-dk` Dark
 
@@ -330,7 +330,7 @@ Surface wind direction depicted by arrows.
 
 Surface wind gusts.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 1hr*
+*x1 · Coverage: Global · Range: -7 days · Updates: 1hr*
 
 - Modifier **Source**: `-rtma` Real-Time Mesoscale Analysis (RTMA)
 
@@ -338,7 +338,7 @@ Surface wind gusts.
 
 Numeric values of surface wind gusts.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 30 minutes*
+*x1 · Coverage: Global · Range: -7 days · Updates: 30 minutes*
 
 - Modifier **Units**: `-metric` Metric
 
@@ -350,7 +350,7 @@ Numeric values of surface wind gusts.
 
 Surface wind speeds.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 1hr*
+*x1 · Coverage: Global · Range: -7 days · Updates: 1hr*
 
 - Modifier **Source**: `-rtma` Real-Time Mesoscale Analysis (RTMA)
 
@@ -358,7 +358,7 @@ Surface wind speeds.
 
 Numeric values of surface wind speeds.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 30 minutes*
+*x1 · Coverage: Global · Range: -7 days · Updates: 30 minutes*
 
 - Modifier **Units**: `-metric` Metric
 
@@ -372,7 +372,7 @@ Numeric values of surface wind speeds.
 
 Forecast dew point temperature.
 
-*x1 · Coverage: global · Range: +15 days · Updates: HRRR: 1hr, NAM/GFS: 6 hrs*
+*x1 · Coverage: Global · Range: +15 days · Updates: HRRR: 1hr, NAM/GFS: 6 hrs*
 
 - Modifier **Model**: `-hrrr` High-Resolution Rapid Refresh (HRRR), `-nam` North American Mesoscale Forecast System (NAM), `-gfs` Global Forecast System (GFS), `-ndfd` National Digital Forecast Database (NDFD)
 
@@ -380,7 +380,7 @@ Forecast dew point temperature.
 
 Forecast feels-like temperature.
 
-*x1 · Coverage: global · Range: +15 days · Updates: HRRR: 1hr, NAM/GFS: 6 hrs*
+*x1 · Coverage: Global · Range: +15 days · Updates: HRRR: 1hr, NAM/GFS: 6 hrs*
 
 - Modifier **Model**: `-hrrr` High-Resolution Rapid Refresh (HRRR), `-nam` North American Mesoscale Forecast System (NAM), `-gfs` Global Forecast System (GFS), `-ndfd` National Digital Forecast Database (NDFD)
 
@@ -388,7 +388,7 @@ Forecast feels-like temperature.
 
 Forecast heat index temperature. 
 
-*x1 · Coverage: global · Range: +15 days · Updates: HRRR: 1hr, NAM/GFS: 6 hrs*
+*x1 · Coverage: Global · Range: +15 days · Updates: HRRR: 1hr, NAM/GFS: 6 hrs*
 
 - Modifier **Model**: `-hrrr` High-Resolution Rapid Refresh (HRRR), `-nam` North American Mesoscale Forecast System (NAM), `-gfs` Global Forecast System (GFS), `-ndfd` National Digital Forecast Database (NDFD)
 
@@ -396,7 +396,7 @@ Forecast heat index temperature.
 
 Forecast relative humidity percentage.
 
-*x1 · Coverage: global · Range: +15 days · Updates: HRRR: 1hr, NAM/GFS: 6hrs*
+*x1 · Coverage: Global · Range: +15 days · Updates: HRRR: 1hr, NAM/GFS: 6hrs*
 
 - Modifier **Model**: `-hrrr` High-Resolution Rapid Refresh (HRRR), `-nam` North American Mesoscale Forecast System (NAM), `-gfs` Global Forecast System (GFS), `-ndfd` National Digital Forecast Database (NDFD)
 
@@ -404,7 +404,7 @@ Forecast relative humidity percentage.
 
 Forecast ice accumulation.
 
-*x1 · Coverage: us · Range: +15 days · Updates: 6 hours*
+*x1 · Coverage: US · Range: +15 days · Updates: 6 hours*
 
 - Modifier **Model**: `-ndfd` National Digital Forecast Database (NDFD)
 
@@ -412,7 +412,7 @@ Forecast ice accumulation.
 
 Forecast jet stream at 250 mb. 
 
-*x1 · Coverage: global · Range: +15 days*
+*x1 · Coverage: Global · Range: +15 days*
 
 - Modifier **Model**: `-hrrr` High-Resolution Rapid Refresh (HRRR), `-nam` North American Mesoscale Forecast System (NAM), `-gfs` Global Forecast System (GFS)
 
@@ -420,13 +420,13 @@ Forecast jet stream at 250 mb.
 
 Forecast mean sea level pressure.
 
-*x1 · Coverage: global · Range: +15 days · Updates: HRRR: 1hr, NAM/GFS: 6 hrs*
+*x1 · Coverage: Global · Range: +15 days · Updates: HRRR: 1hr, NAM/GFS: 6 hrs*
 
 ### `fpressure-msl-isobars` — Forecast Pressure - Isobars
 
 Forecast mean sea level pressure depicted with isobars.
 
-*x1 · Coverage: global · Range: +15 days · Updates: HRRR: 1hr, NAM/GFS: 6 hrs*
+*x1 · Coverage: Global · Range: +15 days · Updates: HRRR: 1hr, NAM/GFS: 6 hrs*
 
 - Modifier **Model**: `-hrrr` High-Resolution Rapid Refresh (HRRR), `-nam` North American Mesoscale Forecast System (NAM), `-gfs` Global Forecast System (GFS)
 
@@ -438,7 +438,7 @@ Forecast mean sea level pressure depicted with isobars.
 
 Forecast accumulated precipitation amounts in hourly intervals.
 
-*x1 · Coverage: global · Range: +15 days · Updates: HRRR: 1hr, NAM/GFS: 6 hrs*
+*x1 · Coverage: Global · Range: +15 days · Updates: HRRR: 1hr, NAM/GFS: 6 hrs*
 
 - Modifier **Model**: `-hrrr` High-Resolution Rapid Refresh (HRRR), `-nam` North American Mesoscale Forecast System (NAM), `-gfs` Global Forecast System (GFS)
 
@@ -446,7 +446,7 @@ Forecast accumulated precipitation amounts in hourly intervals.
 
 Forecast accumulated precipitation amounts in 6 hour intervals.
 
-*x1 · Coverage: us · Range: +15 days · Updates: 6 hours*
+*x1 · Coverage: US · Range: +15 days · Updates: 6 hours*
 
 - Modifier **Model**: `-ndfd` National Digital Forecast Database (NDFD)
 
@@ -454,7 +454,7 @@ Forecast accumulated precipitation amounts in 6 hour intervals.
 
 Forecast accumulated precipitation amounts in a given interval.
 
-*x1 · Coverage: global · Range: +15 days · Updates: HRRR: 1hr, NAM/GFS: 6 hrs*
+*x1 · Coverage: Global · Range: +15 days · Updates: HRRR: 1hr, NAM/GFS: 6 hrs*
 
 - Modifier **Model**: `-hrrr` High-Resolution Rapid Refresh (HRRR), `-nam` North American Mesoscale Forecast System (NAM), `-gfs` Global Forecast System (GFS), `-ndfd` National Digital Forecast Database (NDFD)
 
@@ -462,7 +462,7 @@ Forecast accumulated precipitation amounts in a given interval.
 
 Forecast snow accumulations over a 1 hour interval. 
 
-*x1 · Coverage: global · Range: +15 days · Updates: 6 hours*
+*x1 · Coverage: Global · Range: +15 days · Updates: 6 hours*
 
 - Modifier **Ratio**: `-kuchera` Kuchera, `-10to1` 10-to-1
 
@@ -472,7 +472,7 @@ Forecast snow accumulations over a 1 hour interval.
 
 .
 
-*x1 · Coverage: global · Range: +15 days · Updates: 6 hours*
+*x1 · Coverage: Global · Range: +15 days · Updates: 6 hours*
 
 - Modifier **Ratio**: `-kuchera` Kuchera, `-10to1` 10-to-1
 
@@ -482,7 +482,7 @@ Forecast snow accumulations over a 1 hour interval.
 
 Forecast snow depth. 
 
-*x1 · Coverage: global · Range: +15 days · Updates: 6 hours*
+*x1 · Coverage: Global · Range: +15 days · Updates: 6 hours*
 
 - Modifier **Model**: `-hrrr` High-Resolution Rapid Refresh (HRRR), `-nam` North American Mesoscale Forecast System (NAM), `-gfs` Global Forecast System (GFS)
 
@@ -490,25 +490,25 @@ Forecast snow depth.
 
 .
 
-*x1 · Coverage: north-america · Updates: 12 hours*
+*x1 · Coverage: North America · Updates: 12 hours*
 
 ### `fsurface-analysis-fronts` — Forecast Surface Fronts
 
 .
 
-*x1 · Coverage: north-america · Updates: 12 hours*
+*x1 · Coverage: North America · Updates: 12 hours*
 
 ### `fsurface-analysis-pressure` — Forecast Surface Pressure
 
 .
 
-*x1 · Coverage: north-america · Updates: 12 hours*
+*x1 · Coverage: North America · Updates: 12 hours*
 
 ### `fsurface-analysis-pressure-text` — Forecast Surface Pressure - Text
 
 .
 
-*x1 · Coverage: north-america · Updates: 12 hours*
+*x1 · Coverage: North America · Updates: 12 hours*
 
 - Modifier **Map Theme**: `-dk` Dark
 
@@ -516,7 +516,7 @@ Forecast snow depth.
 
 Forecast surface temperatures. 
 
-*x1 · Coverage: global · Range: +15 days · Updates: HRRR: 1 hr, NAM/GFS: 6 hrs*
+*x1 · Coverage: Global · Range: +15 days · Updates: HRRR: 1 hr, NAM/GFS: 6 hrs*
 
 - Modifier **Model**: `-hrrr` High-Resolution Rapid Refresh (HRRR), `-nam` North American Mesoscale Forecast System (NAM), `-gfs` Global Forecast System (GFS), `-ndfd` National Digital Forecast Database (NDFD)
 
@@ -524,7 +524,7 @@ Forecast surface temperatures.
 
 Forecast high temperatures.
 
-*x1 · Coverage: us, puerto-rico, guam · Range: +15 days · Updates: Daily*
+*x1 · Coverage: US, Puerto Rico, Guam · Range: +15 days · Updates: Daily*
 
 - Modifier **Model**: `-ndfd` National Digital Forecast Database (NDFD)
 
@@ -532,7 +532,7 @@ Forecast high temperatures.
 
 Numeric value showing forecast high temperatures. 
 
-*x1 · Coverage: global · Range: +15 days · Updates: Daily*
+*x1 · Coverage: Global · Range: +15 days · Updates: Daily*
 
 - Modifier **Units**: `-metric` Metric
 
@@ -544,7 +544,7 @@ Numeric value showing forecast high temperatures.
 
 Forecast low temperatures. 
 
-*x1 · Coverage: us, guam, puerto-rico · Range: +15 days · Updates: Daily*
+*x1 · Coverage: US, Guam, Puerto Rico · Range: +15 days · Updates: Daily*
 
 - Modifier **Model**: `-ndfd` National Digital Forecast Database (NDFD)
 
@@ -552,7 +552,7 @@ Forecast low temperatures.
 
 Numeric value of forecast low temperature. 
 
-*x1 · Coverage: global · Range: +15 days · Updates: Daily*
+*x1 · Coverage: Global · Range: +15 days · Updates: Daily*
 
 - Modifier **Units**: `-metric` Metric
 
@@ -564,7 +564,7 @@ Numeric value of forecast low temperature.
 
 Forecast visibility as a distance.
 
-*x1 · Coverage: conus · Range: +15 days · Updates: HRRR: 1hr, NAM: 6hrs*
+*x1 · Coverage: Continental US · Range: +15 days · Updates: HRRR: 1hr, NAM: 6hrs*
 
 - Modifier **Model**: `-hrrr` High-Resolution Rapid Refresh (HRRR), `-nam` North American Mesoscale Forecast System (NAM)
 
@@ -572,7 +572,7 @@ Forecast visibility as a distance.
 
 Forecast wind chill temperatures.
 
-*x1 · Coverage: global · Range: +15 days · Updates: HRRR: 1hr, NAM/GFS: 6 hrs*
+*x1 · Coverage: Global · Range: +15 days · Updates: HRRR: 1hr, NAM/GFS: 6 hrs*
 
 - Modifier **Model**: `-hrrr` High-Resolution Rapid Refresh (HRRR), `-nam` North American Mesoscale Forecast System (NAM), `-gfs` Global Forecast System (GFS)
 
@@ -580,7 +580,7 @@ Forecast wind chill temperatures.
 
 Forecast surface wind speeds.
 
-*x1 · Coverage: global · Range: +15 days · Updates: HRRR: 1hr, NAM/GFS: 6 hrs*
+*x1 · Coverage: Global · Range: +15 days · Updates: HRRR: 1hr, NAM/GFS: 6 hrs*
 
 - Modifier **Model**: `-hrrr` High-Resolution Rapid Refresh (HRRR), `-nam` North American Mesoscale Forecast System (NAM), `-gfs` Global Forecast System (GFS), `-ndfd` National Digital Forecast Database (NDFD)
 
@@ -590,7 +590,7 @@ Forecast surface wind speeds.
 
 All currently active US, Canadian and European alerts as issued by the National Weather Service (NWS), Environment Canada (EC), MeteoAlarm, Australian Bureau of Meteorology (AUSBOM), and the UK Met Office.
 
-*x1 · Coverage: us, canada, europe, australia, japan, south-korea · Range: -30 days · Updates: 2-3 minutes*
+*x1 · Coverage: US, Canada, Europe, Australia, Japan, South Korea · Range: -30 days · Updates: 2-3 minutes*
 
 - Modifier **Category**: `-severe` Severe Alerts, `-fire` Fire Alerts, `-flood` Flood Alerts, `-frost-freeze` Frost/Freeze Alerts, `-heat` Heat Alerts, `-wind` Wind Alerts, `-winter` Winter Alerts, `-surge` Storm Surge Alerts
 
@@ -602,19 +602,19 @@ All currently active US, Canadian and European alerts as issued by the National 
 
 Current fires observed depicted via icon. 
 
-*x1 · Coverage: us, canada · Range: -7 days · Updates: Daily*
+*x1 · Coverage: US, Canada · Range: -7 days · Updates: Daily*
 
 ### `fires-obs-points` — Fires - Points
 
 Current fires observed.
 
-*x1 · Coverage: us, canada · Range: -7 days · Updates: Daily*
+*x1 · Coverage: US, Canada · Range: -7 days · Updates: Daily*
 
 ### `stormcells` — Stormcells
 
 Radar-derived data that attempts to identify and track storm cell movement, along with reporting cell intensity and certain severe weather signatures within the cell, like rotation and hail. This layer is a combination of `stormcells-positions`, `stormcells-tracks`, and `stormcells-cones`.
 
-*x1 · Coverage: us · Range: -7 days · Updates: 3 minutes*
+*x1 · Coverage: US · Range: -7 days · Updates: 3 minutes*
 
 - Modifier **Category**: `-general` General, `-hail` Hail, `-major` Major, `-rotating` Rotating, `-tornado` Tornado
 
@@ -622,7 +622,7 @@ Radar-derived data that attempts to identify and track storm cell movement, alon
 
 24 hours of storm reports throughout the US.
 
-*x1 · Coverage: us · Range: -7 days · Updates: 15 minutes*
+*x1 · Coverage: US · Range: -7 days · Updates: 15 minutes*
 
 - Modifier **Category**: `-avalanche` Avalanche, `-blizzard` Blizzard, `-fire` Fire, `-flood` Flood, `-fog` Fog, `-hail` Hail, `-ice` Ice, `-lightning` Lightning, `-rain` Rain, `-snow` Snow, `-tides` Tides, `-tornado` Tornado, `-wind` Wind
 
@@ -632,7 +632,7 @@ Radar-derived data that attempts to identify and track storm cell movement, alon
 
 Aggregated cloud-to-ground and intracloud lightning flashes in the last 5 or 15 (default) minutes.
 
-*x10 · Coverage: global · Range: -7 days · Updates: 5 minutes*
+*x10 · Coverage: Global · Range: -7 days · Updates: 5 minutes*
 
 - Modifier **Icon Size**: `-lg` Large
 
@@ -640,7 +640,7 @@ Aggregated cloud-to-ground and intracloud lightning flashes in the last 5 or 15 
 
 Aggregated cloud-to-ground and intracloud lightning flashes in the last 15 minutes.
 
-*x10 · Coverage: global · Range: -7 days · Updates: 15 minutes*
+*x10 · Coverage: Global · Range: -7 days · Updates: 15 minutes*
 
 - Modifier **Icon Size**: `-lg` Large
 
@@ -648,13 +648,13 @@ Aggregated cloud-to-ground and intracloud lightning flashes in the last 15 minut
 
 Aggregated cloud-to-ground and intracloud lightning flashes in the last 5 minutes.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 5 minutes*
+*x1 · Coverage: Global · Range: -7 days · Updates: 5 minutes*
 
 ### `lightning-flash-5m-icons` — Lightning Flash - Icons 5m
 
 Aggregated cloud-to-ground and intracloud lightning flashes in the last 5 minutes.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 5 minutes*
+*x1 · Coverage: Global · Range: -7 days · Updates: 5 minutes*
 
 - Modifier **Icon Size**: `-lg` Large
 
@@ -662,13 +662,13 @@ Aggregated cloud-to-ground and intracloud lightning flashes in the last 5 minute
 
 A heat map of the number of lightning strikes within an 8km resolution, as provided by NOAA
 
-*x1 · Coverage: central-america, east-pacific, us · Range: -7 days · Updates: 15 minutes*
+*x1 · Coverage: Central America, East Pacific, US · Range: -7 days · Updates: 15 minutes*
 
 ### `lightning-strikes` — Lightning Strikes
 
 Cloud-to-ground lightning strikes in the last 5 or 15 (default) minutes.
 
-*x10 · Coverage: global · Range: -7 days · Updates: 5 minutes*
+*x10 · Coverage: Global · Range: -7 days · Updates: 5 minutes*
 
 - Modifier **Timeframe**: `-15m` 15 minutes, `-5m` 5 minutes
 
@@ -676,7 +676,7 @@ Cloud-to-ground lightning strikes in the last 5 or 15 (default) minutes.
 
 Cloud-to-ground lightning strikes in the last 15 minutes.
 
-*x10 · Coverage: global · Range: -7 days · Updates: 15 minutes*
+*x10 · Coverage: Global · Range: -7 days · Updates: 15 minutes*
 
 - Modifier **Icon Size**: `-lg` Large
 
@@ -684,7 +684,7 @@ Cloud-to-ground lightning strikes in the last 15 minutes.
 
 Cloud-to-ground lightning strikes in the last 5 minutes.
 
-*x10 · Coverage: global · Range: -7 days · Updates: 5 minutes*
+*x10 · Coverage: Global · Range: -7 days · Updates: 5 minutes*
 
 - Modifier **Icon Size**: `-lg` Large
 
@@ -694,103 +694,103 @@ Cloud-to-ground lightning strikes in the last 5 minutes.
 
 Carbon Monoxide concentration.
 
-*x5 · Coverage: global · Range: -7 days  to +4.5 days · Updates: 12 hours*
+*x5 · Coverage: Global · Range: -7 days  to +4.5 days · Updates: 12 hours*
 
 ### `air-quality-health-index-categories` — Air Quality Health Index
 
 Vaisala Xweather Air Quality Health Index, presenting how air quality affects an individual's health.
 
-*x5 · Coverage: global · Range: -7 days  to +4.5 days · Updates: 12 hours*
+*x5 · Coverage: Global · Range: -7 days  to +4.5 days · Updates: 12 hours*
 
 ### `air-quality-index` — AQI
 
 Air Quality Index.
 
-*x1 · Coverage: global · Range: -7 days  to +4.5 days · Updates: 12 hours*
+*x1 · Coverage: Global · Range: -7 days  to +4.5 days · Updates: 12 hours*
 
 ### `air-quality-index-cai-categories` — Korean Comprehensive Air-quality Index
 
 Korean Comprehensive Air-quality Index (CAI) categories and calculations
 
-*x5 · Coverage: global · Range: -7 days  to +4.5 days · Updates: 12 hours*
+*x5 · Coverage: Global · Range: -7 days  to +4.5 days · Updates: 12 hours*
 
 ### `air-quality-index-caqi-categories` — Common Air Quality Index
 
 Common Air Quality Index categories and calculations
 
-*x5 · Coverage: global · Range: -7 days  to +4.5 days · Updates: 12 hours*
+*x5 · Coverage: Global · Range: -7 days  to +4.5 days · Updates: 12 hours*
 
 ### `air-quality-index-categories` — AQI: Categories
 
 Air Quality Index Categories.
 
-*x1 · Coverage: global · Range: -7 days  to +4.5 days · Updates: 12 hours*
+*x1 · Coverage: Global · Range: -7 days  to +4.5 days · Updates: 12 hours*
 
 ### `air-quality-index-china-categories` — Chinese Government Air Quality Index
 
 Chinese Government AQI categories
 
-*x5 · Coverage: global · Range: -7 days  to +4.5 days · Updates: 12 hours*
+*x5 · Coverage: Global · Range: -7 days  to +4.5 days · Updates: 12 hours*
 
 ### `air-quality-index-eaqi-categories` — European Air Quality Index
 
 European Air Quality Index categories and calculations
 
-*x5 · Coverage: global · Range: -7 days  to +4.5 days · Updates: 12 hours*
+*x5 · Coverage: Global · Range: -7 days  to +4.5 days · Updates: 12 hours*
 
 ### `air-quality-index-india-categories` — India Air Quality Index
 
 India AQI categories
 
-*x5 · Coverage: global · Range: -7 days  to +4.5 days · Updates: 12 hours*
+*x5 · Coverage: Global · Range: -7 days  to +4.5 days · Updates: 12 hours*
 
 ### `air-quality-index-uba-daqi-categories` — German Air Quality Index
 
 German Air Quality categories and calculations
 
-*x5 · Coverage: global · Range: -7 days  to +4.5 days · Updates: 12 hours*
+*x5 · Coverage: Global · Range: -7 days  to +4.5 days · Updates: 12 hours*
 
 ### `air-quality-index-uk-daqi-categories` — UK Air Quality Index
 
 UK AQI categories and calculations
 
-*x5 · Coverage: global · Range: -7 days  to +4.5 days · Updates: 12 hours*
+*x5 · Coverage: Global · Range: -7 days  to +4.5 days · Updates: 12 hours*
 
 ### `air-quality-no` — Nitrogen Monoxide (NO)
 
 Nitrogen Monoxide concentration.
 
-*x5 · Coverage: global · Range: -7 days  to +4.5 days · Updates: 12 hours*
+*x5 · Coverage: Global · Range: -7 days  to +4.5 days · Updates: 12 hours*
 
 ### `air-quality-no2` — Nitrogen Dioxide (NO2)
 
 Nitrogen Dioxide concentration.
 
-*x5 · Coverage: global · Range: -7 days  to +4.5 days · Updates: 12 hours*
+*x5 · Coverage: Global · Range: -7 days  to +4.5 days · Updates: 12 hours*
 
 ### `air-quality-o3` — Ozone (O3)
 
 Ozone concentration.
 
-*x5 · Coverage: global · Range: -7 days  to +4.5 days · Updates: 12 hours*
+*x5 · Coverage: Global · Range: -7 days  to +4.5 days · Updates: 12 hours*
 
 ### `air-quality-pm10` — Particle Pollution (PM10)
 
 Particulate Matter < 10um concentration.
 
-*x5 · Coverage: global · Range: -7 days  to +4.5 days · Updates: 12 hours*
+*x5 · Coverage: Global · Range: -7 days  to +4.5 days · Updates: 12 hours*
 
 ### `air-quality-pm2p5` — Particle Pollution (PM2.5)
 
 Particulate Matter < 2.5um concentration.
 
-*x5 · Coverage: global · Range: -7 days  to +4.5 days · Updates: 12 hours*
+*x5 · Coverage: Global · Range: -7 days  to +4.5 days · Updates: 12 hours*
 
 ### `air-quality-so2` — Sulfer Dioxide (SO2)
 
 Sulfer Dioxide concentration.
 
-*x5 · Coverage: global · Range: -7 days  to +4.5 days · Updates: 12 hours*
+*x5 · Coverage: Global · Range: -7 days  to +4.5 days · Updates: 12 hours*
 
 ## Maritime
 
@@ -798,79 +798,79 @@ Sulfer Dioxide concentration.
 
 Ocean Currents
 
-*x1 · Coverage: global · Range: -7 days · Updates: 6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 6 hours*
 
 ### `maritime-sst` — Sea Surface Temperature
 
 Sea Surface Temperatures
 
-*x1 · Coverage: global · Range: -7 days · Updates: 6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 6 hours*
 
 ### `maritime-surges` — Storm Surge Height
 
 Amount of abnormal rise of water over and above the predicted astronomical tides due to storm activity. (Not inland storm surge)
 
-*x1 · Coverage: global · Range: -7 days · Updates: 6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 6 hours*
 
 ### `maritime-swell-2-heights` — Secondary Swell Heights
 
 Secondary Swell Heights
 
-*x1 · Coverage: global · Range: -7 days · Updates: 8 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 8 hours*
 
 ### `maritime-swell-2-periods` — Secondary Swell Periods
 
 Secondary Swell Periods
 
-*x1 · Coverage: global · Range: -7 days · Updates: 6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 6 hours*
 
 ### `maritime-swell-3-heights` — Tertiary Swell Heights
 
 Tertiary Swell Heights
 
-*x1 · Coverage: global · Range: -7 days · Updates: 6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 6 hours*
 
 ### `maritime-swell-3-periods` — Tertiary Swell Periods
 
 Tertiary Swell Periods
 
-*x1 · Coverage: global · Range: -7 days · Updates: 6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 6 hours*
 
 ### `maritime-swell-heights` — Primary Swell Heights
 
 Primary Swell Heights
 
-*x1 · Coverage: global · Range: -7 days · Updates: 6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 6 hours*
 
 ### `maritime-swell-periods` — Primary Swell Periods
 
 Primary Swell Periods
 
-*x1 · Coverage: global · Range: -7 days · Updates: 6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 6 hours*
 
 ### `maritime-tides` — Tide Height
 
 Tide Height
 
-*x1 · Coverage: global · Range: -7 days · Updates: 6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 6 hours*
 
 ### `maritime-wave-heights` — Primary Wave Heights
 
 Primary Wave Heights
 
-*x1 · Coverage: global · Range: -7 days · Updates: 6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 6 hours*
 
 ### `maritime-wave-periods` — Primary Wave Periods
 
 Primary Wave Periods
 
-*x1 · Coverage: global · Range: -7 days · Updates: 6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 6 hours*
 
 ### `maritime-wind-wave-heights` — Primary Wind Wave Heights
 
 Primary Wind Wave Heights
 
-*x1 · Coverage: global · Range: -7 days · Updates: 6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 6 hours*
 
 ## Tropical
 
@@ -878,49 +878,49 @@ Primary Wind Wave Heights
 
 Active tropical cyclones with up to a 5 day forecast.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 1-6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 1-6 hours*
 
 ### `tropical-cyclones-break-points` — Tropical Cyclones - Breakpoints
 
 Coastal areas under cyclone watches or warnings.
 
-*x1 · Coverage: east-pacific, west-atlantic · Range: -7 days · Updates: 1-6 hours*
+*x1 · Coverage: East Pacific, West Atlantic · Range: -7 days · Updates: 1-6 hours*
 
 ### `tropical-cyclones-forecast-error-cones` — Tropical Cyclones - Forecast Error Cones
 
 Probable track of the center of a tropical cyclone
 
-*x1 · Coverage: global · Range: -7 days · Updates: 1-6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 1-6 hours*
 
 ### `tropical-cyclones-forecast-lines` — Tropical Cyclones - Forecast Lines
 
 Probable track of the center of a tropical cyclone, displayed as lines.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 1-6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 1-6 hours*
 
 ### `tropical-cyclones-forecast-point-icons` — Tropical Cyclones - Forecast Icons
 
 Probable track of the center of a tropical cyclone, displayed as icons.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 1-6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 1-6 hours*
 
 ### `tropical-cyclones-forecast-points` — Tropical Cyclones - Forecast Points
 
 Probable track of the center of a tropical cyclone, displayed as points.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 1-6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 1-6 hours*
 
 ### `tropical-cyclones-invests` — Tropical Invests
 
 Displays active Tropical Invests (Tropical disturbances under investigation for further development).
 
-*x1 · Coverage: global · Range: -7 days · Updates: 1-6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 1-6 hours*
 
 ### `tropical-cyclones-invests-names` — Tropical Invests - Names
 
 The names of the active tropical invests.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 1-6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 1-6 hours*
 
 - Modifier **Font Size**: `-lg` Large
 
@@ -928,19 +928,19 @@ The names of the active tropical invests.
 
 The current position of tropical invests as an icon (L).
 
-*x1 · Coverage: global · Range: -7 days · Updates: 1-6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 1-6 hours*
 
 ### `tropical-cyclones-invests-positions` — Tropical Invests - Positions
 
 The current position of tropical invests (as a dot).
 
-*x1 · Coverage: global · Range: -7 days · Updates: 1-6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 1-6 hours*
 
 ### `tropical-cyclones-names` — Tropical Cyclones - Names
 
 Active tropical cyclones with up to a 5 day forecast, displayed with cyclone names.
 
-*x1 · Coverage: global · Range: -7 Days · Updates: 1-6 hours*
+*x1 · Coverage: Global · Range: -7 Days · Updates: 1-6 hours*
 
 - Modifier **Font Size**: `-lg` Large
 
@@ -948,31 +948,31 @@ Active tropical cyclones with up to a 5 day forecast, displayed with cyclone nam
 
 Current positions of active tropical cyclones depicted with an icon of storm intensity. 
 
-*x1 · Coverage: global · Range: -7 days · Updates: 1-6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 1-6 hours*
 
 ### `tropical-cyclones-positions` — Tropical Cyclones - Positions
 
 Current positions of active tropical cyclones.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 1-6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 1-6 hours*
 
 ### `tropical-cyclones-track-lines` — Tropical Cyclones - Track Lines
 
 Tropical cyclone track lines for active storms only.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 1-6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 1-6 hours*
 
 ### `tropical-cyclones-track-point-icons` — Tropical Cyclones - Track Icons
 
 Active tropical cyclone tracks, displayed as icons.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 1-6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 1-6 hours*
 
 ### `tropical-cyclones-track-points` — Tropical Cyclones - Track Points
 
 Active tropical cyclone tracks, displayed as points.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 1-6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 1-6 hours*
 
 ## Outlooks
 
@@ -980,7 +980,7 @@ Active tropical cyclone tracks, displayed as points.
 
 SPC Convective Outlook throughout the US.
 
-*x1 · Coverage: conus · Updates: As needed*
+*x1 · Coverage: Continental US · Updates: As needed*
 
 - Modifier **Category**: `-hail` Hail, `-torn` Tornado, `-wind` Wind
 
@@ -988,43 +988,43 @@ SPC Convective Outlook throughout the US.
 
 Latest drought summary and severity as issued by the National Drought Mitigation Center.
 
-*x1 · Coverage: us · Updates: Weekly*
+*x1 · Coverage: US · Updates: Weekly*
 
 ### `fires-dryltg-outlook` — Fires Outlook (Dry Lightning)
 
 Fire Weather Outlook for dry lightning
 
-*x1 · Coverage: conus · Updates: Daily*
+*x1 · Coverage: Continental US · Updates: Daily*
 
 ### `fires-outlook` — Fires Outlook
 
 Fire weather outlooks and fire conditions as issued by the Storm Prediction Center (SPC).
 
-*x1 · Coverage: conus · Updates: Daily*
+*x1 · Coverage: Continental US · Updates: Daily*
 
 ### `precip-outlook-6-10d-cpc` — 6-10d Precip Outlook
 
 The CPC 6 to 10 day Precipitation outlook
 
-*x1 · Coverage: us · Updates: Daily*
+*x1 · Coverage: US · Updates: Daily*
 
 ### `precip-outlook-8-14d-cpc` — 8-14d Precip Outlook
 
 The CPC 8 to 14 day Precipitation outlook
 
-*x1 · Coverage: us · Updates: Daily*
+*x1 · Coverage: US · Updates: Daily*
 
 ### `temperatures-outlook-6-10d-cpc` — 6-10d Temp Outlook
 
 The CPC 6 to 10 day Temperature outlook
 
-*x1 · Coverage: us · Updates: Daily*
+*x1 · Coverage: US · Updates: Daily*
 
 ### `temperatures-outlook-8-14d-cpc` — 8-14d Temp Outlook
 
 The CPC 8 to 14 day Temperature outlook
 
-*x1 · Coverage: us · Updates: Daily*
+*x1 · Coverage: US · Updates: Daily*
 
 ## Overlays
 
@@ -1032,7 +1032,7 @@ The CPC 8 to 14 day Temperature outlook
 
 Administration boundaries and labels, including country, states major cities
 
-*x1 · Coverage: global*
+*x1 · Coverage: Global*
 
 - Modifier **Font Size**: `-lg` Large
 
@@ -1040,7 +1040,7 @@ Administration boundaries and labels, including country, states major cities
 
 Standard admin layers with emphasis on city names versus state / country names.
 
-*x1 · Coverage: global*
+*x1 · Coverage: Global*
 
 - Modifier **Font Size**: `-lg` Large
 
@@ -1048,7 +1048,7 @@ Standard admin layers with emphasis on city names versus state / country names.
 
 Standard admin layers with emphasis on city names versus state / country names.
 
-*x1 · Coverage: global*
+*x1 · Coverage: Global*
 
 - Modifier **Font Size**: `-lg` Large
 
@@ -1056,7 +1056,7 @@ Standard admin layers with emphasis on city names versus state / country names.
 
 Administration boundaries and labels, including country, states major cities
 
-*x1 · Coverage: global*
+*x1 · Coverage: Global*
 
 - Modifier **Font Size**: `-lg` Large
 
@@ -1064,7 +1064,7 @@ Administration boundaries and labels, including country, states major cities
 
 County / Parish outlines within the US.
 
-*x1 · Coverage: us*
+*x1 · Coverage: US*
 
 - Modifier **Map Theme**: `-dk` Dark
 
@@ -1074,7 +1074,7 @@ County / Parish outlines within the US.
 
 Country outlines across the globe.
 
-*x1 · Coverage: global*
+*x1 · Coverage: Global*
 
 - Modifier **Map Theme**: `-dk` Dark
 
@@ -1082,7 +1082,7 @@ Country outlines across the globe.
 
 Major interstates / highways around the globe.
 
-*x1 · Coverage: global*
+*x1 · Coverage: Global*
 
 - Modifier **Map Theme**: `-dk` Dark
 
@@ -1092,7 +1092,7 @@ Major interstates / highways around the globe.
 
 Rivers across the globe.
 
-*x1 · Coverage: global*
+*x1 · Coverage: Global*
 
 - Modifier **Map Theme**: `-dk` Dark
 
@@ -1100,7 +1100,7 @@ Rivers across the globe.
 
 Major roads across the U.S.
 
-*x1 · Coverage: us*
+*x1 · Coverage: US*
 
 - Modifier **Map Theme**: `-dk` Dark
 
@@ -1108,7 +1108,7 @@ Major roads across the U.S.
 
 State / Province outlines and labels
 
-*x1 · Coverage: global*
+*x1 · Coverage: Global*
 
 - Modifier **State Outlines**: `-outlines` No Text Labels
 
@@ -1122,13 +1122,13 @@ State / Province outlines and labels
 
 Blue Marble base layer with transparent US
 
-*x1 · Coverage: us*
+*x1 · Coverage: US*
 
 ### `clip-us-terrain` — Terrain - Clip US
 
 Terrain base layer with transparent US
 
-*x1 · Coverage: us*
+*x1 · Coverage: US*
 
 - Modifier **Map Theme**: `-dk` Dark
 
@@ -1136,13 +1136,13 @@ Terrain base layer with transparent US
 
 Land mask using blue marble base layer.
 
-*x1 · Coverage: global*
+*x1 · Coverage: Global*
 
 ### `land-flat` — Flat - Land Mask
 
 Flat base layer with transparent US.
 
-*x1 · Coverage: global*
+*x1 · Coverage: Global*
 
 - Modifier **Map Theme**: `-dk` Dark
 
@@ -1150,7 +1150,7 @@ Flat base layer with transparent US.
 
 Terrain land mask. 
 
-*x1 · Coverage: global*
+*x1 · Coverage: Global*
 
 - Modifier **Map Theme**: `-dk` Dark
 
@@ -1158,13 +1158,13 @@ Terrain land mask.
 
 Flat base layer with transparent US only.
 
-*x1 · Coverage: us*
+*x1 · Coverage: US*
 
 ### `water-depth` — Water Mask - Bathymetry
 
 Bathymetry water mask. 
 
-*x1 · Coverage: global*
+*x1 · Coverage: Global*
 
 - Modifier **Map Theme**: `-dk` Dark
 
@@ -1172,7 +1172,7 @@ Bathymetry water mask.
 
 Water mask. 
 
-*x1 · Coverage: global*
+*x1 · Coverage: Global*
 
 - Modifier **Map Theme**: `-dk` Dark
 
@@ -1182,7 +1182,7 @@ Water mask.
 
 Flat base layer with transparent US.
 
-*x1 · Coverage: us*
+*x1 · Coverage: US*
 
 - Modifier **Map Theme**: `-dk` Dark
 
@@ -1190,7 +1190,7 @@ Flat base layer with transparent US.
 
 Dew point temperature.
 
-*x1 · Coverage: global · Range: -7 days · Updates: 1hr*
+*x1 · Coverage: Global · Range: -7 days · Updates: 1hr*
 
 - Modifier **Source**: `-rtma` Real-Time Mesoscale Analysis (RTMA)
 
@@ -1198,7 +1198,7 @@ Dew point temperature.
 
 Forecast surface wind gusts.
 
-*x1 · Coverage: global · Range: +15 days · Updates: HRRR: 1hr, NAM/GFS: 6 hrs*
+*x1 · Coverage: Global · Range: +15 days · Updates: HRRR: 1hr, NAM/GFS: 6 hrs*
 
 - Modifier **Model**: `-hrrr` High-Resolution Rapid Refresh (HRRR), `-nam` North American Mesoscale Forecast System (NAM), `-gfs` Global Forecast System (GFS), `-ndfd` National Digital Forecast Database (NDFD)
 
@@ -1206,7 +1206,7 @@ Forecast surface wind gusts.
 
 Aggregated cloud-to-ground and intracloud lightning flashes in the last 5 minutes.
 
-*x10 · Coverage: global · Range: -7 days · Updates: 5 minutes*
+*x10 · Coverage: Global · Range: -7 days · Updates: 5 minutes*
 
 - Modifier **Icon Size**: `-lg` Large
 
@@ -1214,4 +1214,4 @@ Aggregated cloud-to-ground and intracloud lightning flashes in the last 5 minute
 
 Primary Wind Wave Periods
 
-*x1 · Coverage: global · Range: -7 days · Updates: 6 hours*
+*x1 · Coverage: Global · Range: -7 days · Updates: 6 hours*
