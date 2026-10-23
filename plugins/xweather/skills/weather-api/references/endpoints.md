@@ -85,7 +85,7 @@ Docs: https://www.xweather.com/docs/weather-api/endpoints/airquality-index
 
 Mild to severe weather events issued to the public from the Canadian, European, and US governments.
 
-*Coverage: us, canada, europe, australia · Range: Latest · Updates: Near real-time · Cost: x1*
+*Coverage: india, brazil, south-africa, south-korea, mexico, japan, us, canada, europe, australia · Range: Latest · Updates: Near real-time · Cost: x1*
 
 | | |
 |---|---|
@@ -101,7 +101,7 @@ Docs: https://www.xweather.com/docs/weather-api/endpoints/alerts
 
 Summary of active weather events across Canada, the US, and Europe. This endpoint is derived from the /alerts endpoint.
 
-*Coverage: us, europe, canada · Range: Latest · Updates: Near real-time · Cost: x1*
+*Coverage: brazil, japan, south-africa, south-korea, india, australia, mexico, us, europe, canada · Range: Latest · Updates: Near real-time · Cost: x1*
 
 | | |
 |---|---|
@@ -277,7 +277,7 @@ Docs: https://www.xweather.com/docs/weather-api/endpoints/forecasts
 
 Historical data providing hail occurrence and severity insight
 
-*Coverage: US, Canada, Japan, Europe, Australia · Range: 2024-01-01 (US), 2024-03-08 (Europe), and 2025-02-01 (Other Regions) · Updates: Hourly · Cost: x12*
+*Coverage: us, canada, japan, europe, australia · Range: 2024-01-01 (US), 2024-03-08 (Europe), and 2025-02-01 (Other Regions) · Updates: Hourly · Cost: x12*
 
 | | |
 |---|---|
@@ -495,7 +495,7 @@ Docs: https://www.xweather.com/docs/weather-api/endpoints/maritime-archive
 
 Returns raw forecast model data for a single forecast model at a requested location. Each response is a time series of forecast periods drawn from one model run. Use the Models Catalog endpoint to discover which models, run times, and datasets are available before making a request.
 
-*Coverage: Global · Range: Varies by model · Updates: Per model run cycle · Cost: x1*
+*Coverage: global · Range: Varies by model · Updates: Per model run cycle · Cost: x1*
 
 | | |
 |---|---|
@@ -511,7 +511,7 @@ Docs: https://www.xweather.com/docs/weather-api/endpoints/models
 
 Returns a catalog of the forecast models available through the API, including each model's accessible run times, forecast coverage, and the datasets (variables) it produces. Use this endpoint to discover what's available before requesting raw forecast data for a specific model from the /models/:model endpoint.
 
-*Coverage: Global · Range: +15 days · Updates: Per model run cycle · Cost: x1*
+*Coverage: global · Range: +15 days · Updates: Per model run cycle · Cost: x1*
 
 | | |
 |---|---|
@@ -671,7 +671,7 @@ Docs: https://www.xweather.com/docs/weather-api/endpoints/places-postalcodes
 
 Retrieve historical solar irradiance data for any location and date range, including detailed time series of solar energy measurements to analyze past solar potential or validate solar performance.
 
-*Coverage: europe, africa · Range: 2004-01-20 to 2025-09-30 · Updates: Hourly · Cost: x1*
+*Coverage: europe, africa, north-america, south-america, central-america · Range: 2004-01-20 to 2025-09-30 · Updates: Hourly · Cost: x1*
 
 | | |
 |---|---|
@@ -687,7 +687,7 @@ Docs: https://www.xweather.com/docs/weather-api/endpoints/renewables-irradiance-
 
 Retrieve recent solar irradiance data for a specific location, time range, and resolution. This endpoint provides detailed information on how much solar energy reached a given point on Earth's surface and can be used as a proxy of observed irradiance or to validate solar energy generation.
 
-*Coverage: europe, africa · Range: -1 month to -1 day · Updates: Hourly · Cost: x1*
+*Coverage: europe, africa, north-america, south-america, central-america · Range: -1 month to -1 day · Updates: Hourly · Cost: x1*
 
 | | |
 |---|---|
@@ -703,7 +703,7 @@ Docs: https://www.xweather.com/docs/weather-api/endpoints/renewables-irradiance-
 
 Retrieve historical irradiance averages for a specific location at monthly, annual, and overall resolutions. The fullYears summary provides daily average kWh m/2 and annual average kWh m/2.
 
-*Coverage: Africa, Central America, North America, South America, Europe · Range: 2004-01-20 to 2025-09-30 · Cost: x10*
+*Coverage: africa, central-america, north-america, south-america, europe · Range: 2004-01-20 to 2025-09-30 · Cost: x10*
 
 | | |
 |---|---|
@@ -719,7 +719,7 @@ Docs: https://www.xweather.com/docs/weather-api/endpoints/renewables-irradiance-
 
 Retrieve historical solar irradiance data for a specific location and resolution represented as a typical meteorogical year (TMY)
 
-*Coverage: Africa, Europe, Central America, North America, South America · Range: - · Cost: x1*
+*Coverage: africa, europe, central-america, north-america, south-america · Range: - · Cost: x1*
 
 | | |
 |---|---|
