@@ -18,7 +18,7 @@ description: >-
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.15.3"
+  version: "0.15.4"
   platform: android
   sdk: mapsgl-android-sdk
 ---

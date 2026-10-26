@@ -779,6 +779,22 @@ The roadweather endpoint offers real-time, accurate road condition insights powe
 
 Docs: https://www.xweather.com/docs/weather-api/endpoints/roadweather
 
+## `/roadweather/alerts`
+
+Nowcast-based alert polygons for hazardous road conditions, including heavy rain, low visibility, high wind, blizzards, and slippery roads, with severity levels and explanations.
+
+*Coverage: us, canada, europe, japan, south-korea, new-zealand, australia · Range: +15 min · Updates: 15 min · Cost: x12*
+
+| | |
+|---|---|
+| Actions | `:id`, `contains`, `route`, `affects` |
+| Params | `p`, `filter`, `query`, `sort`, `limit`, `skip`, `fields`, `format`, `mindist` |
+| Filters | `heavyrain`, `lowvisibility`, `highwind`, `blizzard`, `slipperyroad`, `yellow`, `orange`, `red`, `geo` |
+| Query props | `region`, `alerttype`, `severity`, `issued`, `created`, `reftime` |
+| Sort fields | `region`, `alerttype`, `severity`, `issued`, `created`, `reftime` |
+
+Docs: https://www.xweather.com/docs/weather-api/endpoints/roadweather-alerts
+
 ## `/roadweather/analytics`
 
 The roadweather/analytics endpoint offers real-time, accurate road condition insights powered by Vaisala Xweather forecasts, enhancing user safety and decision-making for optimal driving experiences.

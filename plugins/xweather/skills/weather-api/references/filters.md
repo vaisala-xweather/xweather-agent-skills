@@ -735,6 +735,29 @@ per endpoint — including endpoints with no prose descriptions — see `endpoin
 - `bridge` — Returns road weather information for bridges. NOTE: the location must be near a bridge.
 - `noroadcheck` — By default the API ensures the requested location is within 100 meters of a supported road. With this filter, this check is bypassed and the API will return information on the closest supported road within 20km.
 
+## `/roadweather/alerts`
+
+**Filters**
+
+- `heavyrain` — Return heavy rain alerts.
+- `lowvisibility` — Return low visibility alerts.
+- `highwind` — Return high wind alerts.
+- `blizzard` — Return blizzard alerts.
+- `slipperyroad` — Return slippery road alerts.
+- `yellow` — Return yellow severity alerts.
+- `orange` — Return orange severity alerts.
+- `red` — Return red severity alerts.
+- `geo` — Include the alert polygon in geoPoly for JSON responses. GeoJSON output always includes geometry.
+
+**Query properties**
+
+- `region` — Data region associated with the alert, such as us.
+- `alerttype` — Hazard type: heavy-rain, low-visibility, high-wind, blizzard, or slippery-road.
+- `severity` — Severity label: yellow, orange, or red.
+- `issued` — Alert issue date/time.
+- `created` — Alert creation date/time; an alias of issued.
+- `reftime` — Reference date/time of the underlying nowcast data.
+
 ## `/roadweather/analytics`
 
 **Filters**

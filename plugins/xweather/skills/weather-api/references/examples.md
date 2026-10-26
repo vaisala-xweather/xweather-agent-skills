@@ -550,6 +550,23 @@ copy its structure rather than inventing parameters.
 - `/roadweather/44.9648,-93.2682?filter=secondary`  
   Returns the road weather information for a secondary road within 100 meters of the specified latitude/longitude.
 
+## `/roadweather/alerts`
+
+- `/roadweather/alerts/minneapolis,mn`  
+  Return alerts whose polygons contain Minneapolis, MN, ordered from highest to lowest severity by default.
+- `/roadweather/alerts/contains?p=44.98,-93.26&filter=geo`  
+  Return alerts containing the specified latitude/longitude, including their polygons.
+- `/roadweather/alerts/minneapolis,mn?filter=lowvisibility,highwind,orange,red`  
+  Return low visibility or high wind alerts with orange or red severity.
+- `/roadweather/alerts/minneapolis,mn?format=geojson`  
+  Return alert polygons as a GeoJSON FeatureCollection.
+- `/roadweather/alerts/minneapolis,mn?query=severity:red&fields=id,alertType,severity,detail,range`  
+  Return red severity alerts with only the specified response fields.
+- `/roadweather/alerts/route?p=44.98,-93.26;45.05,-93.30&filter=geo`  
+  Return alerts for the supplied route points, including each alert polygon.
+- `/roadweather/alerts/affects?p=75735f313738363437333030305f31`  
+  Return places covered by an alert. Replace the sample p value with an id from a current alert response.
+
 ## `/roadweather/analytics`
 
 - `/roadweather/44.9648,-93.2682`  
