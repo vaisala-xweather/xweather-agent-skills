@@ -658,12 +658,14 @@ per endpoint — including endpoints with no prose descriptions — see `endpoin
 **Filters**
 
 - `#hr` — Returns solar data for the specified interval starting at the locale's current time. Default option is 1hr
+- `#min` — Returns solar data for the specified interval: 30min, 15min, or 10min.
 
 ## `/renewables/irradiance/monitoring`
 
 **Filters**
 
 - `#hr` — Returns solar data for the specified interval starting at the locale's current time. Default option is 1hr
+- `#min` — Returns solar data for the specified interval: 30min, 15min, 10min, 5min, or 1min.
 
 ## `/renewables/irradiance/summary`
 

@@ -4,7 +4,7 @@ description: This skill should be used when working with the Xweather MapsGL Jav
 license: MIT
 metadata:
   author: Vaisala Xweather
-  version: "0.15.5"
+  version: "0.15.6"
 ---
 
 # MapsGL JavaScript SDK
@@ -63,7 +63,7 @@ the npm install alike, so both channels get the same release:
 npm install --save @xweather/mapsgl@{version}
 ```
 
-Never emit a literal `{version}`. If the endpoint can't be reached, fall back to `1.10.3`, the
+Never emit a literal `{version}`. If the endpoint can't be reached, fall back to `1.10.4`, the
 released version when this file was last regenerated, and tell the user you couldn't confirm it's
 the latest.
 
