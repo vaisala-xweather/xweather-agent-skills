@@ -154,7 +154,7 @@ SPC's outlook for convective activity across the US. This includes the SPC's con
 | | |
 |---|---|
 | Actions | `:id`, `affects`, `contains`, `search` |
-| Params | `filter`, `from`, `limit`, `p`, `query`, `radius`, `skip`, `sort`, `to` |
+| Params | `filter`, `from`, `lang`, `limit`, `p`, `query`, `radius`, `skip`, `sort`, `to` |
 | Filters | `cat`, `prob`, `conhazo`, `torn`, `xtorn, sigtorn`, `alltorn`, `hail`, `xhail, sighail`, `allhail`, `wind`, `xwind, sigwind`, `allwind`, `all`, `general`, `marginal`, `slight`, `enhanced`, `moderate`, `high`, `day#` |
 | Query props | `id`, `cat`, `day`, `type`, `name`, `code` |
 | Sort fields | `id`, `cat`, `day`, `type`, `name`, `code`, `bdt`, `edt`, `idt` |
@@ -677,7 +677,7 @@ Retrieve historical solar irradiance data for any location and date range, inclu
 |---|---|
 | Actions | `:id` |
 | Params | `fields`, `filter`, `from`, `to`, `tilt`, `azimuth`, `panel_mode`, `horizon`, `preset` |
-| Filters | `#hr` |
+| Filters | `#hr`, `#min` |
 | Query props | — |
 | Sort fields | — |
 
@@ -693,7 +693,7 @@ Retrieve recent solar irradiance data for a specific location, time range, and r
 |---|---|
 | Actions | `:id` |
 | Params | `fields`, `filter`, `from`, `to`, `tilt`, `azimuth`, `panel_mode`, `preset`, `elevation` |
-| Filters | `#hr` |
+| Filters | `#hr`, `#min` |
 | Query props | — |
 | Sort fields | — |
 
